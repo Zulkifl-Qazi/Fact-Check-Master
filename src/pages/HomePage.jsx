@@ -7,6 +7,7 @@ import About from '../components/About';
 const HomePage = () => {
   return (
     <div className="w-full space-y-0">
+      <div id="top" />
       <Hero />
       <div className="container mx-auto px-4 space-y-20">
         <LiveFeed />

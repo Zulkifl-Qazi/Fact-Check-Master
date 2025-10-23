@@ -220,7 +220,7 @@ const LiveFeed = () => {
                     viewport={{ once: true }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 bg-white/[0.08] backdrop-blur-md rounded-full px-4 py-2 mb-4 border border-white/[0.15]">
+                    <div className="inline-flex items-center gap-2 bg-purple-900/50 rounded-full px-4 py-2 mb-4 border border-purple-500/40">
                         <FaRss className="text-purple-400" />
                         <span className="text-white/90 font-semibold text-sm">Live Updates</span>
                     </div>
@@ -238,28 +238,60 @@ const LiveFeed = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.1 }}
                     viewport={{ once: true }}
-                    className="max-w-4xl mx-auto backdrop-blur-sm"
+                    className="max-w-4xl mx-auto"
                 >
-                    <div className="bg-white/[0.05] rounded-xl shadow-2xl overflow-hidden border border-white/[0.15] transition-all duration-300 hover:border-white/[0.25]">
+                    <div
+                        style={{
+                            backgroundColor: '#0f172a',
+                            border: '1px solid rgba(168,85,247,0.35)',
+                            borderRadius: 16,
+                            boxShadow: '0 22px 44px rgba(0,0,0,0.5)',
+                            overflow: 'hidden'
+                        }}
+                    >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-purple-600/90 to-purple-700/90 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-purple-700 to-purple-800 px-6 py-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <FaTwitter className="text-white text-lg" />
                                 <h3 className="text-white font-bold text-lg">Twitter Feed</h3>
-                                <span className="ml-2 px-3 py-1 text-xs font-semibold bg-white/20 rounded-full text-white/95">@fcheckmaster</span>
+                                <span
+                                    className="ml-2 px-3 py-1 text-xs font-semibold rounded-full text-white/95"
+                                    style={{ backgroundColor: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.28)' }}
+                                >
+                                    @fcheckmaster
+                                </span>
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <div className="text-white text-sm hidden md:flex items-center gap-2 bg-white/10 px-3 py-1 rounded-lg">
+                                <div
+                                    className="text-white text-sm hidden md:flex items-center gap-2 px-3 py-1 rounded-lg"
+                                    style={{ backgroundColor: '#1f2937', border: '1px solid rgba(255,255,255,0.18)' }}
+                                >
                                     <FaCheckCircle className="text-green-300 text-base" />
                                     <span className="font-semibold">Verified</span>
                                 </div>
 
                                 <div className="relative">
-                                    <button onClick={() => setSettingsOpen(!settingsOpen)} className="text-white bg-white/20 hover:bg-white/30 px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200">Settings</button>
+                                    <button
+                                        onClick={() => setSettingsOpen(!settingsOpen)}
+                                        className="text-sm font-bold"
+                                        style={{
+                                            color: '#ffffff',
+                                            background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)',
+                                            padding: '8px 16px',
+                                            border: 'none',
+                                            borderRadius: 10,
+                                            boxShadow: '0 10px 20px rgba(139,92,246,0.35)',
+                                            transition: 'filter 150ms ease-in-out'
+                                        }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.filter = 'brightness(1.08)')}
+                                        onMouseLeave={(e) => (e.currentTarget.style.filter = 'brightness(1)')}
+                                    >
+                                        Settings
+                                    </button>
                                     <AnimatePresence>
                                     {settingsOpen && (
-                                        <motion.div initial="hidden" animate="visible" exit="hidden" variants={settingsVariant} className="absolute right-0 mt-2 w-56 bg-slate-900 rounded-md shadow-2xl border border-white/[0.2] p-4 z-50">
+                                        <motion.div initial="hidden" animate="visible" exit="hidden" variants={settingsVariant} className="absolute right-0 mt-2 w-56 rounded-md shadow-2xl p-4 z-50" style={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.2)' }}>
                                             <label className="block text-xs text-white/80 font-semibold mb-2">Items to show</label>
                                             <input type="range" min="1" max="5" value={showCount} onChange={(e) => setShowCount(Number(e.target.value))} className="w-full accent-purple-500" />
                                             <div className="flex items-center justify-between text-xs text-white/60 mt-2">
@@ -289,7 +321,7 @@ const LiveFeed = () => {
                                 <div className="flex flex-col items-center justify-center py-8" role="status" aria-live="polite">
                                     <div className="w-full max-w-4xl space-y-4">
                                         {[1,2,3].map((i) => (
-                                            <div key={i} className="h-20 bg-white/[0.05] border border-white/[0.1] rounded-lg animate-pulse" />
+                                            <div key={i} className="h-20 rounded-lg animate-pulse" style={{ backgroundColor: '#0b1220', border: '1px solid rgba(168,85,247,0.25)' }} />
                                         ))}
                                     </div>
                                     <p className="sr-only">Loading latest fact checks</p>
@@ -312,13 +344,21 @@ const LiveFeed = () => {
                                             const initials = t.author.split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase();
                                             return (
                                                 <motion.a
-                                                    className="block p-5 bg-white/[0.08] border border-white/[0.15] rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:border-white/[0.25] hover:bg-white/[0.12]"
+                                                    className="block"
                                                     key={t.id}
                                                     href={t.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     variants={itemVariant}
                                                     whileHover="hover"
+                                                    style={{
+                                                        backgroundColor: '#111827',
+                                                        border: '1px solid rgba(168,85,247,0.28)',
+                                                        borderRadius: 14,
+                                                        boxShadow: '0 14px 28px rgba(0,0,0,0.45)',
+                                                        padding: 20,
+                                                        textDecoration: 'none'
+                                                    }}
                                                 >
                                                     <div className="flex items-start gap-3">
                                                         <div className="flex-shrink-0">
@@ -336,13 +376,34 @@ const LiveFeed = () => {
                                     </motion.div>
 
                                     <div className="mt-6 text-center">
-                                        <button
-                                            disabled
-                                            title="Upgrade to API integration to enable richer content"
-                                            className="bg-gradient-to-r from-white/10 to-white/5 text-white/60 px-8 py-3 rounded-lg cursor-not-allowed opacity-70 font-bold border border-white/20"
+                                        <div
+                                            style={{
+                                                display: 'inline-block',
+                                                backgroundColor: '#0f172a',
+                                                border: '1px solid rgba(168,85,247,0.35)',
+                                                borderRadius: 12,
+                                                boxShadow: '0 16px 32px rgba(0,0,0,0.5)',
+                                                padding: 12
+                                            }}
                                         >
-                                            Enable API (coming soon)
-                                        </button>
+                                            <button
+                                                disabled
+                                                title="Upgrade to API integration to enable richer content"
+                                                style={{
+                                                    background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)',
+                                                    color: '#ffffff',
+                                                    padding: '12px 20px',
+                                                    border: 'none',
+                                                    borderRadius: 10,
+                                                    fontWeight: 700,
+                                                    cursor: 'not-allowed',
+                                                    opacity: 0.85,
+                                                    boxShadow: '0 10px 22px rgba(139,92,246,0.4)'
+                                                }}
+                                            >
+                                                Enable API (coming soon)
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -401,7 +462,14 @@ const LiveFeed = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
                             viewport={{ once: true }}
-                            className="bg-white/[0.08] backdrop-blur-md p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/[0.15] hover:border-white/[0.25]"
+                            className="transition-all duration-300 transform hover:-translate-y-1"
+                            style={{
+                                backgroundColor: '#111827',
+                                border: '1px solid rgba(168,85,247,0.28)',
+                                borderRadius: 14,
+                                boxShadow: '0 14px 28px rgba(0,0,0,0.45)',
+                                padding: 24
+                            }}
                         >
                             <feature.icon className={`${feature.color} text-3xl mb-4`} />
                             <h4 className="text-lg font-bold text-white mb-2">{feature.title}</h4>

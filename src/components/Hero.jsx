@@ -14,31 +14,10 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-screen min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden -mx-[calc((100vw-100%)/2)]"
+      className="relative w-full min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
     >
-      {/* Background with image and overlays - full screen */}
-      <div className="absolute inset-0 w-screen h-full">
-        {/* Background image */}
-        <div className="absolute inset-0 w-screen h-full overflow-hidden">
-          <img
-            src={heroBackground}
-            alt=""
-            className="w-full h-full object-cover opacity-20"
-            loading="lazy"
-          />
-        </div>
-        
-        {/* Primary dark overlay - very strong */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/98 via-purple-950/95 to-slate-950/98"></div>
-        
-        {/* Side dark overlays for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-950/98 via-transparent to-purple-950/98"></div>
-        
-        {/* Subtle radial overlay from center */}
-        <div className="absolute inset-0 opacity-40" style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(88,28,135,0.4), rgba(15,23,42,0.98))'
-        }}></div>
-      </div>
+      {/* Solid Background - no transparency */}
+      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
       
       {/* Animated background elements - more subtle with purple */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,7 +43,7 @@ const Hero = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-sm rounded-full px-5 py-2.5 border border-white/[0.08] shadow-lg">
+          <div className="inline-flex items-center gap-2.5 bg-purple-900/50 rounded-full px-5 py-2.5 border border-purple-500/40 shadow-lg">
             <FaShieldAlt className="text-purple-300 text-sm" />
             <span className="gradient-text text-sm font-semibold tracking-wide">Trusted Fact-Checking Platform</span>
           </div>
@@ -122,7 +101,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-              className="group bg-white/[0.1] backdrop-blur-md border border-white/[0.2] rounded-xl p-5 text-center hover:bg-white/[0.15] transition-all duration-300 hover:border-white/[0.3] shadow-lg"
+              className="group bg-purple-900/40 border border-purple-500/30 rounded-xl p-5 text-center hover:bg-purple-900/60 transition-all duration-300 hover:border-purple-500/60 shadow-lg"
             >
               <feature.icon className="text-purple-300 text-2xl mx-auto mb-3 transition-transform duration-300 group-hover:scale-110 drop-shadow" />
               <h3 className="text-white/95 font-bold text-sm mb-2">{feature.title}</h3>

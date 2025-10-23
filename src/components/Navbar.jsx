@@ -8,80 +8,96 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-purple-950/90 border-b border-purple-400/20">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 text-purple-400 font-bold text-lg transition-all duration-300 hover:scale-105">
-              <div className="relative">
-                <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg shadow-md" />
-                <div className="absolute -top-1 -right-1">
-                  <FaShieldAlt className="text-purple-400 text-xs" />
+    <nav style={{ 
+      position: 'sticky',
+      top: '0',
+      zIndex: '50',
+      background: 'rgb(88, 28, 135)',
+      borderBottom: '2px solid rgba(168, 85, 247, 0.4)',
+      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.3)'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgb(168, 85, 247)', fontWeight: 'bold', fontSize: '1.125rem', transition: 'all 300ms', textDecoration: 'none' }}>
+              <div style={{ position: 'relative' }}>
+                <img src={logo} alt="Logo" style={{ height: '32px', width: '32px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' }} />
+                <div style={{ position: 'absolute', top: '-4px', right: '-4px' }}>
+                  <FaShieldAlt style={{ color: 'rgb(168, 85, 247)', fontSize: '12px' }} />
                 </div>
               </div>
-              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
+              <span style={{ background: 'linear-gradient(to right, rgb(168, 85, 247), rgb(244, 114, 182))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Fact Check Master</span>
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center gap-1">
-            <Link to="/" className="nav-link text-sm font-medium">Home</Link>
-            <a href="#fact-checks" className="nav-link text-sm font-medium">Live Feed</a>
-            <a href="#about" className="nav-link text-sm font-medium">About</a>
-            <Link to="/contact" className="nav-link text-sm font-medium">Contact</Link>
-            <Link to="/admin/tweets" className="nav-link text-sm font-medium">Admin</Link>
+          {/* Desktop Menu */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <Link to="/#top" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Home</Link>
+            <Link to="/#fact-checks" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Live Feed</Link>
+            <Link to="/#about" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>About</Link>
+            <Link to="/contact" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Contact</Link>
+            <Link to="/admin/login" style={{ fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', padding: '0.45rem 0.75rem', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }} onMouseEnter={(e) => { e.target.style.background = 'rgba(255,255,255,0.12)'; e.target.style.color = 'white'; }} onMouseLeave={(e) => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.color = 'rgba(255, 255, 255, 0.8)'; }}>Admin</Link>
           </div>
           
-          <div className="flex items-center gap-2">
-            <div className="md:hidden">
-              <button 
-                onClick={() => setIsOpen(!isOpen)} 
-                className="p-2 rounded-md text-white/60 hover:text-white hover:bg-white/10 transition-all duration-200"
-                aria-label="Toggle menu"
-              >
-                {isOpen ? <FaTimes className="text-base" /> : <FaBars className="text-base" />}
-              </button>
-            </div>
+          {/* Mobile Menu Button */}
+          <div style={{ display: 'none' }}>
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              style={{ padding: '0.5rem', borderRadius: '6px', background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.6)', cursor: 'pointer', transition: 'all 200ms' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.background = 'none'; }}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <FaTimes style={{ fontSize: '1rem' }} /> : <FaBars style={{ fontSize: '1rem' }} />}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu with Animation */}
-      <div className={`md:hidden transition-all duration-300 ${isOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-        <div className="px-2 py-2 space-y-1 bg-purple-900/90 backdrop-blur-md border-t border-purple-400/20">
+      {/* Mobile Menu */}
+      <div style={{ 
+        display: 'none',
+        maxHeight: isOpen ? '256px' : '0',
+        opacity: isOpen ? '1' : '0',
+        overflow: 'hidden',
+        transition: 'all 300ms'
+      }}>
+        <div style={{ padding: '0.5rem', paddingBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'rgb(76, 22, 120)', borderTop: '2px solid rgba(168, 85, 247, 0.4)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' }}>
           <Link 
-            to="/" 
-            className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-md hover:bg-purple-500/20 transition-all duration-200"
+            to="/#top" 
+            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
             onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
-          <a 
-            href="#fact-checks" 
-            className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-md hover:bg-purple-500/20 transition-all duration-200"
+          <Link 
+            to="/#fact-checks" 
+            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
             onClick={() => setIsOpen(false)}
           >
             Live Feed
-          </a>
-          <a 
-            href="#about" 
-            className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-md hover:bg-purple-500/20 transition-all duration-200"
+          </Link>
+          <Link 
+            to="/#about" 
+            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
             onClick={() => setIsOpen(false)}
           >
             About
-          </a>
-          <Link 
-            to="/contact" 
-            className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-md hover:bg-purple-500/20 transition-all duration-200"
-            onClick={() => setIsOpen(false)}
-          >
-            Contact
           </Link>
           <Link 
-            to="/admin/tweets" 
-            className="block px-3 py-2 text-sm font-medium text-white/80 hover:text-white rounded-md hover:bg-purple-500/20 transition-all duration-200"
+            to="/admin/login" 
+            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }}
             onClick={() => setIsOpen(false)}
           >
             Admin
+          </Link>
+          <Link 
+            to="/contact" 
+            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
+            onClick={() => setIsOpen(false)}
+          >
+            Contact
           </Link>
         </div>
       </div>

@@ -1,22 +1,38 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 const Contact = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
   const [status, setStatus] = useState(null);
+  const [focusedField, setFocusedField] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const submit = async (e) => {
     e.preventDefault();
     setStatus('loading');
     try {
-      const res = await axios.post('/api/feedback', { name, email, message });
+      const res = await axios.post('/api/feedback', {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      });
       if (res.data && res.data.id) {
         setStatus('success');
-        setName(''); setEmail(''); setMessage('');
+        setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+        setTimeout(() => setStatus(null), 5000);
       } else {
         setStatus('error');
       }
@@ -26,116 +42,289 @@ const Contact = () => {
   };
 
   return (
-  <section className="py-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-slate-950">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <motion.div className="text-center mb-12">
-          <motion.h2 
-            initial={{ opacity: 0, y: 8 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
-          >
-            Get in Touch
-          </motion.h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-            Help us fight misinformation by sharing verified sources and feedback.
-          </p>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+    <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', paddingTop: '5rem', paddingBottom: '5rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        style={{ maxWidth: '820px', margin: '0 auto', width: '100%' }}
+      >
+        {/* Single-column Form Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative overflow-hidden bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 space-y-6 group"
+          transition={{ duration: 0.8, delay: 0.05 }}
+          style={{ position: 'relative', background: 'rgba(30, 41, 59, 0.95)', padding: '3rem', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.35)', border: '2px solid rgba(168,85,247,0.35)' }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
-          <form onSubmit={submit} className="relative z-10 space-y-6">
-            <div>
-              <label htmlFor="name" className="block mb-3 text-gray-700 dark:text-gray-200 font-medium tracking-wide">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="John Doe"
-              />
-            </div>
+            {/* Background decorations */}
+            <div style={{ position: 'absolute', top: '0', right: '0', width: '128px', height: '128px', background: 'rgba(168, 85, 247, 0.2)', borderRadius: '9999px', filter: 'blur(80px)', transform: 'translateY(-50%) translateX(25%)' }}></div>
+            <div style={{ position: 'absolute', bottom: '0', left: '0', width: '128px', height: '128px', background: 'rgba(236, 72, 153, 0.2)', borderRadius: '9999px', filter: 'blur(80px)', transform: 'translateY(50%) translateX(-25%)' }}></div>
 
-            <div>
-              <label htmlFor="email" className="block mb-3 text-gray-700 dark:text-gray-200 font-medium tracking-wide">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="john@example.com"
-              />
-            </div>
+            <form onSubmit={submit} style={{ position: 'relative', zIndex: '10', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {/* Heading */}
+              <div>
+                <h2 style={{ fontSize: '2rem', fontWeight: '800', background: 'linear-gradient(to right, rgb(168, 85, 247), rgb(236, 72, 153))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Send us your feedback</h2>
+                <p style={{ color: 'rgba(255,255,255,0.8)', marginTop: '0.5rem' }}>We read every message and typically reply within 24 hours.</p>
+              </div>
+              {/* First Name & Last Name Row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  style={{ position: 'relative' }}
+                >
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('firstName')}
+                    onBlur={() => setFocusedField(null)}
+                    style={{
+                      width: '100%',
+                      padding: '1rem 1.25rem',
+                      background: focusedField === 'firstName' ? 'rgba(71, 85, 105, 0.8)' : 'rgba(71, 85, 105, 0.5)',
+                      border: focusedField === 'firstName' ? '2px solid rgb(168, 85, 247)' : '2px solid rgb(51, 65, 85)',
+                      borderRadius: '16px',
+                      outline: 'none',
+                      transition: 'all 300ms',
+                      color: 'white',
+                      fontSize: '1rem',
+                      fontWeight: '500',
+                      boxShadow: focusedField === 'firstName' ? '0 0 30px rgba(168, 85, 247, 0.4)' : 'none'
+                    }}
+                    placeholder="John"
+                    required
+                  />
+                </motion.div>
 
-            <div>
-              <label htmlFor="message" className="block mb-3 text-gray-700 dark:text-gray-200 font-medium tracking-wide">
-                Your Message
-              </label>
-              <textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                rows={6}
-                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
-                placeholder="Share your thoughts or report misinformation..."
-              />
-            </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.25 }}
+                  style={{ position: 'relative' }}
+                >
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('lastName')}
+                    onBlur={() => setFocusedField(null)}
+                    style={{
+                      width: '100%',
+                      padding: '1rem 1.25rem',
+                      background: focusedField === 'lastName' ? 'rgba(71, 85, 105, 0.8)' : 'rgba(71, 85, 105, 0.5)',
+                      border: focusedField === 'lastName' ? '2px solid rgb(168, 85, 247)' : '2px solid rgb(51, 65, 85)',
+                      borderRadius: '16px',
+                      outline: 'none',
+                      transition: 'all 300ms',
+                      color: 'white',
+                      fontSize: '1rem',
+                      fontWeight: '500',
+                      boxShadow: focusedField === 'lastName' ? '0 0 30px rgba(168, 85, 247, 0.4)' : 'none'
+                    }}
+                    placeholder="Doe"
+                    required
+                  />
+                </motion.div>
+              </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-              <button 
-                type="submit" 
-                className="relative group overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 text-white px-10 py-4 rounded-xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
-                disabled={status === 'loading'}
+              {/* Email */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                style={{ position: 'relative' }}
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  <FaPaperPlane className={status === 'loading' ? 'animate-bounce' : ''} />
-                  {status === 'loading' ? 'Sending...' : 'Send Message'}
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-purple-800 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-              </button>
-              
-              {status === 'success' && (
-                <motion.div 
-                  initial={{ opacity: 0, x: -10 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  className="flex items-center gap-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/10 px-4 py-2 rounded-lg"
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  style={{
+                    width: '100%',
+                    padding: '1rem 1.25rem',
+                    background: focusedField === 'email' ? 'rgba(71, 85, 105, 0.8)' : 'rgba(71, 85, 105, 0.5)',
+                    border: focusedField === 'email' ? '2px solid rgb(168, 85, 247)' : '2px solid rgb(51, 65, 85)',
+                    borderRadius: '16px',
+                    outline: 'none',
+                    transition: 'all 300ms',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    boxShadow: focusedField === 'email' ? '0 0 30px rgba(168, 85, 247, 0.4)' : 'none'
+                  }}
+                  placeholder="john@example.com"
+                  required
+                />
+              </motion.div>
+
+              {/* Subject */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.35 }}
+                style={{ position: 'relative' }}
+              >
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Subject</label>
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('subject')}
+                  onBlur={() => setFocusedField(null)}
+                  style={{
+                    width: '100%',
+                    padding: '1rem 1.25rem',
+                    background: focusedField === 'subject' ? 'rgba(71, 85, 105, 0.8)' : 'rgba(71, 85, 105, 0.5)',
+                    border: focusedField === 'subject' ? '2px solid rgb(168, 85, 247)' : '2px solid rgb(51, 65, 85)',
+                    borderRadius: '16px',
+                    outline: 'none',
+                    transition: 'all 300ms',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    boxShadow: focusedField === 'subject' ? '0 0 30px rgba(168, 85, 247, 0.4)' : 'none'
+                  }}
+                  placeholder="How can we help?"
+                  required
+                />
+              </motion.div>
+
+              {/* Message */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                style={{ position: 'relative' }}
+              >
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '0.75rem', letterSpacing: '0.05em' }}>Message</label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField('message')}
+                  onBlur={() => setFocusedField(null)}
+                  rows={5}
+                  style={{
+                    width: '100%',
+                    padding: '1rem 1.25rem',
+                    background: focusedField === 'message' ? 'rgba(71, 85, 105, 0.8)' : 'rgba(71, 85, 105, 0.5)',
+                    border: focusedField === 'message' ? '2px solid rgb(168, 85, 247)' : '2px solid rgb(51, 65, 85)',
+                    borderRadius: '16px',
+                    outline: 'none',
+                    transition: 'all 300ms',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    resize: 'none',
+                    fontFamily: 'inherit',
+                    boxShadow: focusedField === 'message' ? '0 0 30px rgba(168, 85, 247, 0.4)' : 'none'
+                  }}
+                  placeholder="Tell us what's on your mind..."
+                  required
+                />
+              </motion.div>
+
+              {/* Submit Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1.5rem' }}
+              >
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    overflow: 'hidden',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247), rgb(236, 72, 153))',
+                    paddingLeft: '1.5rem',
+                    paddingRight: '1.5rem',
+                    paddingTop: '1.25rem',
+                    paddingBottom: '1.25rem',
+                    fontWeight: '700',
+                    color: 'white',
+                    boxShadow: '0 20px 25px rgba(147, 51, 234, 0.3)',
+                    transition: 'all 300ms',
+                    cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                    opacity: status === 'loading' ? 0.5 : 1,
+                    border: 'none',
+                    fontSize: '1rem'
+                  }}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Message sent successfully!</span>
-                </motion.div>
-              )}
-              
-              {status === 'error' && (
-                <motion.div 
-                  initial={{ opacity: 0, x: -10 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  className="flex items-center gap-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/10 px-4 py-2 rounded-lg"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  <span>Failed to send. Please try again.</span>
-                </motion.div>
-              )}
-            </div>
-          </form>
-        </motion.div>
-      </div>
+                  <span style={{ position: 'relative', zIndex: '10', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <FaPaperPlane style={{ animation: status === 'loading' ? 'bounce 1s infinite' : 'none' }} />
+                    {status === 'loading' ? 'Sending...' : 'Send Message'}
+                  </span>
+                </button>
+
+                {/* Success Message */}
+                {status === 'success' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.75rem',
+                      color: 'rgb(134, 239, 172)',
+                      background: 'rgba(6, 78, 59, 0.3)',
+                      paddingLeft: '1.5rem',
+                      paddingRight: '1.5rem',
+                      paddingTop: '1rem',
+                      paddingBottom: '1rem',
+                      borderRadius: '16px',
+                      border: '2px solid rgba(34, 197, 94, 0.5)',
+                      fontWeight: '600'
+                    }}
+                  >
+                    <FaCheckCircle />
+                    <span>Message sent successfully! 🎉</span>
+                  </motion.div>
+                )}
+
+                {/* Error Message */}
+                {status === 'error' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.75rem',
+                      color: 'rgb(252, 165, 165)',
+                      background: 'rgba(127, 29, 29, 0.3)',
+                      paddingLeft: '1.5rem',
+                      paddingRight: '1.5rem',
+                      paddingTop: '1rem',
+                      paddingBottom: '1rem',
+                      borderRadius: '16px',
+                      border: '2px solid rgba(239, 68, 68, 0.5)',
+                      fontWeight: '600'
+                    }}
+                  >
+                    <FaExclamationCircle />
+                    <span>Error sending. Please try again.</span>
+                  </motion.div>
+                )}
+              </motion.div>
+            </form>
+          </motion.div>
+      </motion.div>
     </section>
   );
 };
