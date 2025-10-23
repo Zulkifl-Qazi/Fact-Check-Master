@@ -1,0 +1,159 @@
+// src/components/Hero.jsx
+import { motion } from 'framer-motion';
+import { FaShieldAlt, FaSearch, FaChartLine, FaUsers } from 'react-icons/fa';
+import heroBackground from '../assets/hero-background.jpg';
+
+const Hero = () => {
+  const features = [
+    { icon: FaShieldAlt, title: "Verified Facts", desc: "Real-time fact checking" },
+    { icon: FaSearch, title: "Deep Analysis", desc: "Comprehensive research" },
+    { icon: FaChartLine, title: "Trend Tracking", desc: "Monitor misinformation" },
+    { icon: FaUsers, title: "Community", desc: "Collaborative verification" }
+  ];
+
+  return (
+    <section
+      id="home"
+      className="relative w-screen min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden -mx-[calc((100vw-100%)/2)]"
+    >
+      {/* Background with image and overlays - full screen */}
+      <div className="absolute inset-0 w-screen h-full">
+        {/* Background image */}
+        <div className="absolute inset-0 w-screen h-full overflow-hidden">
+          <img
+            src={heroBackground}
+            alt=""
+            className="w-full h-full object-cover opacity-20"
+            loading="lazy"
+          />
+        </div>
+        
+        {/* Primary dark overlay - very strong */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/98 via-purple-950/95 to-slate-950/98"></div>
+        
+        {/* Side dark overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-950/98 via-transparent to-purple-950/98"></div>
+        
+        {/* Subtle radial overlay from center */}
+        <div className="absolute inset-0 opacity-40" style={{
+          background: 'radial-gradient(circle at 50% 50%, rgba(88,28,135,0.4), rgba(15,23,42,0.98))'
+        }}></div>
+      </div>
+      
+      {/* Animated background elements - more subtle with purple */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div 
+          className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-600/12 rounded-full blur-[100px] animate-pulse"
+          style={{ animationDuration: '8s' }}
+        ></div>
+        <div 
+          className="absolute top-1/3 -right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] animate-pulse"
+          style={{ animationDuration: '10s', animationDelay: '1s' }}
+        ></div>
+        <div 
+          className="absolute -bottom-1/4 left-1/3 w-[700px] h-[700px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse"
+          style={{ animationDuration: '12s', animationDelay: '2s' }}
+        ></div>
+      </div>
+
+      {/* Content container */}
+      <div className="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="inline-flex items-center gap-2.5 bg-white/[0.06] backdrop-blur-sm rounded-full px-5 py-2.5 border border-white/[0.08] shadow-lg">
+            <FaShieldAlt className="text-purple-300 text-sm" />
+            <span className="gradient-text text-sm font-semibold tracking-wide">Trusted Fact-Checking Platform</span>
+          </div>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 drop-shadow-xl"
+        >
+          <span className="block text-white/98">Fact Check</span>
+          <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 bg-clip-text text-transparent drop-shadow-lg">
+            Master
+          </span>
+        </motion.h1>
+        
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-3xl mx-auto text-lg sm:text-xl text-white/85 leading-relaxed mb-12 drop-shadow-lg"
+        >
+          <span className="block mb-3 font-semibold">Countering Fake News, Propaganda, Post-Truth and Beyond The Truth Rhetoric.</span>
+          <span className="block text-purple-300/95 font-medium">Your trusted source for verified information in the digital age.</span>
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+        >
+          <button className="btn btn-primary" aria-label="Start Fact Checking">
+            <span>Start Fact Checking</span>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+          </button>
+          
+          <button className="btn btn-ghost" aria-label="Learn more">
+            <span>Learn More</span>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+          </button>
+        </motion.div>
+
+        {/* Feature grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+              className="group bg-white/[0.1] backdrop-blur-md border border-white/[0.2] rounded-xl p-5 text-center hover:bg-white/[0.15] transition-all duration-300 hover:border-white/[0.3] shadow-lg"
+            >
+              <feature.icon className="text-purple-300 text-2xl mx-auto mb-3 transition-transform duration-300 group-hover:scale-110 drop-shadow" />
+              <h3 className="text-white/95 font-bold text-sm mb-2">{feature.title}</h3>
+              <p className="text-white/70 text-xs">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Stats section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="grid grid-cols-3 gap-8 max-w-2xl mx-auto"
+        >
+          <div className="text-center group">
+            <div className="text-4xl font-black text-purple-400 mb-2 transition-all duration-300 group-hover:text-purple-300 drop-shadow-lg">10K+</div>
+            <div className="text-white/70 text-sm font-semibold tracking-wider">Facts Checked</div>
+          </div>
+          <div className="text-center group">
+            <div className="text-4xl font-black text-pink-400 mb-2 transition-all duration-300 group-hover:text-pink-300 drop-shadow-lg">24/7</div>
+            <div className="text-white/70 text-sm font-semibold tracking-wider">Monitoring</div>
+          </div>
+          <div className="text-center group">
+            <div className="text-4xl font-black text-purple-300 mb-2 transition-all duration-300 group-hover:text-purple-200 drop-shadow-lg">99.9%</div>
+            <div className="text-white/70 text-sm font-semibold tracking-wider">Accuracy</div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
