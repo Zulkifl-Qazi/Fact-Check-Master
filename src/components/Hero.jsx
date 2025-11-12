@@ -14,7 +14,8 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
+      className="relative w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
+      style={{ minHeight: 'auto', height: 'auto', paddingBottom: '3rem' }}
     >
       {/* Solid Background - no transparency */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
@@ -77,14 +78,14 @@ const Hero = () => {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
         >
-          <button className="btn btn-primary" aria-label="Start Fact Checking">
+          <button className="btn btn-primary text-sm px-5 py-2" aria-label="Start Fact Checking">
             <span>Start Fact Checking</span>
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
           </button>
           
-          <button className="btn btn-ghost" aria-label="Learn more">
+          <button className="btn btn-ghost text-sm px-5 py-2" aria-label="Learn more">
             <span>Learn More</span>
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
           </button>
         </motion.div>
 
