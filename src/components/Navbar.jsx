@@ -38,6 +38,24 @@ const Navbar = () => {
             <Link to="/#about" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>About</Link>
             <Link to="/contact" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Contact</Link>
             <Link to="/admin/login" style={{ fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', padding: '0.45rem 0.75rem', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }} onMouseEnter={(e) => { e.target.style.background = 'rgba(255,255,255,0.12)'; e.target.style.color = 'white'; }} onMouseLeave={(e) => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.color = 'rgba(255, 255, 255, 0.8)'; }}>Admin</Link>
+            
+            {/* Search Bar */}
+            <input 
+              type="text" 
+              placeholder="Search facts..." 
+              style={{ 
+                fontSize: '0.875rem', 
+                padding: '0.5rem 0.75rem', 
+                borderRadius: '6px', 
+                border: '1px solid rgba(168, 85, 247, 0.4)', 
+                background: 'rgba(0, 0, 0, 0.2)', 
+                color: 'rgba(255, 255, 255, 0.8)',
+                width: '200px',
+                transition: 'all 200ms'
+              }}
+              onFocus={(e) => { e.target.style.background = 'rgba(0, 0, 0, 0.4)'; e.target.style.borderColor = 'rgb(168, 85, 247)'; e.target.style.boxShadow = '0 0 8px rgba(168, 85, 247, 0.3)'; }}
+              onBlur={(e) => { e.target.style.background = 'rgba(0, 0, 0, 0.2)'; e.target.style.borderColor = 'rgba(168, 85, 247, 0.4)'; e.target.style.boxShadow = 'none'; }}
+            />
           </div>
           
           {/* Mobile Menu Button */}
