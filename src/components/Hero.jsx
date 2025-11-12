@@ -1,7 +1,6 @@
 // src/components/Hero.jsx
 import { motion } from 'framer-motion';
 import { FaShieldAlt, FaSearch, FaChartLine, FaUsers } from 'react-icons/fa';
-import backImage from '../assets/back.jpg';
 
 const Hero = () => {
   const features = [
@@ -17,17 +16,6 @@ const Hero = () => {
       className="relative w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'auto', height: 'auto', paddingBottom: '3rem' }}
     >
-      {/* Background Image with Light Overlay */}
-      <div 
-        className="absolute inset-0 w-full h-full opacity-20"
-        style={{
-          backgroundImage: `url(${backImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          zIndex: 0
-        }}
-      ></div>
-
       {/* Solid Background - no transparency */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
       
