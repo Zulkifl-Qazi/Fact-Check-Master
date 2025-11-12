@@ -1,11 +1,12 @@
 // src/components/Navbar.jsx
 import React, { useState } from 'react';
-import { FaBars, FaTimes, FaShieldAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShieldAlt, FaSearch } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <nav style={{ 
@@ -14,9 +15,10 @@ const Navbar = () => {
       zIndex: '50',
       background: 'rgb(88, 28, 135)',
       borderBottom: '2px solid rgba(168, 85, 247, 0.4)',
-      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.3)'
+      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.3)',
+      overflow: 'visible'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -39,23 +41,70 @@ const Navbar = () => {
             <Link to="/contact" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Contact</Link>
             <Link to="/admin/login" style={{ fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', padding: '0.45rem 0.75rem', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }} onMouseEnter={(e) => { e.target.style.background = 'rgba(255,255,255,0.12)'; e.target.style.color = 'white'; }} onMouseLeave={(e) => { e.target.style.background = 'rgba(255,255,255,0.06)'; e.target.style.color = 'rgba(255, 255, 255, 0.8)'; }}>Admin</Link>
             
-            {/* Search Bar */}
-            <input 
-              type="text" 
-              placeholder="Search facts..." 
-              style={{ 
-                fontSize: '0.875rem', 
-                padding: '0.5rem 0.75rem', 
-                borderRadius: '6px', 
-                border: '1px solid rgba(168, 85, 247, 0.4)', 
-                background: 'rgba(0, 0, 0, 0.2)', 
-                color: 'rgba(255, 255, 255, 0.8)',
-                width: '200px',
-                transition: 'all 200ms'
+            {/* Search Button */}
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              style={{
+                padding: '0.5rem 0.65rem',
+                borderRadius: '6px',
+                border: 'none',
+                background: 'rgba(255, 255, 255, 0.06)',
+                color: 'rgba(255, 255, 255, 0.7)',
+                cursor: 'pointer',
+                transition: 'all 200ms',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
-              onFocus={(e) => { e.target.style.background = 'rgba(0, 0, 0, 0.4)'; e.target.style.borderColor = 'rgb(168, 85, 247)'; e.target.style.boxShadow = '0 0 8px rgba(168, 85, 247, 0.3)'; }}
-              onBlur={(e) => { e.target.style.background = 'rgba(0, 0, 0, 0.2)'; e.target.style.borderColor = 'rgba(168, 85, 247, 0.4)'; e.target.style.boxShadow = 'none'; }}
-            />
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'white'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'; }}
+              aria-label="Search"
+            >
+              <FaSearch style={{ fontSize: '1rem' }} />
+            </button>
+
+            {/* Animated Search Bar */}
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: '1rem',
+              marginTop: '0.5rem',
+              width: '250px',
+              maxWidth: 'calc(100% - 2rem)',
+              transform: isSearchOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-10px)',
+              opacity: isSearchOpen ? 1 : 0,
+              pointerEvents: isSearchOpen ? 'auto' : 'none',
+              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+              transformOrigin: 'top right',
+              zIndex: 40
+            }}>
+              <input
+                type="text"
+                placeholder="Search facts..."
+                autoFocus={isSearchOpen}
+                style={{
+                  width: '100%',
+                  fontSize: '0.875rem',
+                  padding: '0.65rem 0.9rem',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(168, 85, 247, 0.6)',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)',
+                  transition: 'all 200ms'
+                }}
+                onFocus={(e) => {
+                  e.target.style.background = 'rgba(0, 0, 0, 0.4)';
+                  e.target.style.borderColor = 'rgb(168, 85, 247)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(168, 85, 247, 0.4)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.background = 'rgba(0, 0, 0, 0.3)';
+                  e.target.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+                  e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)';
+                }}
+              />
+            </div>
           </div>
           
           {/* Mobile Menu Button */}
