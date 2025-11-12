@@ -1,7 +1,7 @@
 // src/components/Hero.jsx
 import { motion } from 'framer-motion';
 import { FaShieldAlt, FaSearch, FaChartLine, FaUsers } from 'react-icons/fa';
-import heroBackground from '../assets/hero-background.jpg';
+import backImage from '../assets/back.jpg';
 
 const Hero = () => {
   const features = [
@@ -17,6 +17,17 @@ const Hero = () => {
       className="relative w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'auto', height: 'auto', paddingBottom: '3rem' }}
     >
+      {/* Background Image with Light Overlay */}
+      <div 
+        className="absolute inset-0 w-full h-full opacity-20"
+        style={{
+          backgroundImage: `url(${backImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          zIndex: 0
+        }}
+      ></div>
+
       {/* Solid Background - no transparency */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
       
@@ -76,14 +87,20 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+          className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-16"
         >
-          <button className="btn btn-primary text-sm px-5 py-2" aria-label="Start Fact Checking">
-            <span>Start Fact Checking</span>
+          <button style={{
+            background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%)',
+            boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)'
+          }} className="inline-flex items-center gap-2 text-white font-bold rounded-lg transition-all duration-300 px-5 py-2.5 text-sm hover:shadow-lg hover:scale-105" aria-label="Start Fact Checking">
+            <span>Start Checking</span>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
           </button>
           
-          <button className="btn btn-ghost text-sm px-5 py-2" aria-label="Learn more">
+          <button style={{
+            background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+            boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)'
+          }} className="inline-flex items-center gap-2 text-white font-bold rounded-lg transition-all duration-300 px-5 py-2.5 text-sm hover:shadow-lg hover:scale-105" aria-label="Learn more">
             <span>Learn More</span>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
           </button>

@@ -205,10 +205,14 @@ const Carousel = () => {
 
             {/* Left Arrow - Always Visible */}
             <motion.button
-              whileHover={{ scale: 1.3, backgroundColor: 'rgba(255,255,255,0.6)' }}
+              whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.85 }}
               onClick={prev}
-              className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-4 bg-white/35 hover:bg-white/50 backdrop-blur-md border-2 border-white/70 rounded-full text-white transition-all duration-300 shadow-2xl"
+              style={{
+                background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+                boxShadow: '0 0 15px rgba(168, 85, 247, 0.6)'
+              }}
+              className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full text-white transition-all duration-300 shadow-2xl hover:shadow-purple-500/80"
               aria-label="Previous slide"
             >
               <FaChevronLeft className="text-2xl" />
@@ -216,10 +220,14 @@ const Carousel = () => {
 
             {/* Right Arrow - Always Visible */}
             <motion.button
-              whileHover={{ scale: 1.3, backgroundColor: 'rgba(255,255,255,0.6)' }}
+              whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.85 }}
               onClick={next}
-              className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-4 bg-white/35 hover:bg-white/50 backdrop-blur-md border-2 border-white/70 rounded-full text-white transition-all duration-300 shadow-2xl"
+              style={{
+                background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+                boxShadow: '0 0 15px rgba(6, 182, 212, 0.6)'
+              }}
+              className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/80"
               aria-label="Next slide"
             >
               <FaChevronRight className="text-2xl" />
@@ -243,7 +251,7 @@ const Carousel = () => {
               className={`transition-all duration-400 rounded-full ${
                 index === current
                   ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 w-12 h-3 shadow-lg shadow-purple-500/60 ring-2 ring-white/30'
-                  : 'bg-white/30 hover:bg-white/60 w-3 h-3'
+                  : 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-pink-500 w-3 h-3 shadow-md hover:shadow-lg hover:shadow-purple-500/40'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
