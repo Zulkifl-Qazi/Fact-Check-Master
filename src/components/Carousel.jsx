@@ -100,7 +100,7 @@ const Carousel = () => {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.20) 50%, rgba(0,0,0,0.25) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.10) 50%, rgba(0,0,0,0.15) 100%)',
             zIndex: 1,
           }}
         />
@@ -113,7 +113,7 @@ const Carousel = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{ 
-              textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.4)',
+              textShadow: '0 3px 10px rgba(0,0,0,0.6), 0 1px 5px rgba(0,0,0,0.5)',
               letterSpacing: '0.5px',
               color: '#ffffff'
             }}>
@@ -125,7 +125,7 @@ const Carousel = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-medium"
               style={{ 
-                textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.4)',
+                textShadow: '0 3px 10px rgba(0,0,0,0.6), 0 1px 5px rgba(0,0,0,0.5)',
                 color: '#ffffff'
               }}
             >
