@@ -93,33 +93,42 @@ const Carousel = () => {
           paddingBottom: '3rem',
           paddingLeft: '1rem',
           paddingRight: '1rem',
+          position: 'relative',
         }}
       >
-        {/* Dark overlay for dull image effect */}
+        {/* Dark overlay ONLY for image - using pseudo-element strategy */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             background: 'linear-gradient(135deg, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.65) 50%, rgba(0,0,0,0.70) 100%)',
             zIndex: 1,
+            pointerEvents: 'none',
           }}
         />
 
-        {/* Content with z-index above overlay */}
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
+        {/* Content with HIGHER z-index - bypasses overlay completely */}
+        <div 
+          className="relative max-w-7xl mx-auto text-center"
+          style={{
+            zIndex: 20,
+            position: 'relative',
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight" style={{ 
-              textShadow: '0 0 15px rgba(0,0,0,1), 0 2px 4px rgba(0,0,0,1), 0 4px 8px rgba(0,0,0,0.8)',
-              letterSpacing: '0.5px',
-              color: '#ffffff',
-              fontWeight: '900',
-              textDecoration: 'none',
-              WebkitTextStroke: '0.5px rgba(255,255,255,0.2)'
-            }}>
+            <h2 
+              className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight" 
+              style={{ 
+                textShadow: '0 0 20px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.95)',
+                color: '#ffffff',
+                fontWeight: '900',
+                textDecoration: 'none',
+              }}
+            >
               Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
             <motion.p 
@@ -128,7 +137,7 @@ const Carousel = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-bold"
               style={{ 
-                textShadow: '0 0 12px rgba(0,0,0,1), 0 2px 3px rgba(0,0,0,0.9)',
+                textShadow: '0 0 18px rgba(0,0,0,0.95), 0 2px 5px rgba(0,0,0,0.95)',
                 color: '#ffffff'
               }}
             >
