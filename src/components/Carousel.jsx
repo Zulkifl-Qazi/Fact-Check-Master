@@ -250,35 +250,39 @@ const Carousel = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Left Arrow - Always Visible */}
+            {/* Left Arrow - Small Arrowhead */}
             <motion.button
-              whileHover={{ scale: 1.3 }}
-              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
               onClick={prev}
+              className="absolute left-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300 hover:shadow-purple-500/80"
               style={{
                 background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
-                boxShadow: '0 0 15px rgba(168, 85, 247, 0.6)'
+                boxShadow: '0 0 12px rgba(168, 85, 247, 0.5)',
+                clipPath: 'polygon(100% 0%, 0% 50%, 100% 100%)',
+                width: '32px',
+                height: '48px',
+                padding: '0',
               }}
-              className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full text-white transition-all duration-300 shadow-2xl hover:shadow-purple-500/80"
               aria-label="Previous slide"
-            >
-              <FaChevronLeft className="text-2xl" />
-            </motion.button>
+            />
 
-            {/* Right Arrow - Always Visible */}
+            {/* Right Arrow - Small Arrowhead */}
             <motion.button
-              whileHover={{ scale: 1.3 }}
-              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
               onClick={next}
+              className="absolute right-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300 hover:shadow-cyan-500/80"
               style={{
                 background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                boxShadow: '0 0 15px rgba(6, 182, 212, 0.6)'
+                boxShadow: '0 0 12px rgba(6, 182, 212, 0.5)',
+                clipPath: 'polygon(0% 0%, 100% 50%, 0% 100%)',
+                width: '32px',
+                height: '48px',
+                padding: '0',
               }}
-              className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full text-white transition-all duration-300 shadow-2xl hover:shadow-cyan-500/80"
               aria-label="Next slide"
-            >
-              <FaChevronRight className="text-2xl" />
-            </motion.button>
+            />
           </motion.div>
         </div>
 
