@@ -252,15 +252,23 @@ const Carousel = () => {
 
             {/* Left Arrow - Simple < symbol */}
             <motion.button
-              whileHover={{ scale: 1.3 }}
+              whileHover={{ scale: 1.4, color: '#a855f7' }}
               whileTap={{ scale: 0.9 }}
               onClick={prev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-white text-4xl font-bold transition-all duration-300"
               style={{
+                position: 'absolute',
+                left: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 30,
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '0 8px',
+                padding: '8px 12px',
+                fontSize: '48px',
+                fontWeight: 'bold',
+                color: '#ffffff',
+                lineHeight: '1',
               }}
               aria-label="Previous slide"
             >
@@ -269,15 +277,23 @@ const Carousel = () => {
 
             {/* Right Arrow - Simple > symbol */}
             <motion.button
-              whileHover={{ scale: 1.3 }}
+              whileHover={{ scale: 1.4, color: '#06b6d4' }}
               whileTap={{ scale: 0.9 }}
               onClick={next}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-white text-4xl font-bold transition-all duration-300"
               style={{
+                position: 'absolute',
+                right: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 30,
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '0 8px',
+                padding: '8px 12px',
+                fontSize: '48px',
+                fontWeight: 'bold',
+                color: '#ffffff',
+                lineHeight: '1',
               }}
               aria-label="Next slide"
             >
