@@ -95,12 +95,12 @@ const Carousel = () => {
           paddingRight: '1rem',
         }}
       >
-        {/* Dark overlay for text readability */}
+        {/* Very Dark overlay for dull image effect */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.65) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.78) 50%, rgba(0,0,0,0.82) 100%)',
             zIndex: 1,
           }}
         />
@@ -113,10 +113,11 @@ const Carousel = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{ 
-              textShadow: '0 2px 6px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.6)',
+              textShadow: '0 0 10px rgba(255,255,255,0.6), 0 4px 15px rgba(0,0,0,0.9)',
               letterSpacing: '0.5px',
               color: '#ffffff',
-              fontWeight: '900'
+              fontWeight: '900',
+              filter: 'brightness(1.2)'
             }}>
               Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
@@ -126,8 +127,9 @@ const Carousel = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-semibold"
               style={{ 
-                textShadow: '0 2px 6px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.6)',
-                color: '#ffffff'
+                textShadow: '0 0 8px rgba(255,255,255,0.5), 0 3px 12px rgba(0,0,0,0.9)',
+                color: '#ffffff',
+                filter: 'brightness(1.15)'
               }}
             >
               Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
