@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTwitter, FaRss, FaCheckCircle, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
+import backImage from '../assets/back.jpg';
 
 const LiveFeed = () => {
     const twitterContainerRef = useRef(null);
@@ -147,6 +148,40 @@ const LiveFeed = () => {
 
     return (
         <section id="fact-checks" className="py-20 bg-gradient-to-br from-purple-950 via-slate-950 to-purple-950 relative overflow-hidden">
+            {/* Professional Image Banner - Above Carousel */}
+            <motion.div
+                initial={{ opacity: 0, y: -30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="mb-12 mx-auto max-w-6xl px-4"
+            >
+                <div
+                    style={{
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(168,85,247,0.3)',
+                        border: '2px solid rgba(168,85,247,0.4)',
+                        height: '320px',
+                        backgroundImage: `url(${backImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        position: 'relative'
+                    }}
+                >
+                    {/* Subtle overlay for depth and readability */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(88,28,135,0.15) 100%)',
+                            borderRadius: '16px'
+                        }}
+                    />
+                </div>
+            </motion.div>
+
             {/* Background decorations */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-1/3 -left-1/4 w-[600px] h-[600px] bg-purple-600/8 rounded-full blur-[100px]"></div>
