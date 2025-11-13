@@ -100,7 +100,7 @@ const Carousel = () => {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.20) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.60) 50%, rgba(0,0,0,0.65) 100%)',
             zIndex: 1,
           }}
         />
