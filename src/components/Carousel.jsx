@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import backImage from '../assets/back.jpg';
 
 const Carousel = () => {
   const slides = [
@@ -74,7 +75,11 @@ const Carousel = () => {
       id="carousel"
       className="w-full px-4"
       style={{
-        background: 'linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(30,27,50,0.7) 50%, rgba(15,23,42,0.9) 100%)',
+        backgroundImage: `url(${backImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        background: `linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,27,50,0.85) 50%, rgba(15,23,42,0.92) 100%), url(${backImage}) center/cover fixed`,
         paddingTop: '3rem',
         paddingBottom: '3rem',
         position: 'relative',
