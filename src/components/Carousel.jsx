@@ -73,40 +73,45 @@ const Carousel = () => {
   return (
     <section 
       id="carousel"
-      className="w-full px-4"
+      className="w-full"
       style={{
         background: 'linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(30,27,50,0.7) 50%, rgba(15,23,42,0.9) 100%)',
-        paddingTop: '3rem',
         paddingBottom: '3rem',
         position: 'relative',
-        zIndex: '15'
+        zIndex: '15',
+        marginTop: 0,
       }}
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Carousel Title Section - WITH BACKGROUND IMAGE */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 rounded-2xl p-12 relative overflow-hidden"
+      {/* Image Section - Full Width, No Gap */}
+      <div
+        className="w-full relative"
+        style={{
+          backgroundImage: `url(${backImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          paddingTop: '3rem',
+          paddingBottom: '3rem',
+          paddingLeft: '1rem',
+          paddingRight: '1rem',
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div
           style={{
-            backgroundImage: `url(${backImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.70) 0%, rgba(20,10,40,0.65) 50%, rgba(0,0,0,0.70) 100%)',
+            zIndex: 1,
           }}
-        >
-          {/* Dark overlay for text readability */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(135deg, rgba(15,23,42,0.88) 0%, rgba(30,27,50,0.82) 50%, rgba(15,23,42,0.88) 100%)',
-              zIndex: 1,
-            }}
-          />
-          
-          {/* Content with z-index above overlay */}
-          <div className="relative z-10">
+        />
+
+        {/* Content with z-index above overlay */}
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 drop-shadow-lg leading-tight">
               Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
@@ -114,15 +119,18 @@ const Carousel = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
+              className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-medium"
             >
               Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
             </motion.p>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4">
 
         {/* CAROUSEL BOX - LARGER & PREMIUM */}
-        <div className="relative group">
+        <div className="relative group mt-12">
           {/* Main Carousel Slide Container */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
