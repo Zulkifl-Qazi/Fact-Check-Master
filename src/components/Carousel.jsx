@@ -75,11 +75,7 @@ const Carousel = () => {
       id="carousel"
       className="w-full px-4"
       style={{
-        backgroundImage: `url(${backImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        background: `linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,27,50,0.85) 50%, rgba(15,23,42,0.92) 100%), url(${backImage}) center/cover fixed`,
+        background: 'linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(30,27,50,0.7) 50%, rgba(15,23,42,0.9) 100%)',
         paddingTop: '3rem',
         paddingBottom: '3rem',
         position: 'relative',
@@ -87,24 +83,43 @@ const Carousel = () => {
       }}
     >
       <div className="max-w-7xl mx-auto">
-        {/* Carousel Title Section */}
+        {/* Carousel Title Section - WITH BACKGROUND IMAGE */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-12 rounded-2xl p-12 relative overflow-hidden"
+          style={{
+            backgroundImage: `url(${backImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 drop-shadow-lg leading-tight">
-            Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
-          </h2>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-white/75 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
-          >
-            Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
-          </motion.p>
+          {/* Dark overlay for text readability */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(135deg, rgba(15,23,42,0.88) 0%, rgba(30,27,50,0.82) 50%, rgba(15,23,42,0.88) 100%)',
+              zIndex: 1,
+            }}
+          />
+          
+          {/* Content with z-index above overlay */}
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 drop-shadow-lg leading-tight">
+              Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
+            </h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-white/75 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
+            >
+              Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
+            </motion.p>
+          </div>
         </motion.div>
 
         {/* CAROUSEL BOX - LARGER & PREMIUM */}
