@@ -1,23 +1,37 @@
 [
   {
-    "id": "s1",
+    "id": "1",
     "author": "Fact Check Master",
-    "text": "We just debunked a viral claim about vaccine safety. Read the full breakdown on our site.",
-    "date": "Oct 20, 2025",
-    "url": "https://x.com/fcheckmaster/status/1"
+    "text": "BREAKING: Our investigation reveals the viral claim about election irregularities has no credible evidence. We traced the source to a debunked 2020 narrative. Full analysis: [link]",
+    "date": "Nov 13, 2025",
+    "url": "https://x.com/fcheckmaster/status/1234567890"
   },
   {
-    "id": "s2",
+    "id": "2",
     "author": "Fact Check Master",
-    "text": "How to spot manipulated images: 3 quick tips to verify visual content.",
-    "date": "Oct 18, 2025",
-    "url": "https://x.com/fcheckmaster/status/2"
+    "text": "⚠️ Health Alert: The trending social media post claiming a miracle cure for diabetes is FALSE. We fact-checked this claim against 50+ medical sources. No such treatment exists. Be cautious.",
+    "date": "Nov 12, 2025",
+    "url": "https://x.com/fcheckmaster/status/1234567889"
   },
   {
-    "id": "s3",
+    "id": "3",
     "author": "Fact Check Master",
-    "text": "Our team monitors emerging propaganda campaigns 24/7. Subscribe for alerts.",
-    "date": "Oct 15, 2025",
-    "url": "https://x.com/fcheckmaster/status/3"
+    "text": "🔍 IMAGE VERIFICATION: This viral photo claiming to show a UFO is actually from a 2015 hoax. We used reverse image search and found the original source. Always verify before sharing!",
+    "date": "Nov 11, 2025",
+    "url": "https://x.com/fcheckmaster/status/1234567888"
+  },
+  {
+    "id": "4",
+    "author": "Fact Check Master",
+    "text": "FACT CHECK: The claim that a major politician said X is MISLEADING. The actual quote was taken out of context. We verified this through official transcripts and video evidence.",
+    "date": "Nov 10, 2025",
+    "url": "https://x.com/fcheckmaster/status/1234567887"
+  },
+  {
+    "id": "5",
+    "author": "Fact Check Master",
+    "text": "Our latest report: 73% of viral claims this week were either FALSE or MISLEADING. Follow us for daily fact-checks. Together, we fight misinformation. #FactCheck #Verified",
+    "date": "Nov 9, 2025",
+    "url": "https://x.com/fcheckmaster/status/1234567886"
   }
 ]

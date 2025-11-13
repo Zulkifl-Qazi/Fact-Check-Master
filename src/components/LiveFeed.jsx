@@ -269,26 +269,24 @@ const LiveFeed = () => {
                                 </div>
                             )}
 
-                            {/* X Timeline Embed - Auto-refreshes every 60 seconds */}
-                            {!error && (
-                                <div ref={twitterContainerRef} className="w-full twitter-timeline-wrapper">
-                                    <a
-                                        className="twitter-timeline"
-                                        href="https://twitter.com/fcheckmaster?ref_src=twsrc%5Etfw"
-                                        data-theme={widgetTheme === 'auto' ? undefined : widgetTheme}
-                                        data-height="600"
-                                    >
-                                        Tweets by fcheckmaster
-                                    </a>
+                            {/* Display Sample Tweets - ALWAYS VISIBLE */}
+                            {isLoading && (
+                                <div className="text-center py-12 text-white/60 font-semibold">
+                                    Loading fact-checks...
                                 </div>
                             )}
 
-                            {/* Error or blocked - show animated fallback tweets */}
-                            {(error || !widgetLoaded) && (
+                            {!isLoading && sampleTweets.length === 0 && (
+                                <div className="text-center py-12 text-white/60 font-semibold">
+                                    No tweets available
+                                </div>
+                            )}
+
+                            {!isLoading && sampleTweets.length > 0 && (
                                 <div className="space-y-4">
-                                    <p className="text-center text-white/70 mb-4 font-semibold">Latest updates from @fcheckmaster</p>
+                                    <p className="text-center text-white/70 mb-6 font-semibold">Latest updates from @fcheckmaster</p>
                                     <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" variants={listVariant} initial="hidden" animate="visible">
-                                        {sampleTweets.slice(0, showCount).map((t, i) => {
+                                        {sampleTweets.slice(0, showCount).map((t) => {
                                             const initials = t.author.split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase();
                                             return (
                                                 <motion.a
@@ -301,21 +299,22 @@ const LiveFeed = () => {
                                                     whileHover="hover"
                                                     style={{
                                                         backgroundColor: '#111827',
-                                                        border: '1px solid rgba(168,85,247,0.28)',
+                                                        border: '2px solid rgba(168,85,247,0.35)',
                                                         borderRadius: 14,
                                                         boxShadow: '0 14px 28px rgba(0,0,0,0.45)',
                                                         padding: 20,
-                                                        textDecoration: 'none'
+                                                        textDecoration: 'none',
+                                                        transition: 'all 0.3s ease'
                                                     }}
                                                 >
                                                     <div className="flex items-start gap-3">
                                                         <div className="flex-shrink-0">
-                                                            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">{initials}</div>
+                                                            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">{initials}</div>
                                                         </div>
                                                         <div className="flex-1">
                                                             <div className="text-sm text-white font-bold">{t.author}</div>
                                                             <div className="text-xs text-white/60">{t.date}</div>
-                                                            <div className="mt-2 text-white/80 text-sm leading-relaxed">{t.text}</div>
+                                                            <div className="mt-3 text-white/80 text-sm leading-relaxed font-medium">{t.text}</div>
                                                         </div>
                                                     </div>
                                                 </motion.a>

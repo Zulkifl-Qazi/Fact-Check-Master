@@ -1,5 +1,5 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaShieldAlt, FaSearch } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,25 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsOpen(false); // Close mobile menu on resize to desktop
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close mobile menu when a link is clicked
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
 
   return (
     <nav style={{ 
@@ -18,6 +37,31 @@ const Navbar = () => {
       boxShadow: '0 10px 15px rgba(0, 0, 0, 0.3)',
       overflow: 'visible'
     }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .navbar-desktop-menu {
+            display: none !important;
+          }
+          .navbar-mobile-button {
+            display: block !important;
+          }
+          .navbar-mobile-menu {
+            display: block !important;
+          }
+        }
+        @media (min-width: 768px) {
+          .navbar-desktop-menu {
+            display: flex !important;
+          }
+          .navbar-mobile-button {
+            display: none !important;
+          }
+          .navbar-mobile-menu {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
           {/* Logo */}
@@ -34,7 +78,7 @@ const Navbar = () => {
           </div>
           
           {/* Desktop Menu */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div className="navbar-desktop-menu" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link to="/#top" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Home</Link>
             <Link to="/#fact-checks" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Live Feed</Link>
             <Link to="/#about" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>About</Link>
@@ -107,64 +151,94 @@ const Navbar = () => {
             </div>
           </div>
           
-          {/* Mobile Menu Button */}
-          <div style={{ display: 'none' }}>
+          {/* Mobile Menu Button (3 lines hamburger) */}
+          <div className="navbar-mobile-button" style={{ display: 'none' }}>
             <button 
               onClick={() => setIsOpen(!isOpen)} 
-              style={{ padding: '0.5rem', borderRadius: '6px', background: 'none', border: 'none', color: 'rgba(255, 255, 255, 0.6)', cursor: 'pointer', transition: 'all 200ms' }}
+              style={{ 
+                padding: '0.5rem 0.65rem', 
+                borderRadius: '6px', 
+                background: 'none', 
+                border: 'none', 
+                color: 'rgba(255, 255, 255, 0.6)', 
+                cursor: 'pointer', 
+                transition: 'all 200ms',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
               onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.background = 'none'; }}
               aria-label="Toggle menu"
             >
-              {isOpen ? <FaTimes style={{ fontSize: '1rem' }} /> : <FaBars style={{ fontSize: '1rem' }} />}
+              {isOpen ? <FaTimes style={{ fontSize: '1.5rem' }} /> : <FaBars style={{ fontSize: '1.5rem' }} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div style={{ 
+      {/* Mobile Menu - Slides down from top */}
+      <div className="navbar-mobile-menu" style={{ 
         display: 'none',
-        maxHeight: isOpen ? '256px' : '0',
+        maxHeight: isOpen ? '400px' : '0',
         opacity: isOpen ? '1' : '0',
         overflow: 'hidden',
-        transition: 'all 300ms'
+        transition: 'all 300ms ease-in-out'
       }}>
-        <div style={{ padding: '0.5rem', paddingBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', background: 'rgb(76, 22, 120)', borderTop: '2px solid rgba(168, 85, 247, 0.4)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' }}>
+        <div style={{ 
+          padding: '1rem', 
+          paddingBottom: '1rem', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '0.5rem', 
+          background: 'rgb(76, 22, 120)', 
+          borderTop: '2px solid rgba(168, 85, 247, 0.4)', 
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' 
+        }}>
           <Link 
             to="/#top" 
-            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
-            onClick={() => setIsOpen(false)}
+            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            onClick={handleLinkClick}
           >
-            Home
+            🏠 Home
           </Link>
           <Link 
             to="/#fact-checks" 
-            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
-            onClick={() => setIsOpen(false)}
+            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            onClick={handleLinkClick}
           >
-            Live Feed
+            📱 Live Feed
           </Link>
           <Link 
             to="/#about" 
-            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
-            onClick={() => setIsOpen(false)}
+            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            onClick={handleLinkClick}
           >
-            About
-          </Link>
-          <Link 
-            to="/admin/login" 
-            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)' }}
-            onClick={() => setIsOpen(false)}
-          >
-            Admin
+            ℹ️ About
           </Link>
           <Link 
             to="/contact" 
-            style={{ display: 'block', padding: '0.75rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms' }}
-            onClick={() => setIsOpen(false)}
+            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            onClick={handleLinkClick}
           >
-            Contact
+            ✉️ Contact
+          </Link>
+          <Link 
+            to="/admin/login" 
+            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'; }}
+            onClick={handleLinkClick}
+          >
+            🔐 Admin
           </Link>
         </div>
       </div>

@@ -14,6 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const EXPORT_KEY = process.env.EXPORT_KEY || null; // optional simple guard for exports
 const ADMIN_KEY = process.env.ADMIN_KEY || null;   // optional simple guard for admin-write actions
+const X_API_BEARER_TOKEN = process.env.X_API_BEARER_TOKEN || null;  // X API token for fetching real tweets
 
 app.use(cors());
 app.use(express.json());
@@ -251,6 +252,59 @@ app.get('/api/feedback/export', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get tweets from file or cached source
+app.get('/api/tweets', async (req, res) => {
+  try {
+    // Try to fetch from X API if Bearer token is configured
+    if (X_API_BEARER_TOKEN) {
+      console.log('📡 Fetching real tweets from X API...');
+      const tweetRes = await fetch('https://api.twitter.com/2/tweets/search/recent?query=from:fcheckmaster&max_results=10&tweet.fields=created_at,author_id&expansions=author_id&user.fields=username', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${X_API_BEARER_TOKEN}`,
+          'User-Agent': 'FactCheckMaster/1.0'
+        }
+      });
+
+      if (tweetRes.ok) {
+        const data = await tweetRes.json();
+        if (data.data && Array.isArray(data.data)) {
+          const tweets = data.data.map((t, idx) => ({
+            id: t.id,
+            author: 'Fact Check Master',
+            text: t.text,
+            date: new Date(t.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            url: `https://twitter.com/fcheckmaster/status/${t.id}`
+          }));
+          console.log('✅ Successfully fetched', tweets.length, 'real tweets from X API');
+          return res.json(tweets);
+        }
+      } else {
+        console.error('❌ X API error:', tweetRes.status, tweetRes.statusText);
+      }
+    }
+
+    // Fallback: serve from JSON file
+    console.log('📁 Falling back to sample tweets from JSON file');
+    const tweetsPath = path.join(__dirname, '..', 'data', 'sample-tweets.json');
+    if (fs.existsSync(tweetsPath)) {
+      const tweets = JSON.parse(fs.readFileSync(tweetsPath, 'utf-8'));
+      return res.json(tweets);
+    }
+    res.json([]);
+  } catch (err) {
+    console.error('Error fetching tweets:', err);
+    // Return sample tweets as fallback
+    const tweetsPath = path.join(__dirname, '..', 'data', 'sample-tweets.json');
+    try {
+      const tweets = JSON.parse(fs.readFileSync(tweetsPath, 'utf-8'));
+      return res.json(tweets);
+    } catch {
+      res.status(500).json({ error: 'Failed to fetch tweets' });
+    }
   }
 });
 
