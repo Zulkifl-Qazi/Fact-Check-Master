@@ -100,7 +100,7 @@ const Carousel = () => {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.10) 50%, rgba(0,0,0,0.15) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.40) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.40) 100%)',
             zIndex: 1,
           }}
         />
@@ -113,9 +113,10 @@ const Carousel = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{ 
-              textShadow: '0 3px 10px rgba(0,0,0,0.6), 0 1px 5px rgba(0,0,0,0.5)',
+              textShadow: '0 2px 6px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.6)',
               letterSpacing: '0.5px',
-              color: '#ffffff'
+              color: '#ffffff',
+              fontWeight: '900'
             }}>
               Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
@@ -123,9 +124,9 @@ const Carousel = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-medium"
+              className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-semibold"
               style={{ 
-                textShadow: '0 3px 10px rgba(0,0,0,0.6), 0 1px 5px rgba(0,0,0,0.5)',
+                textShadow: '0 2px 6px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.6)',
                 color: '#ffffff'
               }}
             >
