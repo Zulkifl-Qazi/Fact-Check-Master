@@ -250,39 +250,39 @@ const Carousel = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Left Arrow - Small Arrowhead */}
+            {/* Left Arrow - Simple < symbol */}
             <motion.button
-              whileHover={{ scale: 1.2 }}
+              whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.9 }}
               onClick={prev}
-              className="absolute left-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300 hover:shadow-purple-500/80"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-white text-4xl font-bold transition-all duration-300"
               style={{
-                background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
-                boxShadow: '0 0 12px rgba(168, 85, 247, 0.5)',
-                clipPath: 'polygon(100% 0%, 0% 50%, 100% 100%)',
-                width: '32px',
-                height: '48px',
-                padding: '0',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0 8px',
               }}
               aria-label="Previous slide"
-            />
+            >
+              &lt;
+            </motion.button>
 
-            {/* Right Arrow - Small Arrowhead */}
+            {/* Right Arrow - Simple > symbol */}
             <motion.button
-              whileHover={{ scale: 1.2 }}
+              whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.9 }}
               onClick={next}
-              className="absolute right-6 top-1/2 -translate-y-1/2 z-20 transition-all duration-300 hover:shadow-cyan-500/80"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-white text-4xl font-bold transition-all duration-300"
               style={{
-                background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                boxShadow: '0 0 12px rgba(6, 182, 212, 0.5)',
-                clipPath: 'polygon(0% 0%, 100% 50%, 0% 100%)',
-                width: '32px',
-                height: '48px',
-                padding: '0',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0 8px',
               }}
               aria-label="Next slide"
-            />
+            >
+              &gt;
+            </motion.button>
           </motion.div>
         </div>
 
