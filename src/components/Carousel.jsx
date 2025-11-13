@@ -93,7 +93,6 @@ const Carousel = () => {
             backgroundImage: `url(${backImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
           }}
         >
           {/* Dark overlay for text readability */}
@@ -115,7 +114,7 @@ const Carousel = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-white/75 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
+              className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
             >
               Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
             </motion.p>
