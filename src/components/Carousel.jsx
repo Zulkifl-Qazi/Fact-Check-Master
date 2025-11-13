@@ -100,7 +100,7 @@ const Carousel = () => {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(135deg, rgba(0,0,0,0.70) 0%, rgba(20,10,40,0.65) 50%, rgba(0,0,0,0.70) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(20,10,40,0.30) 50%, rgba(0,0,0,0.35) 100%)',
             zIndex: 1,
           }}
         />
@@ -112,7 +112,7 @@ const Carousel = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 drop-shadow-lg leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight" style={{ textShadow: '0 4px 15px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6)' }}>
               Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
             <motion.p 
@@ -120,6 +120,7 @@ const Carousel = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-white text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-medium"
+              style={{ textShadow: '0 3px 12px rgba(0,0,0,0.7), 0 1px 6px rgba(0,0,0,0.5)' }}
             >
               Our comprehensive platform combines cutting-edge technology with expert analysis to combat misinformation and protect the integrity of public discourse.
             </motion.p>
