@@ -46,60 +46,27 @@ const LiveFeed = () => {
     }); // 'auto'|'light'|'dark'
     const [settingsOpen, setSettingsOpen] = useState(false);
 
+    // Load X widgets script once and keep polling to refresh timeline
     useEffect(() => {
-        let observer;
-        let script;
         let didCancel = false;
+        let scriptLoaded = false;
+        let pollInterval = null;
 
-        const isDarkMode = () => document.documentElement.classList.contains('dark');
-
-        const renderWidget = () => {
-            if (didCancel) return;
-            if (twitterContainerRef.current && window.twttr) {
-                try {
-                    twitterContainerRef.current.innerHTML = '';
-                    window.twttr.widgets.createTimeline(
-                        {
-                            sourceType: 'profile',
-                            screenName: 'fcheckmaster'
-                        },
-                        twitterContainerRef.current,
-                        {
-                            height: 600,
-                            theme: isDarkMode() ? 'dark' : 'light',
-                            chrome: 'noheader nofooter noborders transparent',
-                            borderColor: '#e1e8ed',
-                            limit: 5
-                        }
-                    ).then(() => {
-                        if (!didCancel) {
-                            setIsLoading(false);
-                            setWidgetLoaded(true);
-                        }
-                    }).catch(() => {
-                        if (!didCancel) {
-                            setError(true);
-                            setIsLoading(false);
-                        }
-                    });
-                } catch (e) {
-                    setError(true);
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        const loadScriptAndRender = () => {
-            if (window.twttr) {
-                renderWidget();
-                return;
-            }
-
-            setIsLoading(true);
-            script = document.createElement('script');
+        const loadWidgetsScript = () => {
+            if (window.twttr || scriptLoaded) return;
+            scriptLoaded = true;
+            const script = document.createElement('script');
             script.src = 'https://platform.twitter.com/widgets.js';
             script.async = true;
-            script.onload = () => renderWidget();
+            script.charset = 'utf-8';
+            script.onload = () => {
+                if (!didCancel && window.twttr) {
+                    setIsLoading(false);
+                    setWidgetLoaded(true);
+                    // Start polling to refresh the widget every 60 seconds
+                    startPolling();
+                }
+            };
             script.onerror = () => {
                 if (!didCancel) {
                     setError(true);
@@ -109,38 +76,44 @@ const LiveFeed = () => {
             document.body.appendChild(script);
         };
 
-        // Lazy-load when section is visible
-        if (sectionRef.current && 'IntersectionObserver' in window) {
-            observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        loadScriptAndRender();
-                        if (observer) observer.disconnect();
-                    }
-                });
-            }, { rootMargin: '200px' });
+        const startPolling = () => {
+            pollInterval = setInterval(() => {
+                if (window.twttr && window.twttr.widgets) {
+                    // Re-process tweets to pick up any new ones
+                    window.twttr.widgets.load();
+                }
+            }, 60000); // Poll every 60 seconds
+        };
 
-            observer.observe(sectionRef.current);
-        } else {
-            // Fallback: load immediately
-            loadScriptAndRender();
-        }
+        const loadWhenVisible = () => {
+            if (sectionRef.current && 'IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            setIsLoading(true);
+                            loadWidgetsScript();
+                            if (observer) observer.disconnect();
+                        }
+                    });
+                }, { rootMargin: '200px' });
 
-        // Give the widget up to 6s to load, then show fallback
-        const timeout = setTimeout(() => {
-            if (!widgetLoaded && !error) {
-                setError(true);
-                setIsLoading(false);
+                observer.observe(sectionRef.current);
+                return observer;
+            } else {
+                setIsLoading(true);
+                loadWidgetsScript();
+                return null;
             }
-        }, 6000);
+        };
+
+        const observer = loadWhenVisible();
 
         return () => {
             didCancel = true;
             if (observer) observer.disconnect();
-            if (script && document.body.contains(script)) document.body.removeChild(script);
-            clearTimeout(timeout);
+            if (pollInterval) clearInterval(pollInterval);
         };
-    }, [widgetLoaded]);
+    }, []);
 
     // Persist settings to localStorage when they change
     useEffect(() => {
@@ -153,38 +126,6 @@ const LiveFeed = () => {
         try {
             localStorage.setItem('lf_widgetTheme', widgetTheme);
         } catch (e) {}
-    }, [widgetTheme]);
-
-    // Re-create the widget when the widgetTheme changes (or when user toggles)
-    useEffect(() => {
-        if (!twitterContainerRef.current) return;
-        const recreate = async () => {
-            // If twttr not loaded yet, skip — the main loader will handle it
-            if (!window.twttr) return;
-            try {
-                setIsLoading(true);
-                setError(false);
-                setWidgetLoaded(false);
-                twitterContainerRef.current.innerHTML = '';
-
-                const isDark = document.documentElement.classList.contains('dark');
-                const theme = widgetTheme === 'auto' ? (isDark ? 'dark' : 'light') : widgetTheme;
-
-                await window.twttr.widgets.createTimeline(
-                    { sourceType: 'profile', screenName: 'fcheckmaster' },
-                    twitterContainerRef.current,
-                    { height: 600, theme, chrome: 'noheader nofooter noborders transparent', borderColor: '#e1e8ed', limit: 5 }
-                );
-                setIsLoading(false);
-                setWidgetLoaded(true);
-            } catch (err) {
-                setIsLoading(false);
-                setError(true);
-            }
-        };
-
-        recreate();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [widgetTheme]);
 
     // Motion variants
@@ -328,10 +269,17 @@ const LiveFeed = () => {
                                 </div>
                             )}
 
-                            {/* If widget loaded successfully, render the widget container */}
-                            {!error && widgetLoaded && (
-                                <div ref={twitterContainerRef} className="min-h-[600px] w-full">
-                                    {/* Twitter widget will be rendered here */}
+                            {/* X Timeline Embed - Auto-refreshes every 60 seconds */}
+                            {!error && (
+                                <div ref={twitterContainerRef} className="w-full twitter-timeline-wrapper">
+                                    <a
+                                        className="twitter-timeline"
+                                        href="https://twitter.com/fcheckmaster?ref_src=twsrc%5Etfw"
+                                        data-theme={widgetTheme === 'auto' ? undefined : widgetTheme}
+                                        data-height="600"
+                                    >
+                                        Tweets by fcheckmaster
+                                    </a>
                                 </div>
                             )}
 
