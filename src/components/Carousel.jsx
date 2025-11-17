@@ -250,9 +250,9 @@ const Carousel = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Left Arrow - Simple < symbol */}
+            {/* Left Arrow - Simple < symbol with gradient */}
             <motion.button
-              whileHover={{ scale: 1.4, color: '#a855f7' }}
+              whileHover={{ scale: 1.5, boxShadow: '0 0 25px rgba(168, 85, 247, 0.8)' }}
               whileTap={{ scale: 0.9 }}
               onClick={prev}
               style={{
@@ -261,15 +261,18 @@ const Carousel = () => {
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
-                background: 'transparent',
+                background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '8px 12px',
-                fontSize: '48px',
+                padding: '12px 14px',
+                fontSize: '32px',
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
+                borderRadius: '8px',
                 display: 'none',
+                boxShadow: '0 4px 15px rgba(168, 85, 247, 0.4)',
+                transition: 'all 0.3s ease',
               }}
               className="md:block"
               aria-label="Previous slide"
@@ -277,9 +280,9 @@ const Carousel = () => {
               &lt;
             </motion.button>
 
-            {/* Right Arrow - Simple > symbol */}
+            {/* Right Arrow - Simple > symbol with gradient */}
             <motion.button
-              whileHover={{ scale: 1.4, color: '#06b6d4' }}
+              whileHover={{ scale: 1.5, boxShadow: '0 0 25px rgba(6, 182, 212, 0.8)' }}
               whileTap={{ scale: 0.9 }}
               onClick={next}
               style={{
@@ -288,15 +291,18 @@ const Carousel = () => {
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
-                background: 'transparent',
+                background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '8px 12px',
-                fontSize: '48px',
+                padding: '12px 14px',
+                fontSize: '32px',
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
+                borderRadius: '8px',
                 display: 'none',
+                boxShadow: '0 4px 15px rgba(6, 182, 212, 0.4)',
+                transition: 'all 0.3s ease',
               }}
               className="md:block"
               aria-label="Next slide"
