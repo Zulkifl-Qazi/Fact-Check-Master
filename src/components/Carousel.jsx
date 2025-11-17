@@ -250,64 +250,74 @@ const Carousel = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Left Arrow - Simple < symbol with gradient */}
+            {/* Left Arrow - Styled button with icon */}
             <motion.button
-              whileHover={{ scale: 1.5, boxShadow: '0 0 25px rgba(168, 85, 247, 0.8)' }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ 
+                scale: 1.2,
+                boxShadow: '0 0 30px rgba(168, 85, 247, 0.9)',
+                background: 'linear-gradient(135deg, #d946ef 0%, #ff1493 100%)',
+              }}
+              whileTap={{ scale: 0.95 }}
               onClick={prev}
               style={{
                 position: 'absolute',
-                left: '-60px',
+                left: '-70px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
-                background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
-                border: 'none',
+                background: 'linear-gradient(135deg, #a855f7 0%, #d946ef 100%)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
                 cursor: 'pointer',
-                padding: '12px 14px',
-                fontSize: '32px',
+                padding: '16px 16px',
+                fontSize: '24px',
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 display: 'none',
-                boxShadow: '0 4px 15px rgba(168, 85, 247, 0.4)',
-                transition: 'all 0.3s ease',
+                boxShadow: '0 8px 20px rgba(168, 85, 247, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                backdropFilter: 'blur(10px)',
               }}
               className="md:block"
               aria-label="Previous slide"
             >
-              &lt;
+              <FaChevronLeft />
             </motion.button>
 
-            {/* Right Arrow - Simple > symbol with gradient */}
+            {/* Right Arrow - Styled button with icon */}
             <motion.button
-              whileHover={{ scale: 1.5, boxShadow: '0 0 25px rgba(6, 182, 212, 0.8)' }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ 
+                scale: 1.2,
+                boxShadow: '0 0 30px rgba(6, 182, 212, 0.9)',
+                background: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
+              }}
+              whileTap={{ scale: 0.95 }}
               onClick={next}
               style={{
                 position: 'absolute',
-                right: '-60px',
+                right: '-70px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
-                background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                border: 'none',
+                background: 'linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
                 cursor: 'pointer',
-                padding: '12px 14px',
-                fontSize: '32px',
+                padding: '16px 16px',
+                fontSize: '24px',
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 display: 'none',
-                boxShadow: '0 4px 15px rgba(6, 182, 212, 0.4)',
-                transition: 'all 0.3s ease',
+                boxShadow: '0 8px 20px rgba(6, 182, 212, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                backdropFilter: 'blur(10px)',
               }}
               className="md:block"
               aria-label="Next slide"
             >
-              &gt;
+              <FaChevronRight />
             </motion.button>
           </motion.div>
         </div>
