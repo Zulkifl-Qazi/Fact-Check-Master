@@ -269,7 +269,9 @@ const Carousel = () => {
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
+                display: 'none',
               }}
+              className="md:block"
               aria-label="Previous slide"
             >
               &lt;
@@ -294,7 +296,9 @@ const Carousel = () => {
                 fontWeight: 'bold',
                 color: '#ffffff',
                 lineHeight: '1',
+                display: 'none',
               }}
+              className="md:block"
               aria-label="Next slide"
             >
               &gt;
