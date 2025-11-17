@@ -257,7 +257,7 @@ const Carousel = () => {
               onClick={prev}
               style={{
                 position: 'absolute',
-                left: '20px',
+                left: '-60px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
@@ -282,7 +282,7 @@ const Carousel = () => {
               onClick={next}
               style={{
                 position: 'absolute',
-                right: '20px',
+                right: '-60px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
