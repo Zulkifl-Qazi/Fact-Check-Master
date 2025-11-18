@@ -55,13 +55,28 @@ const Footer = () => {
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                  className="group flex items-center gap-3 text-rgba(255,255,255,0.7) hover:text-rgb(168,85,247) transition-all duration-200 text-sm font-medium"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'}
-                  onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+                  whileHover={{ x: 8, scale: 1.02 }}
+                  className="group relative flex items-center gap-3 py-2.5 px-3 rounded-lg bg-gradient-to-r from-transparent to-transparent hover:from-purple-500/10 hover:to-purple-600/10 border border-transparent hover:border-purple-400/30 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/20"
+                  style={{ 
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = 'rgb(168, 85, 247)';
+                    e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                 >
-                  <link.icon className="text-purple-400 group-hover:text-purple-300 transition-colors duration-200" />
-                  {link.label}
+                  <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/15 to-purple-600/10 border border-purple-500/20 group-hover:from-purple-500/25 group-hover:to-purple-600/20 group-hover:border-purple-400/40 transition-all duration-300 group-hover:scale-110">
+                    <link.icon className="text-sm text-purple-400 group-hover:text-purple-300 transition-all duration-300" />
+                  </div>
+                  <span className="text-sm font-medium transition-all duration-300 group-hover:font-semibold">
+                    {link.label}
+                  </span>
+                  <FaArrowRight className="text-xs text-purple-400/50 group-hover:text-purple-300 group-hover:translate-x-1 transition-all duration-300 ml-auto opacity-0 group-hover:opacity-100" />
                 </motion.a>
               ))}
             </div>
