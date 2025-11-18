@@ -32,40 +32,15 @@ const Footer = () => {
           </motion.div>
 
           {/* Quick Links */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="col-span-1 md:col-span-3"
-          >
-            <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#home" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
-                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#fact-checks" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
-                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
-                  Live Feed
-                </a>
-              </li>
-              <li>
-                <a href="#about" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
-                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
-                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
-                  Contact
-                </a>
-              </li>
+          <div>
+            <h4 className="text-white mb-3">Quick Links</h4>
+            <ul className="list-none space-y-1">
+              <li><a href="#home" className="text-gray-400 hover:text-white">Home</a></li>
+              <li><a href="#fact-checks" className="text-gray-400 hover:text-white">Live Feed</a></li>
+              <li><a href="#about" className="text-gray-400 hover:text-white">About Us</a></li>
+              <li><a href="#contact" className="text-gray-400 hover:text-white">Contact</a></li>
             </ul>
-          </motion.div>
+          </div>
 
           {/* Social Media */}
           <motion.div 
