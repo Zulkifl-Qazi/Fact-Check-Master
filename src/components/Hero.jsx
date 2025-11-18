@@ -73,7 +73,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+          className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-16"
         >
           <motion.button
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' }}
@@ -84,11 +84,11 @@ const Hero = () => {
               border: '2px solid rgba(168, 85, 247, 0.25)',
               lineHeight: '1.6',
             }}
-            className="inline-flex items-center gap-4 text-white font-bold rounded-xl transition-all duration-300 px-16 py-6 text-lg hover:shadow-2xl backdrop-blur-md"
+            className="inline-flex items-center gap-4 text-white font-semibold rounded-xl transition-all duration-300 px-20 py-7 text-base hover:shadow-2xl backdrop-blur-md"
             aria-label="Start Fact Checking"
           >
             <span style={{ letterSpacing: '0.5px' }}>Start Checking</span>
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
             </svg>
           </motion.button>
@@ -102,11 +102,11 @@ const Hero = () => {
               border: '2px solid rgba(168, 85, 247, 0.25)',
               lineHeight: '1.6',
             }}
-            className="inline-flex items-center gap-4 text-white font-bold rounded-xl transition-all duration-300 px-18 py-6 text-lg hover:shadow-2xl backdrop-blur-md"
+            className="inline-flex items-center gap-4 text-white font-semibold rounded-xl transition-all duration-300 px-22 py-7 text-base hover:shadow-2xl backdrop-blur-md"
             aria-label="Learn more"
           >
             <span style={{ letterSpacing: '0.5px' }}>Learn More</span>
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
             </svg>
           </motion.button>
