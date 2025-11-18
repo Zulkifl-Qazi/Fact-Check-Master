@@ -38,66 +38,33 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="col-span-1 md:col-span-3"
           >
-            <div className="bg-gradient-to-br from-purple-900/20 to-purple-950/30 backdrop-blur-sm rounded-2xl border border-purple-500/20 p-6 hover:border-purple-400/30 transition-all duration-300">
-              <h4 className="text-lg font-bold mb-6 text-white flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                Quick Links
-              </h4>
-              <nav className="space-y-3">
-                <a href="#home" className="group flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-transparent to-transparent hover:from-purple-600/10 hover:to-purple-500/5 border border-transparent hover:border-purple-500/20 transition-all duration-300">
-                  <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 group-hover:bg-purple-500/30 rounded-lg transition-all duration-300 group-hover:scale-110">
-                    <svg className="w-4 h-4 text-purple-300 group-hover:text-purple-200" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-300 group-hover:text-white font-medium transition-colors duration-300">Home</span>
-                  <svg className="w-4 h-4 text-purple-400/50 group-hover:text-purple-300 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+            <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider">Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="#home" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
+                  Home
                 </a>
-                
-                <a href="#fact-checks" className="group flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-transparent to-transparent hover:from-purple-600/10 hover:to-purple-500/5 border border-transparent hover:border-purple-500/20 transition-all duration-300">
-                  <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 group-hover:bg-purple-500/30 rounded-lg transition-all duration-300 group-hover:scale-110">
-                    <svg className="w-4 h-4 text-purple-300 group-hover:text-purple-200" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-300 group-hover:text-white font-medium transition-colors duration-300">Live Feed</span>
-                  <svg className="w-4 h-4 text-purple-400/50 group-hover:text-purple-300 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              </li>
+              <li>
+                <a href="#fact-checks" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
+                  Live Feed
                 </a>
-                
-                <a href="#about" className="group flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-transparent to-transparent hover:from-purple-600/10 hover:to-purple-500/5 border border-transparent hover:border-purple-500/20 transition-all duration-300">
-                  <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 group-hover:bg-purple-500/30 rounded-lg transition-all duration-300 group-hover:scale-110">
-                    <svg className="w-4 h-4 text-purple-300 group-hover:text-purple-200" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-300 group-hover:text-white font-medium transition-colors duration-300">About Us</span>
-                  <svg className="w-4 h-4 text-purple-400/50 group-hover:text-purple-300 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              </li>
+              <li>
+                <a href="#about" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
+                  About Us
                 </a>
-                
-                <a href="#contact" className="group flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-transparent to-transparent hover:from-purple-600/10 hover:to-purple-500/5 border border-transparent hover:border-purple-500/20 transition-all duration-300">
-                  <div className="flex items-center justify-center w-8 h-8 bg-purple-500/20 group-hover:bg-purple-500/30 rounded-lg transition-all duration-300 group-hover:scale-110">
-                    <svg className="w-4 h-4 text-purple-300 group-hover:text-purple-200" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-300 group-hover:text-white font-medium transition-colors duration-300">Contact</span>
-                  <svg className="w-4 h-4 text-purple-400/50 group-hover:text-purple-300 ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              </li>
+              <li>
+                <a href="#contact" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300"></span>
+                  Contact
                 </a>
-              </nav>
-            </div>
+              </li>
+            </ul>
           </motion.div>
 
           {/* Social Media */}
