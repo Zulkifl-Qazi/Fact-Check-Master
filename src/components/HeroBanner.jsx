@@ -47,7 +47,7 @@ const HeroBanner = () => {
       />
 
       <motion.div
-        className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl"
+        className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl"
         animate={{
           x: [0, 30, -30, 0],
           y: [0, 40, -20, 0],
@@ -144,13 +144,13 @@ const HeroBanner = () => {
 
           {/* Secondary Button */}
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(6, 182, 212, 0.6)' }}
+            whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(168, 85, 247, 0.6)' }}
             whileTap={{ scale: 0.95 }}
             className="px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-bold text-white rounded-lg transition-all duration-300"
             style={{
-              background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-              boxShadow: '0 10px 30px rgba(6, 182, 212, 0.4)',
-              border: '2px solid rgba(6, 182, 212, 0.5)',
+              background: 'rgb(88, 28, 135)',
+              boxShadow: '0 10px 30px rgba(88, 28, 135, 0.5)',
+              border: '2px solid rgba(168, 85, 247, 0.25)',
             }}
           >
             Learn More

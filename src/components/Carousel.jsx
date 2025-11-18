@@ -289,8 +289,8 @@ const Carousel = () => {
             <motion.button
               whileHover={{ 
                 scale: 1.2,
-                boxShadow: '0 0 30px rgba(6, 182, 212, 0.9)',
-                background: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)',
+                boxShadow: '0 0 30px rgba(168, 85, 247, 0.9)',
+                background: 'linear-gradient(135deg, rgb(88, 28, 135) 0%, #a855f7 100%)',
               }}
               whileTap={{ scale: 0.95 }}
               onClick={next}
@@ -300,7 +300,7 @@ const Carousel = () => {
                 top: '50%',
                 transform: 'translateY(-50%)',
                 zIndex: 30,
-                background: 'linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%)',
+                background: 'linear-gradient(135deg, rgb(88, 28, 135) 0%, #a855f7 100%)',
                 border: '2px solid rgba(255, 255, 255, 0.3)',
                 cursor: 'pointer',
                 padding: '16px 16px',
@@ -337,8 +337,8 @@ const Carousel = () => {
               whileTap={{ scale: 0.8 }}
               className={`transition-all duration-400 rounded-full ${
                 index === current
-                  ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 w-12 h-3 shadow-lg shadow-purple-500/60 ring-2 ring-white/30'
-                  : 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-pink-500 w-3 h-3 shadow-md hover:shadow-lg hover:shadow-purple-500/40'
+                  ? 'bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 w-12 h-3 shadow-lg shadow-purple-500/60 ring-2 ring-white/30'
+                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-500 w-3 h-3 shadow-md hover:shadow-lg hover:shadow-purple-500/40'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
