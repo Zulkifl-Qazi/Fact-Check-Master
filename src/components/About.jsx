@@ -71,7 +71,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="bg-slate-900/80 rounded-2xl p-8 md:p-12 mb-16 border border-purple-500/30"
+          className="bg-slate-900/80 rounded-2xl p-8 md:p-12 mb-20 border border-purple-500/30"
         >
           <div className="text-center">
             <h3 className="text-3xl font-bold text-white mb-6">Our Mission</h3>
@@ -90,7 +90,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-20"
         >
           <h3 className="text-3xl font-bold text-center text-white mb-12">Our Core Values</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -123,7 +123,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-purple-700 via-purple-600 to-purple-700 rounded-2xl p-8 md:p-12 text-white border border-purple-500/40"
+          className="bg-gradient-to-r from-purple-700 via-purple-600 to-purple-700 rounded-2xl p-8 md:p-12 text-white border border-purple-500/40 mt-8"
         >
           <h3 className="text-3xl font-bold text-center mb-12">Our Impact</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -150,7 +150,7 @@ const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           viewport={{ once: true }}
-          className="mt-16 text-center"
+          className="mt-20 text-center"
         >
           <h3 className="text-3xl font-bold text-white mb-6">Expert Team</h3>
           <p className="text-lg text-white/75 max-w-3xl mx-auto leading-relaxed mb-8">
