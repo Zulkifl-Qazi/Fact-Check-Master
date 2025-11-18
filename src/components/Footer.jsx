@@ -42,12 +42,12 @@ const Footer = () => {
               <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
               Quick Links
             </h4>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="flex flex-col space-y-3">
               {[
-                { href: "#home", icon: FaHome, label: "Home", desc: "Return to homepage" },
-                { href: "#fact-checks", icon: FaRss, label: "Live Feed", desc: "Real-time fact checks" },
-                { href: "#about", icon: FaInfoCircle, label: "About Us", desc: "Learn our mission" },
-                { href: "#contact", icon: FaEnvelope, label: "Contact", desc: "Get in touch" }
+                { href: "#home", icon: FaHome, label: "Home" },
+                { href: "#fact-checks", icon: FaRss, label: "Live Feed" },
+                { href: "#about", icon: FaInfoCircle, label: "About Us" },
+                { href: "#contact", icon: FaEnvelope, label: "Contact" }
               ].map((link, index) => (
                 <motion.a
                   key={link.href}
@@ -55,22 +55,13 @@ const Footer = () => {
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                  className="group relative flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-purple-500/5 to-purple-600/5 border border-purple-500/10 hover:from-purple-500/20 hover:to-purple-600/15 hover:border-purple-400/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/10"
+                  className="group flex items-center gap-3 text-rgba(255,255,255,0.7) hover:text-rgb(168,85,247) transition-all duration-200 text-sm font-medium"
+                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                  onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'}
+                  onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
                 >
-                  <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 group-hover:from-purple-500/30 group-hover:to-purple-600/20 group-hover:border-purple-400/40 transition-all duration-300">
-                    <link.icon className="text-sm text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors duration-300">
-                        {link.label}
-                      </span>
-                      <FaArrowRight className="text-xs text-purple-400/60 group-hover:text-purple-300 group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-                    <p className="text-xs text-gray-400/80 group-hover:text-gray-300 transition-colors duration-300 leading-relaxed">
-                      {link.desc}
-                    </p>
-                  </div>
+                  <link.icon className="text-purple-400 group-hover:text-purple-300 transition-colors duration-200" />
+                  {link.label}
                 </motion.a>
               ))}
             </div>
