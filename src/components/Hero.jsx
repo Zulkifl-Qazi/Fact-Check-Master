@@ -1,6 +1,7 @@
-// src/components/Hero.jsx
 import { motion } from 'framer-motion';
 import { FaShieldAlt, FaSearch, FaChartLine, FaUsers } from 'react-icons/fa';
+
+const navColor = 'rgb(88, 28, 135)';
 
 const Hero = () => {
   const features = [
@@ -16,10 +17,8 @@ const Hero = () => {
       className="relative w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'auto', height: 'auto', paddingBottom: '3rem' }}
     >
-      {/* Solid Background - no transparency */}
       <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
       
-      {/* Animated background elements - more subtle with purple */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
           className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-600/12 rounded-full blur-[100px] animate-pulse"
@@ -35,7 +34,6 @@ const Hero = () => {
         ></div>
       </div>
 
-      {/* Content container */}
       <div className="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -75,26 +73,43 @@ const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-16"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
         >
-          <button style={{
-            background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%)',
-            boxShadow: '0 0 20px rgba(168, 85, 247, 0.5)'
-          }} className="inline-flex items-center gap-2 text-white font-bold rounded-lg transition-all duration-300 px-5 py-2.5 text-sm hover:shadow-lg hover:scale-105" aria-label="Start Fact Checking">
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              background: navColor,
+              boxShadow: '0 8px 25px rgba(88, 28, 135, 0.5)',
+              border: '2px solid rgba(168, 85, 247, 0.25)',
+            }}
+            className="inline-flex items-center gap-3 text-white font-bold rounded-xl transition-all duration-300 px-10 py-5 text-base hover:shadow-2xl backdrop-blur-md"
+            aria-label="Start Fact Checking"
+          >
             <span>Start Checking</span>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-          </button>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </motion.button>
           
-          <button style={{
-            background: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-            boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)'
-          }} className="inline-flex items-center gap-2 text-white font-bold rounded-lg transition-all duration-300 px-5 py-2.5 text-sm hover:shadow-lg hover:scale-105" aria-label="Learn more">
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(168, 85, 247, 0.8)' }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              background: navColor,
+              boxShadow: '0 8px 25px rgba(88, 28, 135, 0.5)',
+              border: '2px solid rgba(168, 85, 247, 0.25)',
+            }}
+            className="inline-flex items-center gap-3 text-white font-bold rounded-xl transition-all duration-300 px-12 py-5 text-base hover:shadow-2xl backdrop-blur-md"
+            aria-label="Learn more"
+          >
             <span>Learn More</span>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-          </button>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
+          </motion.button>
         </motion.div>
 
-        {/* Feature grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -116,7 +131,6 @@ const Hero = () => {
           ))}
         </motion.div>
 
-        {/* Stats section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
