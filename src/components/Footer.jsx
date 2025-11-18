@@ -20,11 +20,13 @@ const Footer = () => {
             transition={{ duration: 0.5 }}
             className="col-span-1 md:col-span-5"
           >
-            <div className="flex items-center gap-2 mb-3">
-              <FaShieldAlt className="text-2xl text-purple-300" />
-              <h3 className="text-xl font-bold">Fact Check Master</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-xl border border-purple-500/20">
+                <FaShieldAlt className="text-2xl text-purple-300" />
+              </div>
+              <h3 className="text-xl font-bold text-white">Fact Check Master</h3>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed max-w-md">
               Dedicated to countering fake news and promoting media literacy for a well-informed society.
             </p>
           </motion.div>
@@ -36,12 +38,35 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="col-span-1 md:col-span-3"
           >
-            <h4 className="text-sm font-semibold mb-3 text-purple-200 uppercase tracking-[0.2em]">Quick Links</h4>
-            <ul className="space-y-1.5 text-sm">
-              <li><a href="#home" className="text-gray-300 hover:text-purple-300 transition-colors duration-200">Home</a></li>
-              <li><a href="#fact-checks" className="text-gray-300 hover:text-purple-300 transition-colors duration-200">Live Feed</a></li>
-              <li><a href="#about" className="text-gray-300 hover:text-purple-300 transition-colors duration-200">About Us</a></li>
-              <li><a href="#contact" className="text-gray-300 hover:text-purple-300 transition-colors duration-200">Contact</a></li>
+            <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
+              Quick Links
+            </h4>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a href="#home" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300 group-hover:scale-125"></span>
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#fact-checks" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300 group-hover:scale-125"></span>
+                  Live Feed
+                </a>
+              </li>
+              <li>
+                <a href="#about" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300 group-hover:scale-125"></span>
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="#contact" className="group flex items-center gap-2 text-gray-300 hover:text-purple-300 transition-all duration-300 py-1 hover:translate-x-1">
+                  <span className="w-1.5 h-1.5 bg-purple-500/50 rounded-full group-hover:bg-purple-400 transition-all duration-300 group-hover:scale-125"></span>
+                  Contact
+                </a>
+              </li>
             </ul>
           </motion.div>
 
@@ -52,16 +77,25 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="col-span-1 md:col-span-4"
           >
-            <h4 className="text-sm font-semibold mb-3 text-purple-200 uppercase tracking-[0.2em]">Connect With Us</h4>
+            <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
+              Connect With Us
+            </h4>
             <div className="flex gap-3">
-              <a href="https://twitter.com/fcheckmaster" target="_blank" rel="noopener noreferrer" className="social-button">
-                <FaTwitter size={16} />
+              <a href="https://twitter.com/fcheckmaster" target="_blank" rel="noopener noreferrer" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
+                <FaTwitter size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
               </a>
-              <a href="#" className="social-button"><FaFacebook size={16} /></a>
-              <a href="#" className="social-button"><FaLinkedin size={16} /></a>
-              <a href="#" className="social-button"><FaGithub size={16} /></a>
+              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
+                <FaFacebook size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              </a>
+              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
+                <FaLinkedin size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              </a>
+              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
+                <FaGithub size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              </a>
             </div>
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-sm text-gray-300 mt-4 leading-relaxed">
               Stay updated with our latest fact-checks
             </p>
           </motion.div>
