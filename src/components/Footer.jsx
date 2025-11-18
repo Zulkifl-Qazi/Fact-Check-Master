@@ -33,12 +33,32 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white mb-3">Quick Links</h4>
-            <ul className="list-none space-y-1">
-              <li><a href="#home" className="text-gray-400 hover:text-white">Home</a></li>
-              <li><a href="#fact-checks" className="text-gray-400 hover:text-white">Live Feed</a></li>
-              <li><a href="#about" className="text-gray-400 hover:text-white">About Us</a></li>
-              <li><a href="#contact" className="text-gray-400 hover:text-white">Contact</a></li>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <ul className="list-none space-y-3">
+              <li>
+                <a href="#home" className="text-gray-400 hover:text-purple-300 transition-colors duration-200 flex items-center group">
+                  <span className="w-1 h-1 bg-purple-500 rounded-full mr-3 group-hover:bg-purple-300 transition-colors"></span>
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#fact-checks" className="text-gray-400 hover:text-purple-300 transition-colors duration-200 flex items-center group">
+                  <span className="w-1 h-1 bg-purple-500 rounded-full mr-3 group-hover:bg-purple-300 transition-colors"></span>
+                  Live Feed
+                </a>
+              </li>
+              <li>
+                <a href="#about" className="text-gray-400 hover:text-purple-300 transition-colors duration-200 flex items-center group">
+                  <span className="w-1 h-1 bg-purple-500 rounded-full mr-3 group-hover:bg-purple-300 transition-colors"></span>
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="#contact" className="text-gray-400 hover:text-purple-300 transition-colors duration-200 flex items-center group">
+                  <span className="w-1 h-1 bg-purple-500 rounded-full mr-3 group-hover:bg-purple-300 transition-colors"></span>
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 
