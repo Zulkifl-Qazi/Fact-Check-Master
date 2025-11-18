@@ -74,6 +74,7 @@ const About = () => {
           className="bg-slate-900/80 rounded-2xl p-8 md:p-12 mb-20 border border-purple-500/30"
         >
           <div className="text-center">
+            <br />
             <h3 className="text-3xl font-bold text-white mb-8">Our Mission</h3>
             <p className="text-lg text-white/75 leading-relaxed max-w-4xl mx-auto mt-4">
               To create a more informed society by providing accurate, timely fact-checking services and promoting 
@@ -92,6 +93,7 @@ const About = () => {
           viewport={{ once: true }}
           className="mb-20"
         >
+          <br />
           <h3 className="text-3xl font-bold text-center text-white mb-16">Our Core Values</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
