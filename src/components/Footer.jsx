@@ -38,27 +38,30 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="col-span-1 md:col-span-7"
           >
-            <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-sm font-bold mb-6 text-white uppercase tracking-wider flex items-center gap-2">
               <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
               Connect With Us
             </h4>
-            <div className="flex gap-3">
-              <a href="https://twitter.com/fcheckmaster" target="_blank" rel="noopener noreferrer" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
-                <FaTwitter size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+            <div className="flex gap-4 mb-6">
+              <a href="https://twitter.com/fcheckmaster" target="_blank" rel="noopener noreferrer" className="group relative p-4 bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 hover:from-cyan-500/30 hover:to-cyan-600/20 rounded-xl border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-cyan-500/25">
+                <FaTwitter size={20} className="text-cyan-300 group-hover:text-cyan-200 transition-colors duration-300" />
               </a>
-              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
-                <FaFacebook size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              <a href="https://www.facebook.com/share/14MbJJKH8mD/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="group relative p-4 bg-gradient-to-br from-blue-500/20 to-blue-600/10 hover:from-blue-500/30 hover:to-blue-600/20 rounded-xl border border-blue-500/20 hover:border-blue-400/40 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-blue-500/25">
+                <FaFacebook size={20} className="text-blue-300 group-hover:text-blue-200 transition-colors duration-300" />
               </a>
-              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
-                <FaLinkedin size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              <a href="#" className="group relative p-4 bg-gradient-to-br from-indigo-500/20 to-indigo-600/10 hover:from-indigo-500/30 hover:to-indigo-600/20 rounded-xl border border-indigo-500/20 hover:border-indigo-400/40 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-indigo-500/25">
+                <FaLinkedin size={20} className="text-indigo-300 group-hover:text-indigo-200 transition-colors duration-300" />
               </a>
-              <a href="#" className="group relative p-3 bg-gradient-to-br from-purple-500/20 to-purple-600/10 hover:from-purple-500/30 hover:to-purple-600/20 rounded-xl border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20">
-                <FaGithub size={18} className="text-purple-300 group-hover:text-purple-200 transition-colors duration-300" />
+              <a href="#" className="group relative p-4 bg-gradient-to-br from-gray-500/20 to-gray-600/10 hover:from-gray-500/30 hover:to-gray-600/20 rounded-xl border border-gray-500/20 hover:border-gray-400/40 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-gray-500/25">
+                <FaGithub size={20} className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300" />
               </a>
             </div>
-            <p className="text-sm text-gray-300 mt-4 leading-relaxed">
-              Stay updated with our latest fact-checks
-            </p>
+            <div className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-lg p-4 border border-purple-500/20">
+              <p className="text-sm text-gray-300 leading-relaxed flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                Stay updated with our latest fact-checks and fight misinformation together
+              </p>
+            </div>
           </motion.div>
         </div>
 
