@@ -1,6 +1,6 @@
 // src/components/Footer.jsx
 import React from 'react';
-import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt, FaHome, FaRss, FaInfoCircle, FaEnvelope, FaArrowRight } from 'react-icons/fa';
+import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
@@ -31,63 +31,12 @@ const Footer = () => {
             </p>
           </motion.div>
 
-          {/* Quick Links */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="col-span-1 md:col-span-3"
-          >
-            <h4 className="text-sm font-bold mb-6 text-white uppercase tracking-wider flex items-center gap-2">
-              <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
-              Quick Links
-            </h4>
-            <div className="flex flex-col space-y-3">
-              {[
-                { href: "#home", icon: FaHome, label: "Home" },
-                { href: "#fact-checks", icon: FaRss, label: "Live Feed" },
-                { href: "#about", icon: FaInfoCircle, label: "About Us" },
-                { href: "#contact", icon: FaEnvelope, label: "Contact" }
-              ].map((link, index) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-                  whileHover={{ x: 8, scale: 1.02 }}
-                  className="group relative flex items-center gap-3 py-2.5 px-3 rounded-lg bg-gradient-to-r from-transparent to-transparent hover:from-purple-500/10 hover:to-purple-600/10 border border-transparent hover:border-purple-400/30 transition-all duration-300 hover:shadow-md hover:shadow-purple-500/20"
-                  style={{ 
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'rgb(168, 85, 247)';
-                    e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/15 to-purple-600/10 border border-purple-500/20 group-hover:from-purple-500/25 group-hover:to-purple-600/20 group-hover:border-purple-400/40 transition-all duration-300 group-hover:scale-110">
-                    <link.icon className="text-sm text-purple-400 group-hover:text-purple-300 transition-all duration-300" />
-                  </div>
-                  <span className="text-sm font-medium transition-all duration-300 group-hover:font-semibold">
-                    {link.label}
-                  </span>
-                  <FaArrowRight className="text-xs text-purple-400/50 group-hover:text-purple-300 group-hover:translate-x-1 transition-all duration-300 ml-auto opacity-0 group-hover:opacity-100" />
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
-
           {/* Social Media */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="col-span-1 md:col-span-4"
+            className="col-span-1 md:col-span-7"
           >
             <h4 className="text-sm font-bold mb-4 text-white uppercase tracking-wider flex items-center gap-2">
               <span className="inline-block w-1 h-4 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></span>
