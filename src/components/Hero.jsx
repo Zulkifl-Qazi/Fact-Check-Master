@@ -72,49 +72,6 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-16"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(168, 85, 247, 0.9)' }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              background: `linear-gradient(135deg, ${navColor} 0%, #a855f7 50%, #d946ef 100%)`,
-              boxShadow: '0 12px 30px rgba(88, 28, 135, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-              border: '2px solid rgba(168, 85, 247, 0.4)',
-              lineHeight: '1.4',
-            }}
-            className="inline-flex items-center gap-3 text-white font-medium rounded-2xl transition-all duration-300 px-20 py-7 text-sm hover:shadow-2xl backdrop-blur-md"
-            aria-label="Start Fact Checking"
-          >
-            <span style={{ letterSpacing: '0.3px', fontWeight: '500' }}>Start Checking</span>
-            <svg className="h-4 w-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(168, 85, 247, 0.9)' }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              background: `linear-gradient(135deg, ${navColor} 0%, #a855f7 50%, #d946ef 100%)`,
-              boxShadow: '0 12px 30px rgba(88, 28, 135, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-              border: '2px solid rgba(168, 85, 247, 0.4)',
-              lineHeight: '1.4',
-            }}
-            className="inline-flex items-center gap-3 text-white font-medium rounded-2xl transition-all duration-300 px-22 py-7 text-sm hover:shadow-2xl backdrop-blur-md"
-            aria-label="Learn more"
-          >
-            <span style={{ letterSpacing: '0.3px', fontWeight: '500' }}>Learn More</span>
-            <svg className="h-4 w-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-            </svg>
-          </motion.button>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16"
         >
