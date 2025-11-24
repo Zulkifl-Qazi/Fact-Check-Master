@@ -4,24 +4,6 @@ import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  const scrollToSection = (sectionId) => {
-    const element = document.querySelector(`#${sectionId}`);
-    if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start',
-        inline: 'nearest'
-      });
-    } else {
-      console.warn(`Element with id "${sectionId}" not found`);
-    }
-  };
-
-  const handleNavClick = (sectionId, e) => {
-    e.preventDefault();
-    scrollToSection(sectionId);
-  };
-
   return (
     <footer style={{ 
       background: 'rgb(88, 28, 135)',
@@ -66,64 +48,55 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Navigation Links - Similar to Navbar style */}
+          {/* Navigation Links - Exactly like Navbar */}
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
             gap: '2rem',
             flexWrap: 'wrap'
           }}>
-            <button 
-              onClick={(e) => handleNavClick('home', e)}
+            <Link 
+              to="/#top" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer'
+                transition: 'all 200ms' 
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Home
-            </button>
-            <button 
-              onClick={(e) => handleNavClick('fact-checks', e)}
+            </Link>
+            <Link 
+              to="/#fact-checks" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer'
+                transition: 'all 200ms' 
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Live Feed
-            </button>
-            <button 
-              onClick={(e) => handleNavClick('about', e)}
+            </Link>
+            <Link 
+              to="/#about" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer'
+                transition: 'all 200ms' 
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               About
-            </button>
+            </Link>
             <Link 
               to="/contact" 
               style={{ 
