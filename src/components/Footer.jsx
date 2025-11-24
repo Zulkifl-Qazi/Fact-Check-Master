@@ -1,8 +1,16 @@
 // src/components/Footer.jsx
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const handleSectionClick = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer style={{ 
       background: 'rgb(88, 28, 135)',
@@ -54,50 +62,59 @@ const Footer = () => {
             gap: '2rem',
             flexWrap: 'wrap'
           }}>
-            <a 
-              href="/#top" 
+            <button 
+              onClick={() => handleSectionClick('home')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms' 
+                transition: 'all 200ms',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Home
-            </a>
-            <a 
-              href="/#fact-checks" 
+            </button>
+            <button 
+              onClick={() => handleSectionClick('fact-checks')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms' 
+                transition: 'all 200ms',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Live Feed
-            </a>
-            <a 
-              href="/#about" 
+            </button>
+            <button 
+              onClick={() => handleSectionClick('about')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms' 
+                transition: 'all 200ms',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               About
-            </a>
-            <a 
-              href="/contact" 
+            </button>
+            <Link 
+              to="/contact" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -109,7 +126,7 @@ const Footer = () => {
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Contact
-            </a>
+            </Link>
           </div>
 
           {/* Social Media - Styled like Navbar buttons */}
