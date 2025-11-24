@@ -1,4 +1,4 @@
-// src/components/Footer.jsx - Updated Nov 24, 2025 for working navigation
+// src/components/Footer.jsx - Updated Nov 24, 2025 - Footer navigation working with useNavigate
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
