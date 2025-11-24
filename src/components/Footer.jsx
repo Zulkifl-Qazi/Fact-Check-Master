@@ -1,15 +1,23 @@
 // src/components/Footer.jsx - Updated Nov 24, 2025 for working navigation
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <footer style={{ 
       background: 'rgb(88, 28, 135)',
       borderTop: '2px solid rgba(168, 85, 247, 0.4)',
       boxShadow: '0 -10px 15px rgba(0, 0, 0, 0.3)',
-      color: 'white'
+      color: 'white',
+      position: 'relative',
+      zIndex: 10
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '80px', flexWrap: 'wrap', gap: '1rem' }}>
@@ -55,66 +63,82 @@ const Footer = () => {
             gap: '2rem',
             flexWrap: 'wrap'
           }}>
-            <Link 
-              to="/#top"
+            <button 
+              onClick={() => handleNavigation('/#top')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '8px 12px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '4px'
               }} 
-              onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
-              onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
               Home
-            </Link>
-            <Link 
-              to="/#fact-checks"
+            </button>
+            <button 
+              onClick={() => handleNavigation('/#fact-checks')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '8px 12px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '4px'
               }} 
-              onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
-              onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
               Live Feed
-            </Link>
-            <Link 
-              to="/#about"
+            </button>
+            <button 
+              onClick={() => handleNavigation('/#about')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '8px 12px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '4px'
               }} 
-              onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
-              onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
               About
-            </Link>
-            <Link 
-              to="/contact"
+            </button>
+            <button 
+              onClick={() => handleNavigation('/contact')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '8px 12px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '4px'
               }} 
-              onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
-              onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
               Contact
-            </Link>
+            </button>
           </div>
 
           {/* Social Media - Styled like Navbar buttons */}
