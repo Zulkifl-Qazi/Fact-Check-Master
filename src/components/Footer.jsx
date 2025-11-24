@@ -55,7 +55,7 @@ const Footer = () => {
             flexWrap: 'wrap'
           }}>
             <a 
-              href="#home" 
+              href="/#top" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -69,7 +69,21 @@ const Footer = () => {
               Home
             </a>
             <a 
-              href="#about" 
+              href="/#fact-checks" 
+              style={{ 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: 'rgba(255, 255, 255, 0.7)', 
+                textDecoration: 'none', 
+                transition: 'all 200ms' 
+              }} 
+              onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
+              onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+            >
+              Live Feed
+            </a>
+            <a 
+              href="/#about" 
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -157,7 +171,9 @@ const Footer = () => {
             </a>
 
             <a 
-              href="#" 
+              href="https://linkedin.com/company/fact-check-master" 
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 padding: '0.5rem 0.65rem',
                 borderRadius: '6px',
@@ -183,7 +199,9 @@ const Footer = () => {
             </a>
 
             <a 
-              href="#" 
+              href="https://github.com/Zulkifl-Qazi/fact-check-master" 
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 padding: '0.5rem 0.65rem',
                 borderRadius: '6px',
