@@ -4,11 +4,22 @@ import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  const handleSectionClick = (sectionId) => {
-    const element = document.getElementById(sectionId);
+  const scrollToSection = (sectionId) => {
+    const element = document.querySelector(`#${sectionId}`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest'
+      });
+    } else {
+      console.warn(`Element with id "${sectionId}" not found`);
     }
+  };
+
+  const handleNavClick = (sectionId, e) => {
+    e.preventDefault();
+    scrollToSection(sectionId);
   };
 
   return (
@@ -63,7 +74,7 @@ const Footer = () => {
             flexWrap: 'wrap'
           }}>
             <button 
-              onClick={() => handleSectionClick('home')}
+              onClick={(e) => handleNavClick('home', e)}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -80,7 +91,7 @@ const Footer = () => {
               Home
             </button>
             <button 
-              onClick={() => handleSectionClick('fact-checks')}
+              onClick={(e) => handleNavClick('fact-checks', e)}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -97,7 +108,7 @@ const Footer = () => {
               Live Feed
             </button>
             <button 
-              onClick={() => handleSectionClick('about')}
+              onClick={(e) => handleNavClick('about', e)}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
