@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import Carousel from '../components/Carousel';
 import LiveFeed from '../components/LiveFeed';
 import About from '../components/About';
+import Contact from '../components/Contact';
 
 const HomePage = () => {
   return (
@@ -17,6 +18,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 space-y-20 py-16">
           <LiveFeed />
           <About />
+          <Contact />
         </div>
       </div>
     </div>

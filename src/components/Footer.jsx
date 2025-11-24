@@ -1,23 +1,9 @@
 // src/components/Footer.jsx - Updated Nov 24, 2025 for working navigation
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  const scrollToSection = (sectionId) => {
-    const element = document.querySelector(`#${sectionId}`);
-    if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
-  const handleLinkClick = (e, sectionId) => {
-    e.preventDefault();
-    scrollToSection(sectionId);
-  };
-
   return (
     <footer style={{ 
       background: 'rgb(88, 28, 135)',
@@ -69,9 +55,8 @@ const Footer = () => {
             gap: '2rem',
             flexWrap: 'wrap'
           }}>
-            <a 
-              href="#home"
-              onClick={(e) => handleLinkClick(e, 'home')}
+            <Link 
+              to="/#top"
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -84,10 +69,9 @@ const Footer = () => {
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Home
-            </a>
-            <a 
-              href="#fact-checks"
-              onClick={(e) => handleLinkClick(e, 'fact-checks')}
+            </Link>
+            <Link 
+              to="/#fact-checks"
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -100,10 +84,9 @@ const Footer = () => {
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Live Feed
-            </a>
-            <a 
-              href="#about"
-              onClick={(e) => handleLinkClick(e, 'about')}
+            </Link>
+            <Link 
+              to="/#about"
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
@@ -116,21 +99,22 @@ const Footer = () => {
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               About
-            </a>
-            <a 
-              href="/contact"
+            </Link>
+            <Link 
+              to="/contact"
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 textDecoration: 'none', 
-                transition: 'all 200ms' 
+                transition: 'all 200ms',
+                cursor: 'pointer'
               }} 
               onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} 
               onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
             >
               Contact
-            </a>
+            </Link>
           </div>
 
           {/* Social Media - Styled like Navbar buttons */}
