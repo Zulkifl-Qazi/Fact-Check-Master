@@ -1,4 +1,4 @@
-// src/components/Footer.jsx
+// src/components/Footer.jsx - Updated Nov 24, 2025 for working navigation
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
 
