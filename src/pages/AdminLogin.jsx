@@ -35,7 +35,6 @@ export default function AdminLogin() {
         </div>
         {error && <div style={{ color: '#fecaca', marginBottom: 8, fontSize: 13 }}>{error}</div>}
         <button type="submit" style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: 'none', fontWeight: 800, background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', color: 'white', boxShadow: '0 10px 20px rgba(139,92,246,0.35)' }}>Sign in</button>
-        <div style={{ marginTop: 10, color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Tip: username = factadmin, password = factadmin</div>
       </form>
     </section>
   );
