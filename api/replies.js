@@ -114,13 +114,27 @@ async function getDb() {
         feedback_id INTEGER,
         reply TEXT,
         replied_by TEXT DEFAULT 'Admin',
-        emailed BOOLEAN DEFAULT 0,
-        email_error TEXT,
-        delivered_at DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (feedback_id) REFERENCES feedback (id)
       )
     `);
+    
+    // Add email columns if they don't exist (for backward compatibility)
+    try {
+      await db.exec(`ALTER TABLE replies ADD COLUMN emailed BOOLEAN DEFAULT 0`);
+    } catch (e) {
+      // Column already exists or other error, ignore
+    }
+    try {
+      await db.exec(`ALTER TABLE replies ADD COLUMN email_error TEXT`);
+    } catch (e) {
+      // Column already exists or other error, ignore
+    }
+    try {
+      await db.exec(`ALTER TABLE replies ADD COLUMN delivered_at DATETIME`);
+    } catch (e) {
+      // Column already exists or other error, ignore
+    }
   }
   return db;
 }
@@ -176,21 +190,37 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'Feedback not found' });
       }
 
-      // Send email notification
-      const emailResult = await sendReplyNotification(feedback, reply.trim());
+      // Send email notification (optional, don't fail if email fails)
+      let emailResult = { sent: false, error: null };
+      try {
+        emailResult = await sendReplyNotification(feedback, reply.trim());
+      } catch (emailError) {
+        console.warn('Email sending failed:', emailError);
+        emailResult = { sent: false, error: emailError.message };
+      }
 
-      // Insert the reply with email status
-      const result = await database.run(
-        'INSERT INTO replies (feedback_id, reply, replied_by, emailed, email_error, delivered_at) VALUES (?, ?, ?, ?, ?, ?)',
-        [
-          targetFeedbackId, 
-          reply.trim(), 
-          'Admin',
-          emailResult.sent ? 1 : 0,
-          emailResult.error,
-          emailResult.sent ? new Date().toISOString() : null
-        ]
-      );
+      // Insert the reply - try with email fields first, fallback to basic if schema doesn't support it
+      let result;
+      try {
+        result = await database.run(
+          'INSERT INTO replies (feedback_id, reply, replied_by, emailed, email_error, delivered_at) VALUES (?, ?, ?, ?, ?, ?)',
+          [
+            targetFeedbackId, 
+            reply.trim(), 
+            'Admin',
+            emailResult.sent ? 1 : 0,
+            emailResult.error,
+            emailResult.sent ? new Date().toISOString() : null
+          ]
+        );
+      } catch (schemaError) {
+        // Fallback to basic insert if email columns don't exist
+        console.warn('Email columns not found, using basic insert:', schemaError.message);
+        result = await database.run(
+          'INSERT INTO replies (feedback_id, reply, replied_by) VALUES (?, ?, ?)',
+          [targetFeedbackId, reply.trim(), 'Admin']
+        );
+      }
 
       res.status(201).json({ 
         id: result.lastID,

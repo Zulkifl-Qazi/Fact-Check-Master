@@ -153,8 +153,13 @@ export default async function handler(req, res) {
         [name, email, subject, message]
       );
 
-      // Send confirmation email
-      const emailSent = await sendConfirmationEmail({ name, email, subject, message });
+      // Send confirmation email (optional, don't fail if email fails)
+      let emailSent = false;
+      try {
+        emailSent = await sendConfirmationEmail({ name, email, subject, message });
+      } catch (emailError) {
+        console.warn('Email sending failed:', emailError);
+      }
 
       res.status(201).json({ 
         id: result.lastID,

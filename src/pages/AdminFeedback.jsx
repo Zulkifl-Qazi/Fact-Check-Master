@@ -71,18 +71,23 @@ export default function AdminFeedback() {
         reply: replyText
       });
       
-      // Show feedback about email status
-      if (response.data.emailSent) {
-        alert('Reply sent successfully! ✅ Email notification delivered to user.');
+      // Show feedback about email status (only if email fields are present)
+      if (response.data.hasOwnProperty('emailSent')) {
+        if (response.data.emailSent) {
+          alert('Reply sent successfully! ✅ Email notification delivered to user.');
+        } else {
+          const errorMsg = response.data.emailError ? ` (${response.data.emailError})` : '';
+          alert(`Reply saved successfully! ⚠️ Email notification could not be sent${errorMsg}`);
+        }
       } else {
-        const errorMsg = response.data.emailError ? ` (${response.data.emailError})` : '';
-        alert(`Reply saved successfully! ⚠️ Email notification could not be sent${errorMsg}`);
+        alert('Reply sent successfully!');
       }
       
       setReplyText('');
       await loadReplies(selected.id);
     } catch (e) {
-      alert('Failed to add reply');
+      console.error('Reply submission error:', e);
+      alert('Failed to add reply. Please try again.');
     } finally {
       setSubmitting(false);
     }
