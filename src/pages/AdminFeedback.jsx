@@ -28,9 +28,7 @@ export default function AdminFeedback() {
       const res = await axios.get('/api/feedback');
       setItems(res.data || []);
     } catch (e) {
-      console.error('API Error:', e);
-      setError('Failed to load feedback - API may not be running');
-      setItems([]);
+      setError('Failed to load feedback');
     } finally {
       setLoading(false);
     }
@@ -38,10 +36,9 @@ export default function AdminFeedback() {
 
   const loadReplies = async (id) => {
     try {
-      const res = await axios.get(`/api/feedback/${id}/replies`);
+      const res = await axios.get(`/api/replies?feedback_id=${id}`);
       setReplies(res.data || []);
     } catch (e) {
-      console.error('Error loading replies:', e);
       setReplies([]);
     }
   };
@@ -69,11 +66,10 @@ export default function AdminFeedback() {
     if (!selected || !replyText.trim()) return;
     setSubmitting(true);
     try {
-      await axios.post(
-        `/api/feedback/${selected.id}/replies`,
-        { reply: replyText, repliedBy: 'Admin' },
-        { headers: adminKey ? { 'x-admin-key': adminKey } : {} }
-      );
+      await axios.post('/api/replies', {
+        feedback_id: selected.id,
+        reply: replyText
+      });
       setReplyText('');
       await loadReplies(selected.id);
     } catch (e) {
