@@ -29,14 +29,16 @@ const Contact = () => {
         subject: formData.subject,
         message: formData.message
       });
-      if (res.data && res.data.id) {
+      if (res.data && (res.data.id || res.data.success)) {
         setStatus('success');
         setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
         setTimeout(() => setStatus(null), 5000);
       } else {
+        console.error('Unexpected response:', res.data);
         setStatus('error');
       }
     } catch (err) {
+      console.error('Submit error:', err);
       setStatus('error');
     }
   };

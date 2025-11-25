@@ -11,7 +11,7 @@ let db;
 async function getDb() {
   if (!db) {
     // For Vercel, create an in-memory database since file system is read-only
-    const dbPath = process.env.NODE_ENV === 'production' ? ':memory:' : path.join(__dirname, '../server/data.db');
+    const dbPath = process.env.NODE_ENV === 'production' ? ':memory:' : path.join(__dirname, '../../server/data.db');
     
     db = await open({
       filename: dbPath,
@@ -60,34 +60,36 @@ export default async function handler(req, res) {
   }
 
   try {
+    const { id } = req.query;
     const database = await getDb();
 
-    if (req.method === 'POST') {
-      // Create new feedback
-      const { name, email, subject, message } = req.body;
+    if (req.method === 'GET') {
+      // Get replies for specific feedback
+      const replies = await database.all(
+        'SELECT * FROM replies WHERE feedback_id = ? ORDER BY created_at ASC',
+        [id]
+      );
+
+      res.status(200).json(replies);
+
+    } else if (req.method === 'POST') {
+      // Add new reply to feedback
+      const { reply, adminKey } = req.body;
       
-      if (!name || !email || !subject || !message) {
-        return res.status(400).json({ error: 'All fields are required' });
+      if (!reply || !reply.trim()) {
+        return res.status(400).json({ error: 'Reply text is required' });
       }
 
       const result = await database.run(
-        'INSERT INTO feedback (name, email, subject, message) VALUES (?, ?, ?, ?)',
-        [name, email, subject, message]
+        'INSERT INTO replies (feedback_id, reply, replied_by) VALUES (?, ?, ?)',
+        [id, reply.trim(), 'Admin']
       );
 
       res.status(201).json({ 
         id: result.lastID,
         success: true,
-        message: 'Feedback submitted successfully'
+        message: 'Reply added successfully'
       });
-
-    } else if (req.method === 'GET') {
-      // Get all feedback (for admin)
-      const feedbackList = await database.all(
-        'SELECT * FROM feedback ORDER BY created_at DESC'
-      );
-
-      res.status(200).json(feedbackList);
 
     } else {
       res.status(405).json({ error: 'Method not allowed' });

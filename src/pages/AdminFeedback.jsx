@@ -28,7 +28,9 @@ export default function AdminFeedback() {
       const res = await axios.get('/api/feedback');
       setItems(res.data || []);
     } catch (e) {
-      setError('Failed to load feedback');
+      console.error('API Error:', e);
+      setError('Failed to load feedback - API may not be running');
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -39,6 +41,7 @@ export default function AdminFeedback() {
       const res = await axios.get(`/api/feedback/${id}/replies`);
       setReplies(res.data || []);
     } catch (e) {
+      console.error('Error loading replies:', e);
       setReplies([]);
     }
   };
