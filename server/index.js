@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3001;
 const EXPORT_KEY = process.env.EXPORT_KEY || null; // optional simple guard for exports
 const ADMIN_KEY = process.env.ADMIN_KEY || null;   // optional simple guard for admin-write actions
 const X_API_BEARER_TOKEN = process.env.X_API_BEARER_TOKEN || null;  // X API token for fetching real tweets
@@ -305,6 +305,187 @@ app.get('/api/tweets', async (req, res) => {
     } catch {
       res.status(500).json({ error: 'Failed to fetch tweets' });
     }
+  }
+});
+
+// Feedback API endpoints
+app.get('/api/feedback', async (req, res) => {
+  try {
+    const feedbackList = await db.all(
+      'SELECT * FROM feedback ORDER BY created_at DESC'
+    );
+    res.status(200).json(feedbackList);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const result = await db.run(
+      'INSERT INTO feedback (name, email, subject, message) VALUES (?, ?, ?, ?)',
+      [name, email, subject, message]
+    );
+
+    // Send confirmation email if configured
+    let emailSent = false;
+    if (smtpConfigured && mailer) {
+      try {
+        const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_USER;
+        await mailer.sendMail({
+          from: `"Fact Check Master" <${fromEmail}>`,
+          to: email,
+          subject: `Thank you for contacting us - ${subject}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 30px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">Fact Check Master</h1>
+                <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Thank you for reaching out!</p>
+              </div>
+              
+              <div style="background: #f8fafc; padding: 30px;">
+                <h2 style="color: #1e293b; margin-bottom: 20px;">We've received your message</h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+                  <p style="margin: 0 0 10px 0; color: #64748b;"><strong>Subject:</strong> ${subject}</p>
+                  <p style="margin: 0 0 15px 0; color: #64748b;"><strong>Your message:</strong></p>
+                  <p style="color: #1e293b; line-height: 1.6; margin: 0;">${message}</p>
+                </div>
+                
+                <p style="color: #64748b; margin-top: 20px; line-height: 1.6;">
+                  Our team will review your message and get back to you within 24-48 hours. 
+                  Thank you for helping us fight misinformation!
+                </p>
+              </div>
+            </div>
+          `
+        });
+        emailSent = true;
+      } catch (emailError) {
+        console.warn('Email sending failed:', emailError);
+      }
+    }
+
+    res.status(201).json({ 
+      id: result.lastID,
+      success: true,
+      message: 'Feedback submitted successfully',
+      emailSent: emailSent
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Replies API endpoints
+app.get('/api/replies', async (req, res) => {
+  try {
+    const { feedback_id } = req.query;
+    
+    if (!feedback_id) {
+      return res.status(400).json({ error: 'feedback_id is required' });
+    }
+
+    const replies = await db.all(
+      'SELECT * FROM feedback_replies WHERE feedback_id = ? ORDER BY created_at ASC',
+      [feedback_id]
+    );
+
+    res.status(200).json(replies);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/replies', async (req, res) => {
+  try {
+    const { feedback_id, reply } = req.body;
+    
+    if (!feedback_id || !reply || !reply.trim()) {
+      return res.status(400).json({ error: 'feedback_id and reply are required' });
+    }
+
+    // Get the feedback details for email notification
+    const feedback = await db.get(
+      'SELECT * FROM feedback WHERE id = ?',
+      [feedback_id]
+    );
+
+    if (!feedback) {
+      return res.status(404).json({ error: 'Feedback not found' });
+    }
+
+    // Send email notification if configured
+    let emailSent = false;
+    let emailError = null;
+    if (smtpConfigured && mailer) {
+      try {
+        const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_USER;
+        await mailer.sendMail({
+          from: `"Fact Check Master" <${fromEmail}>`,
+          to: feedback.email,
+          subject: `Reply to your message: ${feedback.subject}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #8b5cf6, #ec4899); padding: 30px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">Fact Check Master</h1>
+                <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">We've responded to your message!</p>
+              </div>
+              
+              <div style="background: #f8fafc; padding: 30px;">
+                <h2 style="color: #1e293b; margin-bottom: 20px;">Our Response</h2>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 20px;">
+                  <h3 style="color: #059669; margin: 0 0 15px 0;">Admin Reply:</h3>
+                  <p style="color: #1e293b; line-height: 1.6; margin: 0;">${reply}</p>
+                </div>
+                
+                <div style="background: #f3f4f6; padding: 15px; border-radius: 6px; border-left: 3px solid #6b7280;">
+                  <h4 style="color: #374151; margin: 0 0 10px 0;">Your Original Message:</h4>
+                  <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 14px;"><strong>Subject:</strong> ${feedback.subject}</p>
+                  <p style="color: #4b5563; line-height: 1.5; margin: 0; font-size: 14px;">${feedback.message}</p>
+                </div>
+                
+                <p style="color: #64748b; margin-top: 20px; line-height: 1.6;">
+                  If you have any follow-up questions, feel free to contact us again. 
+                  Thank you for helping us fight misinformation!
+                </p>
+              </div>
+            </div>
+          `
+        });
+        emailSent = true;
+      } catch (err) {
+        console.error('Email sending failed:', err);
+        emailError = err.message;
+      }
+    }
+
+    // Insert the reply
+    const result = await db.run(
+      'INSERT INTO feedback_replies (feedback_id, reply, replied_by) VALUES (?, ?, ?)',
+      [feedback_id, reply.trim(), 'Admin']
+    );
+
+    res.status(201).json({ 
+      id: result.lastID,
+      success: true,
+      message: 'Reply added successfully',
+      emailSent: emailSent,
+      emailError: emailError
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
