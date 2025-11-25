@@ -93,6 +93,20 @@ async function initDb() {
     )
   `);
 
+  // Posts table (for admin-created posts)
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      author TEXT DEFAULT 'Admin',
+      status TEXT DEFAULT 'published',
+      fact_check_status TEXT DEFAULT 'verified',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Migrate columns for older databases
   const rcols = await db.all("PRAGMA table_info(feedback_replies)");
   const hasEmailed = rcols.some(c => c.name === 'emailed');
@@ -482,6 +496,66 @@ app.post('/api/replies', async (req, res) => {
       message: 'Reply added successfully',
       emailSent: emailSent,
       emailError: emailError
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Posts API endpoints
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await db.all(
+      'SELECT * FROM posts WHERE status = "published" ORDER BY created_at DESC'
+    );
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/posts', async (req, res) => {
+  try {
+    const { title, content, author = 'Admin', fact_check_status = 'verified' } = req.body;
+    
+    if (!title || !content) {
+      return res.status(400).json({ error: 'Title and content are required' });
+    }
+
+    const result = await db.run(
+      'INSERT INTO posts (title, content, author, fact_check_status) VALUES (?, ?, ?, ?)',
+      [title.trim(), content.trim(), author.trim(), fact_check_status]
+    );
+
+    res.status(201).json({ 
+      id: result.lastID,
+      success: true,
+      message: 'Post created successfully'
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await db.run(
+      'DELETE FROM posts WHERE id = ?',
+      [id]
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.status(200).json({ 
+      success: true,
+      message: 'Post deleted successfully'
     });
   } catch (error) {
     console.error('Database error:', error);

@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import Contact from './pages/Contact';
 import AdminFeedback from './pages/AdminFeedback';
+import AdminPosts from './pages/AdminPosts';
 import AdminLogin from './pages/AdminLogin';
 import Footer from './components/Footer';
 
@@ -42,6 +43,14 @@ function App() {
             element={
               <RequireAdmin>
                 <AdminFeedback />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/posts"
+            element={
+              <RequireAdmin>
+                <AdminPosts />
               </RequireAdmin>
             }
           />

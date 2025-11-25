@@ -99,6 +99,20 @@ export default function AdminFeedback() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h1 style={{ fontSize: 28, fontWeight: 800 }}>Feedback Admin</h1>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              onClick={() => navigate('/admin/posts')}
+              style={{
+                padding: '10px 12px',
+                borderRadius: 10,
+                border: 'none',
+                fontWeight: 800,
+                background: 'linear-gradient(90deg, #059669, #10b981)',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              Manage Posts
+            </button>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
