@@ -66,10 +66,19 @@ export default function AdminFeedback() {
     if (!selected || !replyText.trim()) return;
     setSubmitting(true);
     try {
-      await axios.post('/api/replies', {
+      const response = await axios.post('/api/replies', {
         feedback_id: selected.id,
         reply: replyText
       });
+      
+      // Show feedback about email status
+      if (response.data.emailSent) {
+        alert('Reply sent successfully! ✅ Email notification delivered to user.');
+      } else {
+        const errorMsg = response.data.emailError ? ` (${response.data.emailError})` : '';
+        alert(`Reply saved successfully! ⚠️ Email notification could not be sent${errorMsg}`);
+      }
+      
       setReplyText('');
       await loadReplies(selected.id);
     } catch (e) {

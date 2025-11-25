@@ -13,6 +13,7 @@ const Contact = () => {
   });
   const [status, setStatus] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +32,8 @@ const Contact = () => {
       });
       if (res.data && (res.data.id || res.data.success)) {
         setStatus('success');
+        // Store email status for display in success message
+        setEmailSent(res.data.emailSent);
         setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
         setTimeout(() => setStatus(null), 5000);
       } else {
@@ -294,7 +297,18 @@ const Contact = () => {
                     }}
                   >
                     <FaCheckCircle />
-                    <span>Message sent successfully! 🎉</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <span>Message sent successfully! 🎉</span>
+                      {emailSent ? (
+                        <span style={{ fontSize: '0.85rem', opacity: 0.9, marginTop: '0.25rem' }}>
+                          📧 Confirmation email sent to your inbox
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '0.85rem', opacity: 0.8, marginTop: '0.25rem' }}>
+                          ⚠️ Note: Email confirmation could not be sent
+                        </span>
+                      )}
+                    </div>
                   </motion.div>
                 )}
 
