@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import nodemailer from 'nodemailer';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -102,10 +104,25 @@ async function initDb() {
       author TEXT DEFAULT 'Admin',
       status TEXT DEFAULT 'published',
       fact_check_status TEXT DEFAULT 'verified',
+      image_url TEXT,
+      source_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Add new columns to existing posts table if they don't exist
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN image_url TEXT');
+  } catch (e) {
+    // Column already exists
+  }
+  
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN source_url TEXT');
+  } catch (e) {
+    // Column already exists
+  }
 
   // Migrate columns for older databases
   const rcols = await db.all("PRAGMA table_info(feedback_replies)");
@@ -518,15 +535,15 @@ app.get('/api/posts', async (req, res) => {
 
 app.post('/api/posts', async (req, res) => {
   try {
-    const { title, content, author = 'Admin', fact_check_status = 'verified' } = req.body;
+    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
     const result = await db.run(
-      'INSERT INTO posts (title, content, author, fact_check_status) VALUES (?, ?, ?, ?)',
-      [title.trim(), content.trim(), author.trim(), fact_check_status]
+      'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url) VALUES (?, ?, ?, ?, ?, ?)',
+      [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null]
     );
 
     res.status(201).json({ 
@@ -560,6 +577,105 @@ app.delete('/api/posts/:id', async (req, res) => {
   } catch (error) {
     console.error('Database error:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Fetch post data from URL
+app.post('/api/fetch-post', async (req, res) => {
+  try {
+    const { url } = req.body;
+    
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Fetch the webpage content
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache'
+      },
+      timeout: 10000
+    });
+
+    const $ = cheerio.load(response.data);
+    
+    // Extract metadata using various selectors
+    let title = '';
+    let content = '';
+    let author = '';
+    let imageUrl = '';
+
+    // Try different methods to extract title
+    title = $('meta[property="og:title"]').attr('content') ||
+            $('meta[name="twitter:title"]').attr('content') ||
+            $('title').text() ||
+            $('h1').first().text();
+
+    // Try different methods to extract content/description
+    content = $('meta[property="og:description"]').attr('content') ||
+              $('meta[name="twitter:description"]').attr('content') ||
+              $('meta[name="description"]').attr('content') ||
+              $('p').first().text();
+
+    // Try different methods to extract author
+    author = $('meta[name="author"]').attr('content') ||
+             $('meta[property="article:author"]').attr('content') ||
+             $('meta[name="twitter:creator"]').attr('content') ||
+             $('.author').text() ||
+             $('[data-testid="User-Names"]').first().text() ||
+             'Unknown Author';
+
+    // Try different methods to extract image
+    imageUrl = $('meta[property="og:image"]').attr('content') ||
+               $('meta[name="twitter:image"]').attr('content') ||
+               $('meta[name="twitter:image:src"]').attr('content') ||
+               $('img').first().attr('src');
+
+    // Clean up extracted data
+    title = title.trim().substring(0, 200);
+    content = content.trim().substring(0, 500);
+    author = author.trim().substring(0, 100);
+    
+    // Handle relative URLs for images
+    if (imageUrl && imageUrl.startsWith('/')) {
+      const urlObj = new URL(url);
+      imageUrl = urlObj.origin + imageUrl;
+    }
+
+    // Fallback values
+    if (!title) title = 'Post from ' + new URL(url).hostname;
+    if (!content) content = 'Content fetched from ' + url;
+    if (!author) author = 'User';
+
+    res.json({
+      title,
+      content,
+      author,
+      imageUrl,
+      sourceUrl: url
+    });
+
+  } catch (error) {
+    console.error('Error fetching post data:', error);
+    
+    // Return a more user-friendly error
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      return res.status(400).json({ error: 'Unable to connect to the URL. Please check if the URL is correct and accessible.' });
+    }
+    
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({ error: 'The page was not found. Please check the URL.' });
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to fetch post data. The website might not allow automated access or the URL format is not supported.',
+      details: error.message
+    });
   }
 });
 

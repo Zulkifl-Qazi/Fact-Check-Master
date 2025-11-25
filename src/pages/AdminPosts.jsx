@@ -13,9 +13,12 @@ const AdminPosts = () => {
     title: '',
     content: '',
     author: 'Fact Check Master',
-    fact_check_status: 'verified'
+    fact_check_status: 'verified',
+    postUrl: '',
+    imageUrl: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [fetchingUrl, setFetchingUrl] = useState(false);
 
   // Check admin authentication
   useEffect(() => {
@@ -45,6 +48,34 @@ const AdminPosts = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const fetchPostData = async () => {
+    if (!formData.postUrl.trim()) {
+      alert('Please enter a post URL first');
+      return;
+    }
+
+    setFetchingUrl(true);
+    try {
+      const response = await axios.post('/api/fetch-post', { url: formData.postUrl });
+      const { title, content, author, imageUrl } = response.data;
+      
+      setFormData(prev => ({
+        ...prev,
+        title: title || prev.title,
+        content: content || prev.content,
+        author: author || prev.author,
+        imageUrl: imageUrl || prev.imageUrl
+      }));
+      
+      alert('Post data fetched successfully! ✅');
+    } catch (error) {
+      console.error('Failed to fetch post data:', error);
+      alert('Failed to fetch post data. Please check the URL and try again.');
+    } finally {
+      setFetchingUrl(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.content.trim()) return;
@@ -52,7 +83,7 @@ const AdminPosts = () => {
     setSubmitting(true);
     try {
       await axios.post('/api/posts', formData);
-      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified' });
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', postUrl: '', imageUrl: '' });
       setShowAddForm(false);
       await loadPosts();
       alert('Post created successfully! ✅');
@@ -156,6 +187,47 @@ const AdminPosts = () => {
           >
             <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem' }}>Create New Post</h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* URL Fetching Section */}
+              <div style={{ padding: '1rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Post URL (Optional)</label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    type="url"
+                    name="postUrl"
+                    value={formData.postUrl}
+                    onChange={handleChange}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem',
+                      background: 'rgba(71, 85, 105, 0.5)',
+                      border: '2px solid rgb(51, 65, 85)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      outline: 'none'
+                    }}
+                    placeholder="Paste Twitter, Facebook, Instagram, or any post URL..."
+                  />
+                  <button
+                    type="button"
+                    onClick={fetchPostData}
+                    disabled={fetchingUrl || !formData.postUrl.trim()}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      background: fetchingUrl ? 'rgba(107, 114, 128, 0.5)' : 'linear-gradient(to right, rgb(59, 130, 246), rgb(37, 99, 235))',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: fetchingUrl ? 'not-allowed' : 'pointer',
+                      fontWeight: '600',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {fetchingUrl ? 'Fetching...' : 'Fetch Post'}
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem', margin: '0.5rem 0 0 0' }}>Automatically extract title, content, author, and images from social media posts</p>
+              </div>
+              
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Title</label>
@@ -219,6 +291,38 @@ const AdminPosts = () => {
                   <option value="false">❌ False</option>
                   <option value="investigating">🔍 Under Investigation</option>
                 </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Image URL (Optional)</label>
+                <input
+                  type="url"
+                  name="imageUrl"
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: 'rgba(71, 85, 105, 0.5)',
+                    border: '2px solid rgb(51, 65, 85)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    outline: 'none'
+                  }}
+                  placeholder="Direct image URL or fetched automatically..."
+                />
+                {formData.imageUrl && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Preview" 
+                      style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

@@ -27,10 +27,25 @@ async function getDb() {
         author TEXT DEFAULT 'Admin',
         status TEXT DEFAULT 'published',
         fact_check_status TEXT DEFAULT 'verified',
+        image_url TEXT,
+        source_url TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    
+    // Add new columns to existing table if they don't exist
+    try {
+      await db.exec('ALTER TABLE posts ADD COLUMN image_url TEXT');
+    } catch (e) {
+      // Column already exists
+    }
+    
+    try {
+      await db.exec('ALTER TABLE posts ADD COLUMN source_url TEXT');
+    } catch (e) {
+      // Column already exists
+    }
   }
   return db;
 }
@@ -60,15 +75,15 @@ export default async function handler(req, res) {
 
     } else if (req.method === 'POST') {
       // Create new post
-      const { title, content, author = 'Admin', fact_check_status = 'verified' } = req.body;
+      const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
 
       const result = await database.run(
-        'INSERT INTO posts (title, content, author, fact_check_status) VALUES (?, ?, ?, ?)',
-        [title.trim(), content.trim(), author.trim(), fact_check_status]
+        'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url) VALUES (?, ?, ?, ?, ?, ?)',
+        [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null]
       );
 
       res.status(201).json({ 
