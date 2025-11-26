@@ -68,10 +68,10 @@ const LiveFeed = () => {
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-white rounded-lg shadow-lg p-6 text-center"
+                className="bg-slate-800 rounded-lg shadow-lg p-6 text-center border border-slate-700"
             >
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading live feed...</p>
+                <p className="text-gray-300">Loading live feed...</p>
             </motion.div>
         );
     }
@@ -81,11 +81,11 @@ const LiveFeed = () => {
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-white rounded-lg shadow-lg p-6 text-center"
+                className="bg-slate-800 rounded-lg shadow-lg p-6 text-center border border-slate-700"
             >
                 <FaExclamationTriangle className="text-red-500 text-2xl mx-auto mb-4" />
                 <p className="text-red-600 mb-2">Failed to load posts</p>
-                <p className="text-gray-500 text-sm">{error}</p>
+                <p className="text-gray-400 text-sm">{error}</p>
                 <button 
                     onClick={loadPosts}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -97,7 +97,7 @@ const LiveFeed = () => {
     }
 
     return (
-        <section className="py-16 bg-gray-50" id="live-feed">
+        <section className="py-16 bg-slate-900" id="live-feed">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -105,10 +105,10 @@ const LiveFeed = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-12"
                 >
-                    <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
                         Live Fact Check Feed
                     </h2>
-                    <p className="mt-4 text-lg text-gray-600">
+                    <p className="mt-4 text-lg text-gray-300">
                         Real-time updates on the latest fact-checks and verified information
                     </p>
                 </motion.div>
@@ -120,7 +120,7 @@ const LiveFeed = () => {
                         className="text-center py-12"
                     >
                         <FaRss className="text-gray-400 text-4xl mx-auto mb-4" />
-                        <p className="text-gray-500">No posts available at the moment.</p>
+                        <p className="text-gray-400">No posts available at the moment.</p>
                     </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -130,7 +130,7 @@ const LiveFeed = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 max-w-sm mx-auto"
+                                className="bg-slate-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 max-w-sm mx-auto border border-slate-700"
                             >
                                 {post.image_url && (
                                     <div className="relative">
@@ -150,15 +150,15 @@ const LiveFeed = () => {
                                 )}
                                 
                                 <div className="p-4">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                                    <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
                                         {post.title}
                                     </h3>
                                     
-                                    <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                                    <p className="text-gray-300 text-sm mb-3 line-clamp-3">
                                         {post.content}
                                     </p>
                                     
-                                    <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                                    <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
                                         <span>By {post.author || 'Admin'}</span>
                                         <span>{new Date(post.created_at).toLocaleDateString()}</span>
                                     </div>
