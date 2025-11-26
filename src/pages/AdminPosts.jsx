@@ -118,12 +118,15 @@ const AdminPosts = () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     
     try {
-      await axios.delete(`/api/posts/${postId}`);
-      // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
+      const response = await axios.delete(`/api/posts?id=${postId}`);
+      console.log('Delete response:', response.data);
+      
+      // Reload posts immediately after deletion
+      await loadPosts();
       alert('Post deleted successfully! ✅');
     } catch (error) {
       console.error('Failed to delete post:', error);
-      alert('Failed to delete post. Please try again.');
+      alert(`Failed to delete post: ${error.response?.data?.error || error.message}`);
     }
   };
 
