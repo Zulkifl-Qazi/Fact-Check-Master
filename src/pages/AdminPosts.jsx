@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
 
 const AdminPosts = () => {
@@ -19,6 +20,26 @@ const AdminPosts = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [socket, setSocket] = useState(null);
+
+  // Initialize WebSocket connection
+  useEffect(() => {
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+    
+    // Join admin room for real-time updates
+    newSocket.emit('join_admin');
+    
+    // Listen for real-time post updates from other admins
+    newSocket.on('posts_updated', (update) => {
+      console.log('Received posts update:', update);
+      loadPosts(); // Reload posts when any admin makes changes
+    });
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
 
   // Check admin authentication
   useEffect(() => {
@@ -85,7 +106,7 @@ const AdminPosts = () => {
       await axios.post('/api/posts', formData);
       setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', postUrl: '', imageUrl: '' });
       setShowAddForm(false);
-      await loadPosts();
+      // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
       alert('Post created successfully! ✅');
     } catch (error) {
       console.error('Failed to create post:', error);
@@ -100,7 +121,7 @@ const AdminPosts = () => {
     
     try {
       await axios.delete(`/api/posts/${postId}`);
-      await loadPosts();
+      // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
       alert('Post deleted successfully! ✅');
     } catch (error) {
       console.error('Failed to delete post:', error);

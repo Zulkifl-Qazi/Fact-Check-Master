@@ -8,11 +8,20 @@ import { open } from 'sqlite';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
+    methods: ["GET", "POST", "DELETE"]
+  }
+});
 const PORT = process.env.PORT || 3001;
 const EXPORT_KEY = process.env.EXPORT_KEY || null; // optional simple guard for exports
 const ADMIN_KEY = process.env.ADMIN_KEY || null;   // optional simple guard for admin-write actions
@@ -546,6 +555,13 @@ app.post('/api/posts', async (req, res) => {
       [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null]
     );
 
+    const newPost = await db.get('SELECT * FROM posts WHERE id = ?', [result.lastID]);
+    
+    // Broadcast to all connected clients
+    if (global.broadcastPostsUpdate) {
+      global.broadcastPostsUpdate('created', newPost);
+    }
+
     res.status(201).json({ 
       id: result.lastID,
       success: true,
@@ -568,6 +584,11 @@ app.delete('/api/posts/:id', async (req, res) => {
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Broadcast to all connected clients
+    if (global.broadcastPostsUpdate) {
+      global.broadcastPostsUpdate('deleted', { id: parseInt(id) });
     }
 
     res.status(200).json({ 
@@ -698,9 +719,39 @@ if (fs.existsSync(distDir)) {
   });
 }
 
+// WebSocket connection handling
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+  
+  // Join admin room for real-time updates
+  socket.on('join_admin', () => {
+    socket.join('admins');
+    console.log(`Socket ${socket.id} joined admin room`);
+  });
+  
+  // Join live feed room for real-time updates
+  socket.on('join_livefeed', () => {
+    socket.join('livefeed');
+    console.log(`Socket ${socket.id} joined livefeed room`);
+  });
+});
+
+// Broadcast function for posts updates
+function broadcastPostsUpdate(eventType, data) {
+  io.to('admins').emit('posts_updated', { type: eventType, data });
+  io.to('livefeed').emit('posts_updated', { type: eventType, data });
+}
+
+// Make broadcast function available globally
+global.broadcastPostsUpdate = broadcastPostsUpdate;
+
 initDb().then(() => {
   initMailer();
-  app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server listening on port ${PORT} with WebSocket support`));
 }).catch(err => {
   console.error('Failed to initialize DB', err);
 });
