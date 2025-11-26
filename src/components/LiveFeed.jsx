@@ -140,7 +140,7 @@ const LiveFeed = () => {
                                             className="w-full h-32 object-cover"
                                             loading="lazy"
                                         />
-                                        <div className="absolute top-2 right-2">
+                                        <div className="absolute top-2 left-2">
                                             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(post.fact_check_status)}`}>
                                                 {getStatusIcon(post.fact_check_status)}
                                                 <span className="ml-1 capitalize">{post.fact_check_status}</span>
