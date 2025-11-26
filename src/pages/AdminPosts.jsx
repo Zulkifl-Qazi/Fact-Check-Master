@@ -81,7 +81,7 @@ const AdminPosts = () => {
     setFetchingUrl(true);
     try {
       const response = await axios.post('/api/fetch-post', { url: formData.postUrl });
-      const { title, content, author, imageUrl } = response.data;
+      const { title, content, author, imageUrl, message } = response.data;
       
       setFormData(prev => ({
         ...prev,
@@ -91,10 +91,18 @@ const AdminPosts = () => {
         imageUrl: imageUrl || prev.imageUrl
       }));
       
-      alert('Post data fetched successfully! ✅');
+      if (message) {
+        alert(`✅ URL processed!\n\n${message}\n\nPlease review and edit the content as needed.`);
+      } else {
+        alert('Post data fetched successfully! ✅\n\nPlease review and edit the content as needed.');
+      }
     } catch (error) {
       console.error('Failed to fetch post data:', error);
-      alert('Failed to fetch post data. Please check the URL and try again.');
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`ℹ️ ${error.response.data.message}`);
+      } else {
+        alert('Failed to fetch post data. Please check the URL and try again, or enter the content manually.');
+      }
     } finally {
       setFetchingUrl(false);
     }
@@ -213,7 +221,9 @@ const AdminPosts = () => {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* URL Fetching Section */}
               <div style={{ padding: '1rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Post URL (Optional)</label>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>
+                  Post URL (Optional) - Twitter/X URLs require manual content entry
+                </label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <input
                     type="url"
@@ -229,7 +239,7 @@ const AdminPosts = () => {
                       color: 'white',
                       outline: 'none'
                     }}
-                    placeholder="Paste Twitter, Facebook, Instagram, or any post URL..."
+                    placeholder="Paste any post URL (Twitter/X, Facebook, news articles, etc.)..."
                   />
                   <button
                     type="button"
@@ -246,10 +256,16 @@ const AdminPosts = () => {
                       whiteSpace: 'nowrap'
                     }}
                   >
-                    {fetchingUrl ? 'Fetching...' : 'Fetch Post'}
+                    {fetchingUrl ? 'Processing...' : 'Auto-Fill'}
                   </button>
                 </div>
-                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.5rem', margin: '0.5rem 0 0 0' }}>Automatically extract title, content, author, and images from social media posts</p>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', margin: '0' }}>
+                    📱 <strong>Twitter/X:</strong> Will extract username and provide template - you'll need to manually copy tweet content<br/>
+                    🌐 <strong>Other sites:</strong> Attempts to auto-extract title, content, author, and images<br/>
+                    ✨ <strong>Manual entry:</strong> You can always skip URL fetching and fill everything manually
+                  </p>
+                </div>
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>

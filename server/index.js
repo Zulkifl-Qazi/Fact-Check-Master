@@ -610,17 +610,41 @@ app.post('/api/fetch-post', async (req, res) => {
       return res.status(400).json({ error: 'URL is required' });
     }
 
-    // Fetch the webpage content
+    console.log('Fetching URL:', url);
+
+    // Special handling for X/Twitter URLs
+    if (url.includes('x.com') || url.includes('twitter.com')) {
+      // For X/Twitter, extract basic info from URL and provide fallback
+      const urlParts = url.split('/');
+      const username = urlParts.find((part, index) => urlParts[index - 1] === 'x.com' || urlParts[index - 1] === 'twitter.com');
+      const tweetId = urlParts.find(part => /^\d+$/.test(part));
+      
+      return res.json({
+        title: `Post from @${username || 'Twitter User'}`,
+        content: 'Please manually enter the post content or copy the tweet text.',
+        author: `@${username || 'TwitterUser'}`,
+        imageUrl: '',
+        sourceUrl: url,
+        message: 'Twitter/X URLs require manual content entry due to access restrictions. Please copy the tweet text and paste it in the content field.'
+      });
+    }
+
+    // For other URLs, try to fetch content
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache'
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Cache-Control': 'max-age=0'
       },
-      timeout: 10000
+      timeout: 15000,
+      maxRedirects: 5
     });
 
     const $ = cheerio.load(response.data);
@@ -635,12 +659,14 @@ app.post('/api/fetch-post', async (req, res) => {
     title = $('meta[property="og:title"]').attr('content') ||
             $('meta[name="twitter:title"]').attr('content') ||
             $('title').text() ||
-            $('h1').first().text();
+            $('h1').first().text() ||
+            $('h2').first().text();
 
     // Try different methods to extract content/description
     content = $('meta[property="og:description"]').attr('content') ||
               $('meta[name="twitter:description"]').attr('content') ||
               $('meta[name="description"]').attr('content') ||
+              $('article p').first().text() ||
               $('p').first().text();
 
     // Try different methods to extract author
@@ -648,55 +674,69 @@ app.post('/api/fetch-post', async (req, res) => {
              $('meta[property="article:author"]').attr('content') ||
              $('meta[name="twitter:creator"]').attr('content') ||
              $('.author').text() ||
-             $('[data-testid="User-Names"]').first().text() ||
-             'Unknown Author';
+             $('[rel="author"]').text() ||
+             $('.byline').text();
 
     // Try different methods to extract image
     imageUrl = $('meta[property="og:image"]').attr('content') ||
                $('meta[name="twitter:image"]').attr('content') ||
                $('meta[name="twitter:image:src"]').attr('content') ||
-               $('img').first().attr('src');
+               $('meta[property="og:image:url"]').attr('content') ||
+               $('article img').first().attr('src') ||
+               $('.featured-image img').attr('src') ||
+               $('img[alt*="main"], img[alt*="featured"], img[alt*="hero"]').first().attr('src');
 
     // Clean up extracted data
-    title = title.trim().substring(0, 200);
-    content = content.trim().substring(0, 500);
-    author = author.trim().substring(0, 100);
+    title = title ? title.trim().substring(0, 200) : '';
+    content = content ? content.trim().substring(0, 1000) : '';
+    author = author ? author.trim().substring(0, 100).replace(/^by\s+/i, '') : '';
     
     // Handle relative URLs for images
-    if (imageUrl && imageUrl.startsWith('/')) {
-      const urlObj = new URL(url);
-      imageUrl = urlObj.origin + imageUrl;
+    if (imageUrl) {
+      if (imageUrl.startsWith('//')) {
+        imageUrl = 'https:' + imageUrl;
+      } else if (imageUrl.startsWith('/')) {
+        const urlObj = new URL(url);
+        imageUrl = urlObj.origin + imageUrl;
+      }
     }
 
-    // Fallback values
-    if (!title) title = 'Post from ' + new URL(url).hostname;
-    if (!content) content = 'Content fetched from ' + url;
-    if (!author) author = 'User';
+    // Fallback values with better defaults
+    const hostname = new URL(url).hostname.replace('www.', '');
+    if (!title) title = `Article from ${hostname}`;
+    if (!content) content = 'Please manually enter the content from the linked page.';
+    if (!author) author = hostname;
+
+    console.log('Extracted data:', { title, content, author, imageUrl });
 
     res.json({
       title,
       content,
       author,
-      imageUrl,
+      imageUrl: imageUrl || '',
       sourceUrl: url
     });
 
   } catch (error) {
-    console.error('Error fetching post data:', error);
+    console.error('Error fetching post data:', error.message);
     
-    // Return a more user-friendly error
-    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      return res.status(400).json({ error: 'Unable to connect to the URL. Please check if the URL is correct and accessible.' });
+    // Provide helpful fallback response
+    try {
+      const hostname = new URL(req.body.url).hostname.replace('www.', '');
+      return res.json({
+        title: `Post from ${hostname}`,
+        content: 'Could not automatically extract content. Please manually enter the post content.',
+        author: hostname,
+        imageUrl: '',
+        sourceUrl: req.body.url,
+        message: 'Automatic content extraction failed. Please copy and paste the content manually.'
+      });
+    } catch (urlError) {
+      return res.status(400).json({ 
+        error: 'Invalid URL or unable to fetch content. Please check the URL and try again.',
+        details: error.message
+      });
     }
-    
-    if (error.response && error.response.status === 404) {
-      return res.status(404).json({ error: 'The page was not found. Please check the URL.' });
-    }
-    
-    res.status(500).json({ 
-      error: 'Failed to fetch post data. The website might not allow automated access or the URL format is not supported.',
-      details: error.message
-    });
   }
 });
 
