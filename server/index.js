@@ -58,10 +58,23 @@ function initMailer() {
 }
 
 async function initDb() {
-  db = await open({
-    filename: path.join(__dirname, 'data.db'),
-    driver: sqlite3.Database
-  });
+  console.log('[DB] Initializing database...');
+  console.log('[DB] Current working directory:', process.cwd());
+  console.log('[DB] __dirname:', __dirname);
+  
+  const dbPath = path.join(__dirname, 'data.db');
+  console.log('[DB] Database path:', dbPath);
+  
+  try {
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
+    console.log('[DB] Database opened successfully');
+  } catch (error) {
+    console.error('[DB] Failed to open database:', error);
+    throw error;
+  }
 
   // Ensure FKs
   await db.exec('PRAGMA foreign_keys = ON');
@@ -105,6 +118,7 @@ async function initDb() {
   `);
 
   // Posts table (for admin-created posts)
+  console.log('[DB] Creating posts table...');
   await db.exec(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -119,6 +133,7 @@ async function initDb() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  console.log('[DB] Posts table created successfully');
 
   // Add new columns to existing posts table if they don't exist
   try {
@@ -531,13 +546,15 @@ app.post('/api/replies', async (req, res) => {
 
 // Posts API endpoints
 app.get('/api/posts', async (req, res) => {
+  console.log('[API] GET /api/posts called');
   try {
     const posts = await db.all(
       'SELECT * FROM posts WHERE status = "published" ORDER BY created_at DESC'
     );
+    console.log('[API] Found', posts.length, 'posts');
     res.status(200).json(posts);
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('[API] Database error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
