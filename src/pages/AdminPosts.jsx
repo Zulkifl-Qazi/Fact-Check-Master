@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { io } from 'socket.io-client';
 import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
 
 const AdminPosts = () => {
@@ -20,27 +19,15 @@ const AdminPosts = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
-  const [socket, setSocket] = useState(null);
 
-  // Initialize WebSocket connection
+  // Auto-refresh posts every 15 seconds for live collaboration
   useEffect(() => {
-    const socketUrl = process.env.NODE_ENV === 'production' 
-      ? window.location.origin 
-      : 'http://localhost:3001';
-    const newSocket = io(socketUrl);
-    setSocket(newSocket);
-    
-    // Join admin room for real-time updates
-    newSocket.emit('join_admin');
-    
-    // Listen for real-time post updates from other admins
-    newSocket.on('posts_updated', (update) => {
-      console.log('Received posts update:', update);
-      loadPosts(); // Reload posts when any admin makes changes
-    });
+    const interval = setInterval(() => {
+      loadPosts();
+    }, 15000); // Refresh every 15 seconds
 
     return () => {
-      newSocket.close();
+      clearInterval(interval);
     };
   }, []);
 

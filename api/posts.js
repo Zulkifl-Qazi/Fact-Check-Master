@@ -1,54 +1,60 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// Simple in-memory storage for Vercel serverless functions
+// In production, you'd want to use a database service like Supabase, MongoDB Atlas, etc.
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-let db;
-
-async function getDb() {
-  if (!db) {
-    // For Vercel, create an in-memory database since file system is read-only
-    const dbPath = process.env.NODE_ENV === 'production' ? ':memory:' : path.join(__dirname, '../server/data.db');
-    
-    db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    });
-    
-    // Create posts table if it doesn't exist
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS posts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        author TEXT DEFAULT 'Admin',
-        status TEXT DEFAULT 'published',
-        fact_check_status TEXT DEFAULT 'verified',
-        image_url TEXT,
-        source_url TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    // Add new columns to existing table if they don't exist
-    try {
-      await db.exec('ALTER TABLE posts ADD COLUMN image_url TEXT');
-    } catch (e) {
-      // Column already exists
-    }
-    
-    try {
-      await db.exec('ALTER TABLE posts ADD COLUMN source_url TEXT');
-    } catch (e) {
-      // Column already exists
-    }
+// Sample data that will be returned for demo purposes
+const SAMPLE_POSTS = [
+  {
+    id: 1,
+    title: "Breaking: Fact Check Alert",
+    content: "🚨 MISINFORMATION ALERT: Claims circulating about recent events have been fact-checked and found to be false. Always verify information with reliable sources. #FactCheck #TruthMatters",
+    author: "Fact Check Master",
+    status: "published",
+    fact_check_status: "verified",
+    image_url: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    source_url: "https://factcheckmaster.com",
+    created_at: "2024-11-20T10:00:00Z",
+    updated_at: "2024-11-20T10:00:00Z"
+  },
+  {
+    id: 2,
+    title: "Election Security Update",
+    content: "📊 VERIFIED: Election security measures are working as intended. Independent audits confirm system integrity. Don't fall for disinformation campaigns. #ElectionSecurity",
+    author: "Fact Check Master",
+    status: "published",
+    fact_check_status: "verified",
+    image_url: "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    source_url: "https://factcheckmaster.com",
+    created_at: "2024-11-19T15:30:00Z",
+    updated_at: "2024-11-19T15:30:00Z"
+  },
+  {
+    id: 3,
+    title: "Health Information Verified",
+    content: "🏥 FACT-CHECKED: Recent health claims trending on social media have been reviewed by medical experts. The information is accurate and backed by peer-reviewed research. #HealthFacts",
+    author: "Fact Check Master",
+    status: "published",
+    fact_check_status: "verified",
+    image_url: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    source_url: "https://factcheckmaster.com",
+    created_at: "2024-11-18T09:15:00Z",
+    updated_at: "2024-11-18T09:15:00Z"
+  },
+  {
+    id: 4,
+    title: "Climate Data Confirmation",
+    content: "🌍 VERIFIED DATA: Latest climate statistics being questioned online have been confirmed by multiple international agencies. The data is accurate and transparent. #ClimateScience",
+    author: "Fact Check Master",
+    status: "published",
+    fact_check_status: "verified",
+    image_url: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    source_url: "https://factcheckmaster.com",
+    created_at: "2024-11-17T14:45:00Z",
+    updated_at: "2024-11-17T14:45:00Z"
   }
-  return db;
-}
+];
+
+// In a real app, you'd store this in a persistent database
+let posts = [...SAMPLE_POSTS];
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -61,65 +67,72 @@ export default async function handler(req, res) {
     return;
   }
 
+  console.log(`[Vercel API] ${req.method} /api/posts`);
+
   try {
-    const database = await getDb();
-
     if (req.method === 'GET') {
-      // Get all published posts
-      const posts = await database.all(
-        'SELECT * FROM posts WHERE status = ? ORDER BY created_at DESC',
-        ['published']
-      );
-
-      res.status(200).json(posts);
+      // Return all published posts
+      const publishedPosts = posts.filter(post => post.status === 'published');
+      console.log(`[Vercel API] Returning ${publishedPosts.length} posts`);
+      res.status(200).json(publishedPosts);
 
     } else if (req.method === 'POST') {
       // Create new post
-      const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
+      const { title, content, author = 'Fact Check Master', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
 
-      const result = await database.run(
-        'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url) VALUES (?, ?, ?, ?, ?, ?)',
-        [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null]
-      );
+      const newPost = {
+        id: posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1,
+        title: title.trim(),
+        content: content.trim(),
+        author: author.trim(),
+        status: 'published',
+        fact_check_status,
+        image_url: imageUrl || null,
+        source_url: postUrl || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
+      posts.unshift(newPost); // Add to beginning of array
+      
+      console.log(`[Vercel API] Created post with ID: ${newPost.id}`);
       res.status(201).json({ 
-        id: result.lastID,
+        id: newPost.id,
         success: true,
         message: 'Post created successfully'
       });
 
     } else if (req.method === 'DELETE') {
-      // Delete post (extract ID from query or URL)
-      const postId = req.query.id || req.url.split('/').pop();
+      // Delete post
+      const postId = parseInt(req.query.id) || parseInt(req.url.split('/').pop());
       
       if (!postId) {
         return res.status(400).json({ error: 'Post ID is required' });
       }
 
-      const result = await database.run(
-        'DELETE FROM posts WHERE id = ?',
-        [postId]
-      );
+      const initialLength = posts.length;
+      posts = posts.filter(post => post.id !== postId);
 
-      if (result.changes === 0) {
-        return res.status(404).json({ error: 'Post not found' });
+      if (posts.length < initialLength) {
+        console.log(`[Vercel API] Deleted post with ID: ${postId}`);
+        res.status(200).json({ 
+          success: true,
+          message: 'Post deleted successfully'
+        });
+      } else {
+        res.status(404).json({ error: 'Post not found' });
       }
-
-      res.status(200).json({ 
-        success: true,
-        message: 'Post deleted successfully'
-      });
 
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
 
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('[Vercel API] Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
