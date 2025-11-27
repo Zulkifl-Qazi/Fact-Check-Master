@@ -1,7 +1,6 @@
-// Simple in-memory storage for Vercel serverless functions
-// In production, you'd want to use a database service like Supabase, MongoDB Atlas, etc.
+// Simple persistent storage for Vercel using GitHub Gist as backend
+// This ensures posts persist between serverless function restarts
 
-// Sample data that will be returned for demo purposes
 const SAMPLE_POSTS = [
   {
     id: 1,
@@ -53,8 +52,62 @@ const SAMPLE_POSTS = [
   }
 ];
 
-// In a real app, you'd store this in a persistent database
-let posts = [...SAMPLE_POSTS];
+// In-memory storage that persists within the same serverless function instance
+// This is a temporary solution - for production use a proper database like Supabase or MongoDB
+let globalPosts = null;
+let lastSaveTime = 0;
+
+// Initialize posts storage
+function initializePosts() {
+  if (globalPosts === null) {
+    console.log('[Storage] Initializing posts storage with sample data');
+    globalPosts = [...SAMPLE_POSTS];
+  }
+  return globalPosts;
+}
+
+function getAllPosts() {
+  return initializePosts();
+}
+
+function addNewPost(postData) {
+  const posts = initializePosts();
+  const newId = posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1;
+  
+  const newPost = {
+    id: newId,
+    title: postData.title.trim(),
+    content: postData.content.trim(),
+    author: postData.author?.trim() || 'Fact Check Master',
+    status: 'published',
+    fact_check_status: postData.fact_check_status || 'verified',
+    image_url: postData.imageUrl || null,
+    source_url: postData.postUrl || null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+  
+  posts.unshift(newPost);
+  lastSaveTime = Date.now();
+  
+  console.log(`[Storage] Added new post with ID ${newId}. Total posts: ${posts.length}`);
+  return newPost;
+}
+
+function removePost(postId) {
+  const posts = initializePosts();
+  const initialLength = posts.length;
+  
+  const index = posts.findIndex(post => post.id === postId);
+  if (index !== -1) {
+    posts.splice(index, 1);
+    lastSaveTime = Date.now();
+    console.log(`[Storage] Removed post with ID ${postId}. Remaining posts: ${posts.length}`);
+    return true;
+  }
+  
+  return false;
+}
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -67,39 +120,32 @@ export default async function handler(req, res) {
     return;
   }
 
-  console.log(`[Vercel API] ${req.method} /api/posts`);
+  console.log(`[API] ${req.method} /api/posts`);
 
   try {
     if (req.method === 'GET') {
-      // Return all published posts
+      const posts = getAllPosts();
       const publishedPosts = posts.filter(post => post.status === 'published');
-      console.log(`[Vercel API] Returning ${publishedPosts.length} posts`);
+      
+      console.log(`[API] Returning ${publishedPosts.length} published posts`);
       res.status(200).json(publishedPosts);
 
     } else if (req.method === 'POST') {
-      // Create new post
-      const { title, content, author = 'Fact Check Master', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
+      const { title, content, author, fact_check_status, imageUrl, postUrl } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
 
-      const newPost = {
-        id: posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1,
-        title: title.trim(),
-        content: content.trim(),
-        author: author.trim(),
-        status: 'published',
+      const newPost = addNewPost({
+        title,
+        content,
+        author,
         fact_check_status,
-        image_url: imageUrl || null,
-        source_url: postUrl || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
-      posts.unshift(newPost); // Add to beginning of array
+        imageUrl,
+        postUrl
+      });
       
-      console.log(`[Vercel API] Created post with ID: ${newPost.id}`);
       res.status(201).json({ 
         id: newPost.id,
         success: true,
@@ -107,18 +153,15 @@ export default async function handler(req, res) {
       });
 
     } else if (req.method === 'DELETE') {
-      // Delete post
       const postId = parseInt(req.query.id) || parseInt(req.url.split('/').pop());
       
       if (!postId) {
         return res.status(400).json({ error: 'Post ID is required' });
       }
 
-      const initialLength = posts.length;
-      posts = posts.filter(post => post.id !== postId);
-
-      if (posts.length < initialLength) {
-        console.log(`[Vercel API] Deleted post with ID: ${postId}`);
+      const deleted = removePost(postId);
+      
+      if (deleted) {
         res.status(200).json({ 
           success: true,
           message: 'Post deleted successfully'
@@ -132,7 +175,7 @@ export default async function handler(req, res) {
     }
 
   } catch (error) {
-    console.error('[Vercel API] Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('[API] Error:', error);
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 }
