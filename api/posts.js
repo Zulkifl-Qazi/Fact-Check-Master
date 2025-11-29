@@ -59,18 +59,13 @@ async function getAllPosts() {
 
     if (error) throw error;
     
-    // If no posts exist, initialize with sample data
-    if (!data || data.length === 0) {
-      console.log('[Database] No posts found, initializing with sample data...');
-      await initializeSamplePosts();
-      return await getAllPosts(); // Retry after initialization
-    }
-
-    console.log(`[Database] Retrieved ${data.length} posts from Supabase`);
-    return data;
+    // Return posts from database (even if empty)
+    console.log(`[Database] Retrieved ${data ? data.length : 0} posts from Supabase`);
+    return data || [];
   } catch (error) {
     console.error('[Database] Error fetching posts:', error);
-    // Fallback to sample data if database is unavailable
+    // Only use fallback sample data if database connection fails completely
+    console.log('[Database] Using fallback sample data due to connection error');
     return SAMPLE_POSTS.map((post, index) => ({
       id: index + 1,
       ...post,
