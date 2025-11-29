@@ -169,7 +169,7 @@ const AdminPosts = () => {
             </button>
             <div>
               <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>Posts Management</h1>
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Create and manage posts for the Live Feed</p>
+              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Create and manage posts for the Latest News</p>
             </div>
           </div>
           <button

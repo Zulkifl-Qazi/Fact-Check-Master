@@ -99,7 +99,7 @@ const Footer = () => {
               onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
               onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
-              Live Feed
+              Latest News
             </button>
             <button 
               onClick={() => handleNavigation('/#about')}

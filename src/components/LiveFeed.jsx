@@ -71,7 +71,7 @@ const LiveFeed = () => {
                 className="bg-slate-800 rounded-lg shadow-lg p-6 text-center border border-slate-700"
             >
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p className="text-gray-300">Loading live feed...</p>
+                <p className="text-gray-300">Loading latest news...</p>
             </motion.div>
         );
     }
