@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaRss, FaCheckCircle, FaExclamationTriangle, FaTimes, FaEye } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye } from 'react-icons/fa';
 
 const LiveFeed = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedPost, setSelectedPost] = useState(null);
+    const navigate = useNavigate();
 
     const loadPosts = async () => {
         try {
@@ -64,33 +65,9 @@ const LiveFeed = () => {
         return badges[status] || 'bg-gray-100 text-gray-800 border-gray-200';
     };
 
-    const openModal = (post) => {
-        console.log('Opening modal for post:', post);
-        setSelectedPost(post);
-        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    const handleViewMore = (post) => {
+        navigate(`/post/${post.id}`);
     };
-
-    const closeModal = () => {
-        setSelectedPost(null);
-        document.body.style.overflow = 'unset'; // Restore scroll
-    };
-
-    // Close modal on escape key
-    useEffect(() => {
-        const handleEscape = (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        };
-        
-        if (selectedPost) {
-            document.addEventListener('keydown', handleEscape);
-        }
-        
-        return () => {
-            document.removeEventListener('keydown', handleEscape);
-        };
-    }, [selectedPost]);
 
     if (loading) {
         return (
@@ -194,7 +171,7 @@ const LiveFeed = () => {
                                     
                                     <div className="flex items-center justify-between">
                                         <button
-                                            onClick={() => openModal(post)}
+                                            onClick={() => handleViewMore(post)}
                                             style={{
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
@@ -256,200 +233,6 @@ const LiveFeed = () => {
                     </div>
                 )}
             </div>
-
-            {/* Modal for full post view */}
-            {selectedPost && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        zIndex: 50,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '16px'
-                    }}
-                    onClick={closeModal}
-                >
-                    <div
-                        style={{
-                            position: 'relative',
-                            backgroundColor: '#1e293b',
-                            borderRadius: '16px',
-                            maxWidth: '900px',
-                            width: '100%',
-                            maxHeight: '90vh',
-                            overflowY: 'auto',
-                            border: '1px solid #334155',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Close button */}
-                        <button
-                            onClick={closeModal}
-                            style={{
-                                position: 'absolute',
-                                top: '16px',
-                                right: '16px',
-                                zIndex: 10,
-                                padding: '8px',
-                                backgroundColor: '#475569',
-                                borderRadius: '50%',
-                                border: 'none',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                transition: 'background-color 0.2s'
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#64748b'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#475569'}
-                        >
-                            <FaTimes style={{ width: '16px', height: '16px', color: 'white' }} />
-                        </button>
-
-                        {/* Modal content */}
-                        <div style={{ padding: '32px' }}>
-                            {/* Status badge */}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                                <span 
-                                    className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${getStatusBadge(selectedPost.fact_check_status)}`}
-                                >
-                                    {getStatusIcon(selectedPost.fact_check_status)}
-                                    <span style={{ marginLeft: '8px', textTransform: 'capitalize' }}>{selectedPost.fact_check_status}</span>
-                                </span>
-                            </div>
-
-                            {/* Image */}
-                            {selectedPost.image_url && (
-                                <div style={{ marginBottom: '24px' }}>
-                                    <img
-                                        src={selectedPost.image_url}
-                                        alt={selectedPost.title}
-                                        style={{
-                                            width: '100%',
-                                            maxHeight: '320px',
-                                            objectFit: 'cover',
-                                            borderRadius: '8px'
-                                        }}
-                                    />
-                                </div>
-                            )}
-
-                            {/* Title */}
-                            <h1 style={{
-                                fontSize: '28px',
-                                fontWeight: 'bold',
-                                color: 'white',
-                                marginBottom: '16px',
-                                lineHeight: '1.3'
-                            }}>
-                                {selectedPost.title}
-                            </h1>
-
-                            {/* Meta info */}
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                color: '#9ca3af',
-                                fontSize: '14px',
-                                marginBottom: '24px',
-                                gap: '16px'
-                            }}>
-                                <span style={{ fontWeight: '500' }}>By {selectedPost.author || 'Admin'}</span>
-                                <span>•</span>
-                                <span>{new Date(selectedPost.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}</span>
-                            </div>
-
-                            {/* Content */}
-                            <div style={{
-                                color: '#d1d5db',
-                                lineHeight: '1.6',
-                                fontSize: '16px',
-                                marginBottom: '32px',
-                                whiteSpace: 'pre-wrap'
-                            }}>
-                                {selectedPost.content}
-                            </div>
-
-                            {/* Source link */}
-                            {selectedPost.source_url && (
-                                <div style={{
-                                    paddingTop: '24px',
-                                    borderTop: '1px solid #334155'
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '18px',
-                                        fontWeight: '600',
-                                        color: 'white',
-                                        marginBottom: '12px'
-                                    }}>Source</h3>
-                                    <a
-                                        href={selectedPost.source_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            padding: '10px 16px',
-                                            backgroundColor: '#2563eb',
-                                            color: 'white',
-                                            fontWeight: '500',
-                                            borderRadius: '8px',
-                                            textDecoration: 'none',
-                                            transition: 'background-color 0.2s'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
-                                    >
-                                        Visit Original Source
-                                        <svg style={{ marginLeft: '8px', width: '16px', height: '16px' }} fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
-                                        </svg>
-                                    </a>
-                                </div>
-                            )}
-
-                            {/* Close button at bottom */}
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'flex-end',
-                                paddingTop: '24px',
-                                borderTop: '1px solid #334155',
-                                marginTop: '32px'
-                            }}>
-                                <button
-                                    onClick={closeModal}
-                                    style={{
-                                        padding: '8px 24px',
-                                        backgroundColor: '#475569',
-                                        color: 'white',
-                                        fontWeight: '500',
-                                        borderRadius: '8px',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#334155'}
-                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#475569'}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </section>
     );
 };

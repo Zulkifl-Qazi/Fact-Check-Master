@@ -7,6 +7,7 @@ import Contact from './pages/Contact';
 import AdminFeedback from './pages/AdminFeedback';
 import AdminPosts from './pages/AdminPosts';
 import AdminLogin from './pages/AdminLogin';
+import PostView from './pages/PostView';
 import Footer from './components/Footer';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/post/:id" element={<PostView />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/feedback"
