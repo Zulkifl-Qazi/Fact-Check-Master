@@ -83,7 +83,7 @@ const Footer = () => {
               Home
             </button>
             <button 
-              onClick={() => handleNavigation('/#fact-checks')}
+              onClick={() => handleNavigation('/#live-feed')}
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
