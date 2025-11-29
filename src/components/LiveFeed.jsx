@@ -65,6 +65,7 @@ const LiveFeed = () => {
     };
 
     const openModal = (post) => {
+        console.log('Opening modal for post:', post);
         setSelectedPost(post);
         document.body.style.overflow = 'hidden'; // Prevent background scroll
     };
@@ -194,9 +195,24 @@ const LiveFeed = () => {
                                     <div className="flex items-center justify-between">
                                         <button
                                             onClick={() => openModal(post)}
-                                            className="inline-flex items-center px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                padding: '8px 12px',
+                                                backgroundColor: '#9333ea',
+                                                color: 'white',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                borderRadius: '8px',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                transition: 'background-color 0.2s',
+                                                outline: 'none'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#9333ea'}
                                         >
-                                            <FaEye className="mr-1.5 w-3 h-3" />
+                                            <FaEye style={{ marginRight: '6px', width: '12px', height: '12px' }} />
                                             View More
                                         </button>
                                         
@@ -205,10 +221,20 @@ const LiveFeed = () => {
                                                 href={post.source_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+                                                style={{
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    color: '#60a5fa',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500',
+                                                    textDecoration: 'none',
+                                                    transition: 'color 0.2s'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.color = '#93c5fd'}
+                                                onMouseLeave={(e) => e.target.style.color = '#60a5fa'}
                                             >
                                                 Source
-                                                <svg className="ml-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <svg style={{ marginLeft: '4px', width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                                     <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
                                                 </svg>
