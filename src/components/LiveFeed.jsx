@@ -198,21 +198,30 @@ const LiveFeed = () => {
                                             style={{
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
-                                                padding: '8px 12px',
-                                                backgroundColor: '#9333ea',
+                                                padding: '10px 16px',
+                                                backgroundColor: '#8b5cf6',
                                                 color: 'white',
                                                 fontSize: '14px',
-                                                fontWeight: '500',
+                                                fontWeight: '600',
                                                 borderRadius: '8px',
                                                 border: 'none',
                                                 cursor: 'pointer',
-                                                transition: 'background-color 0.2s',
-                                                outline: 'none'
+                                                transition: 'all 0.2s',
+                                                outline: 'none',
+                                                boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
                                             }}
-                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
-                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#9333ea'}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#7c3aed';
+                                                e.target.style.transform = 'translateY(-1px)';
+                                                e.target.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.4)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = '#8b5cf6';
+                                                e.target.style.transform = 'translateY(0px)';
+                                                e.target.style.boxShadow = '0 2px 4px rgba(139, 92, 246, 0.3)';
+                                            }}
                                         >
-                                            <FaEye style={{ marginRight: '6px', width: '12px', height: '12px' }} />
+                                            <FaEye style={{ marginRight: '8px', width: '14px', height: '14px' }} />
                                             View More
                                         </button>
                                         
@@ -249,118 +258,198 @@ const LiveFeed = () => {
             </div>
 
             {/* Modal for full post view */}
-            <AnimatePresence>
-                {selectedPost && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 lg:px-8"
-                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
-                        onClick={closeModal}
+            {selectedPost && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        zIndex: 50,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '16px'
+                    }}
+                    onClick={closeModal}
+                >
+                    <div
+                        style={{
+                            position: 'relative',
+                            backgroundColor: '#1e293b',
+                            borderRadius: '16px',
+                            maxWidth: '900px',
+                            width: '100%',
+                            maxHeight: '90vh',
+                            overflowY: 'auto',
+                            border: '1px solid #334155',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="relative bg-slate-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-700"
-                            onClick={(e) => e.stopPropagation()}
+                        {/* Close button */}
+                        <button
+                            onClick={closeModal}
+                            style={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                zIndex: 10,
+                                padding: '8px',
+                                backgroundColor: '#475569',
+                                borderRadius: '50%',
+                                border: 'none',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'background-color 0.2s'
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#64748b'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#475569'}
                         >
-                            {/* Close button */}
-                            <button
-                                onClick={closeModal}
-                                className="absolute top-4 right-4 z-10 p-2 bg-slate-700 hover:bg-slate-600 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            >
-                                <FaTimes className="w-5 h-5 text-white" />
-                            </button>
+                            <FaTimes style={{ width: '16px', height: '16px', color: 'white' }} />
+                        </button>
 
-                            {/* Modal content */}
-                            <div className="p-6 sm:p-8">
-                                {/* Status badge */}
-                                <div className="flex justify-between items-start mb-6">
-                                    <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${getStatusBadge(selectedPost.fact_check_status)}`}>
-                                        {getStatusIcon(selectedPost.fact_check_status)}
-                                        <span className="ml-2 capitalize">{selectedPost.fact_check_status}</span>
-                                    </span>
-                                </div>
-
-                                {/* Image */}
-                                {selectedPost.image_url && (
-                                    <div className="mb-6">
-                                        <img
-                                            src={selectedPost.image_url}
-                                            alt={selectedPost.title}
-                                            className="w-full max-h-80 object-cover rounded-lg"
-                                        />
-                                    </div>
-                                )}
-
-                                {/* Title */}
-                                <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
-                                    {selectedPost.title}
-                                </h1>
-
-                                {/* Meta info */}
-                                <div className="flex items-center text-gray-400 text-sm mb-6 space-x-4">
-                                    <span className="flex items-center">
-                                        <span className="font-medium">By {selectedPost.author || 'Admin'}</span>
-                                    </span>
-                                    <span>•</span>
-                                    <span>{new Date(selectedPost.created_at).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })}</span>
-                                    {selectedPost.updated_at && selectedPost.updated_at !== selectedPost.created_at && (
-                                        <>
-                                            <span>•</span>
-                                            <span className="text-yellow-400">Updated {new Date(selectedPost.updated_at).toLocaleDateString()}</span>
-                                        </>
-                                    )}
-                                </div>
-
-                                {/* Content */}
-                                <div className="prose prose-invert prose-slate max-w-none mb-8">
-                                    <div className="text-gray-300 leading-relaxed text-base whitespace-pre-wrap">
-                                        {selectedPost.content}
-                                    </div>
-                                </div>
-
-                                {/* Source link */}
-                                {selectedPost.source_url && (
-                                    <div className="pt-6 border-t border-slate-700">
-                                        <h3 className="text-lg font-semibold text-white mb-3">Source</h3>
-                                        <a
-                                            href={selectedPost.source_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800"
-                                        >
-                                            Visit Original Source
-                                            <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                                                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                )}
-
-                                {/* Action buttons */}
-                                <div className="flex justify-end pt-6 border-t border-slate-700 mt-8">
-                                    <button
-                                        onClick={closeModal}
-                                        className="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-800"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
+                        {/* Modal content */}
+                        <div style={{ padding: '32px' }}>
+                            {/* Status badge */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                                <span 
+                                    className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${getStatusBadge(selectedPost.fact_check_status)}`}
+                                >
+                                    {getStatusIcon(selectedPost.fact_check_status)}
+                                    <span style={{ marginLeft: '8px', textTransform: 'capitalize' }}>{selectedPost.fact_check_status}</span>
+                                </span>
                             </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+
+                            {/* Image */}
+                            {selectedPost.image_url && (
+                                <div style={{ marginBottom: '24px' }}>
+                                    <img
+                                        src={selectedPost.image_url}
+                                        alt={selectedPost.title}
+                                        style={{
+                                            width: '100%',
+                                            maxHeight: '320px',
+                                            objectFit: 'cover',
+                                            borderRadius: '8px'
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Title */}
+                            <h1 style={{
+                                fontSize: '28px',
+                                fontWeight: 'bold',
+                                color: 'white',
+                                marginBottom: '16px',
+                                lineHeight: '1.3'
+                            }}>
+                                {selectedPost.title}
+                            </h1>
+
+                            {/* Meta info */}
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                color: '#9ca3af',
+                                fontSize: '14px',
+                                marginBottom: '24px',
+                                gap: '16px'
+                            }}>
+                                <span style={{ fontWeight: '500' }}>By {selectedPost.author || 'Admin'}</span>
+                                <span>•</span>
+                                <span>{new Date(selectedPost.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                })}</span>
+                            </div>
+
+                            {/* Content */}
+                            <div style={{
+                                color: '#d1d5db',
+                                lineHeight: '1.6',
+                                fontSize: '16px',
+                                marginBottom: '32px',
+                                whiteSpace: 'pre-wrap'
+                            }}>
+                                {selectedPost.content}
+                            </div>
+
+                            {/* Source link */}
+                            {selectedPost.source_url && (
+                                <div style={{
+                                    paddingTop: '24px',
+                                    borderTop: '1px solid #334155'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        color: 'white',
+                                        marginBottom: '12px'
+                                    }}>Source</h3>
+                                    <a
+                                        href={selectedPost.source_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            padding: '10px 16px',
+                                            backgroundColor: '#2563eb',
+                                            color: 'white',
+                                            fontWeight: '500',
+                                            borderRadius: '8px',
+                                            textDecoration: 'none',
+                                            transition: 'background-color 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+                                    >
+                                        Visit Original Source
+                                        <svg style={{ marginLeft: '8px', width: '16px', height: '16px' }} fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                            <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            )}
+
+                            {/* Close button at bottom */}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                paddingTop: '24px',
+                                borderTop: '1px solid #334155',
+                                marginTop: '32px'
+                            }}>
+                                <button
+                                    onClick={closeModal}
+                                    style={{
+                                        padding: '8px 24px',
+                                        backgroundColor: '#475569',
+                                        color: 'white',
+                                        fontWeight: '500',
+                                        borderRadius: '8px',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#334155'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#475569'}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
