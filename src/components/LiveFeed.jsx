@@ -106,7 +106,7 @@ const LiveFeed = () => {
                     className="text-center mb-12"
                 >
                     <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                        Live Fact Check Feed
+                        Latest News
                     </h2>
                     <p className="mt-4 text-lg text-gray-300">
                         Real-time updates on the latest fact-checks and verified information

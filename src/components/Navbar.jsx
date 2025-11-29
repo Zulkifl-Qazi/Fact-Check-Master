@@ -211,7 +211,7 @@ const Navbar = () => {
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
             onClick={handleLinkClick}
           >
-            📱 Live Feed
+            📱 Latest News
           </Link>
           <Link 
             to="/#about" 
