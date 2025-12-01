@@ -79,8 +79,8 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        // Navigate with hash - the ScrollToHash component in App.jsx will handle the scroll
-        navigate('/#live-feed');
+        // Use window.location to navigate with hash
+        window.location.href = '/#live-feed';
     };
 
     if (loading) {
