@@ -94,11 +94,35 @@ export default function AdminFeedback() {
   };
 
   return (
-    <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', paddingTop: '5rem', paddingBottom: '5rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 800 }}>Feedback Admin</h1>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+    <section style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', 
+      paddingTop: '5rem', 
+      paddingBottom: '5rem', 
+      paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
+      paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'flex-start', 
+          justifyContent: 'space-between', 
+          marginBottom: 16,
+          flexWrap: 'wrap',
+          gap: '1rem'
+        }}>
+          <h1 style={{ 
+            fontSize: 'clamp(1.5rem, 4vw, 1.75rem)', 
+            fontWeight: 800,
+            color: 'white',
+            margin: '0'
+          }}>Feedback Admin</h1>
+          <div style={{ 
+            display: 'flex', 
+            gap: 8, 
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}>
             <button
               onClick={() => navigate('/admin/posts')}
               style={{
@@ -116,8 +140,16 @@ export default function AdminFeedback() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search name, email, subject, or text"
-              style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.2)', background: '#111827', color: 'white', width: 320 }}
+              placeholder="Search feedback..."
+              style={{ 
+                padding: '10px 14px', 
+                borderRadius: 10, 
+                border: '1px solid rgba(255,255,255,0.2)', 
+                background: '#111827', 
+                color: 'white', 
+                width: 'clamp(200px, 30vw, 320px)',
+                fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+              }}
             />
             <button
               onClick={() => { try { localStorage.removeItem('af_logged_in'); localStorage.removeItem('af_admin_key'); } catch {} navigate('/admin/login', { replace: true }); }}

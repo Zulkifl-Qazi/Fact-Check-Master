@@ -20,7 +20,20 @@ const Footer = () => {
       zIndex: 10
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '80px', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Main Footer Content */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          minHeight: '80px', 
+          flexWrap: 'wrap', 
+          gap: '1.5rem',
+          '@media (max-width: 768px)': {
+            flexDirection: 'column',
+            textAlign: 'center',
+            gap: '1rem'
+          }
+        }}>
           
           {/* Logo Section - Similar to Navbar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -56,13 +69,32 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Navigation Links - Working Version */}
-          <div style={{ 
+          {/* Navigation Links - Mobile Responsive */}
+          <div className="footer-nav" style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '2rem',
-            flexWrap: 'wrap'
+            gap: '0.75rem',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            order: '2',
+            flexBasis: '100%',
+            minWidth: 'auto'
           }}>
+            <style>{`
+              @media (min-width: 768px) {
+                .footer-nav {
+                  order: unset !important;
+                  flex-basis: auto !important;
+                  gap: 1.5rem !important;
+                }
+              }
+              @media (max-width: 767px) {
+                .footer-nav button {
+                  font-size: 0.8rem !important;
+                  padding: 4px 8px !important;
+                }
+              }
+            `}</style>
             <button 
               onClick={() => handleNavigation('/#top')}
               style={{ 
@@ -71,11 +103,12 @@ const Footer = () => {
                 color: 'rgba(255, 255, 255, 0.7)', 
                 background: 'none',
                 border: 'none',
-                padding: '8px 12px',
+                padding: '6px 10px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
                 cursor: 'pointer',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                whiteSpace: 'nowrap'
               }} 
               onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
               onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
@@ -102,19 +135,21 @@ const Footer = () => {
               Latest News
             </button>
             <button 
-              onClick={() => handleNavigation('/#about')}
+              onClick={() => handleNavigation('/#top')}
+              className="footer-nav-btn"
               style={{ 
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: 'rgba(255, 255, 255, 0.7)', 
                 background: 'none',
                 border: 'none',
-                padding: '8px 12px',
+                padding: '6px 10px',
                 textDecoration: 'none', 
                 transition: 'all 200ms',
                 cursor: 'pointer',
-                borderRadius: '4px'
-              }} 
+                borderRadius: '4px',
+                whiteSpace: 'nowrap'
+              }}
               onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
               onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
@@ -141,8 +176,14 @@ const Footer = () => {
             </button>
           </div>
 
-          {/* Social Media - Styled like Navbar buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Social Media - Mobile Optimized */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem',
+            flexWrap: 'wrap',
+            justifyContent: 'center'
+          }}>
             <a 
               href="https://twitter.com/fcheckmaster" 
               target="_blank" 

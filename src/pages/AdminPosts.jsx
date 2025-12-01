@@ -148,11 +148,29 @@ const AdminPosts = () => {
   };
 
   return (
-    <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', paddingTop: '5rem', paddingBottom: '5rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <section style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', 
+      paddingTop: '5rem', 
+      paddingBottom: '5rem', 
+      paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
+      paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
+    }}>
+      <div style={{ 
+        maxWidth: 1200, 
+        margin: '0 auto',
+        width: '100%'
+      }}>
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'flex-start', 
+          justifyContent: 'space-between', 
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          gap: '1rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
             <button
               onClick={() => navigate('/admin/feedback')}
               style={{
@@ -162,14 +180,25 @@ const AdminPosts = () => {
                 border: 'none',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                fontSize: '0.875rem'
+                fontSize: '0.875rem',
+                whiteSpace: 'nowrap'
               }}
             >
               ← Back to Feedback
             </button>
-            <div>
-              <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>Posts Management</h1>
-              <p style={{ color: 'rgba(255,255,255,0.7)' }}>Create and manage posts for the Latest News</p>
+            <div style={{ minWidth: '0' }}>
+              <h1 style={{ 
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
+                fontWeight: '800', 
+                color: 'white', 
+                marginBottom: '0.5rem',
+                lineHeight: '1.2'
+              }}>Posts Management</h1>
+              <p style={{ 
+                color: 'rgba(255,255,255,0.7)', 
+                fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+                margin: '0'
+              }}>Create and manage posts for the Latest News</p>
             </div>
           </div>
           <button
@@ -180,13 +209,16 @@ const AdminPosts = () => {
               gap: '0.5rem',
               background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))',
               color: 'white',
-              padding: '0.75rem 1.5rem',
+              padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
               borderRadius: '12px',
               border: 'none',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s',
-              boxShadow: '0 8px 25px rgba(147, 51, 234, 0.4)'
+              boxShadow: '0 8px 25px rgba(147, 51, 234, 0.4)',
+              fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+              whiteSpace: 'nowrap',
+              flexShrink: '0'
             }}
           >
             <FaPlus />
