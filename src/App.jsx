@@ -73,15 +73,23 @@ function ScrollToHash() {
     // If a hash exists, smooth-scroll to it with an offset for the sticky navbar
     if (location.hash) {
       const id = location.hash.replace('#', '');
-      setTimeout(() => {
+      
+      // Retry mechanism to ensure element is in DOM
+      const scrollToElement = (attempts = 0) => {
         const el = document.getElementById(id);
         if (el) {
           const navOffset = 80; // approx navbar height
           const rect = el.getBoundingClientRect();
           const absoluteY = rect.top + window.scrollY - navOffset;
           window.scrollTo({ top: absoluteY < 0 ? 0 : absoluteY, behavior: 'smooth' });
+        } else if (attempts < 10) {
+          // Retry after 100ms if element not found, up to 10 times (1 second total)
+          setTimeout(() => scrollToElement(attempts + 1), 100);
         }
-      }, 100);
+      };
+      
+      // Start scrolling attempt after initial delay
+      setTimeout(() => scrollToElement(), 150);
     }
     // Only scroll to top if explicitly navigating to home without a hash
     else if (location.pathname === '/' && !location.state?.preventScroll) {
