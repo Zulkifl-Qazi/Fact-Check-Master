@@ -104,76 +104,142 @@ export default function AdminFeedback() {
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
         <div style={{ 
-          display: 'flex', 
-          alignItems: 'flex-start', 
-          justifyContent: 'space-between', 
-          marginBottom: 16,
-          flexWrap: 'wrap',
-          gap: '1rem'
+          marginBottom: 20
         }}>
+          {/* Title */}
           <h1 style={{ 
-            fontSize: 'clamp(1.5rem, 4vw, 1.75rem)', 
+            fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
             fontWeight: 800,
             color: 'white',
-            margin: '0'
+            margin: '0 0 1rem 0',
+            textAlign: 'center'
           }}>Feedback Admin</h1>
+          
+          {/* Controls - Mobile Stack Layout */}
           <div style={{ 
             display: 'flex', 
-            gap: 8, 
-            alignItems: 'center',
-            flexWrap: 'wrap'
+            gap: '0.5rem', 
+            alignItems: 'stretch',
+            flexDirection: 'column',
+            maxWidth: '500px',
+            margin: '0 auto'
           }}>
-            <button
-              onClick={() => navigate('/admin/posts')}
-              style={{
-                padding: '10px 12px',
-                borderRadius: 10,
-                border: 'none',
-                fontWeight: 800,
-                background: 'linear-gradient(90deg, #059669, #10b981)',
-                color: 'white',
-                cursor: 'pointer'
-              }}
-            >
-              Manage Posts
-            </button>
+            {/* First Row: Buttons */}
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              justifyContent: 'center'
+            }}>
+              <button
+                onClick={() => navigate('/admin/posts')}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontWeight: 700,
+                  background: 'linear-gradient(90deg, #059669, #10b981)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  flex: '1'
+                }}
+              >
+                Manage Posts
+              </button>
+              <button
+                onClick={() => { try { localStorage.removeItem('af_logged_in'); localStorage.removeItem('af_admin_key'); } catch {} navigate('/admin/login', { replace: true }); }}
+                style={{ 
+                  padding: '12px 16px', 
+                  borderRadius: 10, 
+                  border: 'none', 
+                  fontWeight: 700, 
+                  background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  flex: '1'
+                }}
+              >Sign out</button>
+            </div>
+            
+            {/* Second Row: Search */}
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search feedback..."
+              placeholder="Search name, email, subject, or text..."
               style={{ 
-                padding: '10px 14px', 
+                padding: '12px 16px', 
                 borderRadius: 10, 
                 border: '1px solid rgba(255,255,255,0.2)', 
                 background: '#111827', 
                 color: 'white', 
-                width: 'clamp(200px, 30vw, 320px)',
-                fontSize: 'clamp(0.8rem, 2vw, 0.9rem)'
+                fontSize: '0.9rem',
+                width: '100%',
+                boxSizing: 'border-box'
               }}
             />
-            <button
-              onClick={() => { try { localStorage.removeItem('af_logged_in'); localStorage.removeItem('af_admin_key'); } catch {} navigate('/admin/login', { replace: true }); }}
-              style={{ padding: '10px 12px', borderRadius: 10, border: 'none', fontWeight: 800, background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', color: 'white' }}
-            >Sign out</button>
           </div>
         </div>
 
-        <div style={{ ...box, padding: 12, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: 'rgba(255,255,255,0.75)' }}>Admin key</span>
-          <input
-            value={adminKey}
-            onChange={(e) => setAdminKey(e.target.value)}
-            placeholder="Optional (set ADMIN_KEY on server)"
-            style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.2)', background: '#111827', color: 'white', width: 260 }}
-          />
-          <button
-            onClick={() => localStorage.setItem('af_admin_key', adminKey)}
-            style={{
-              background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', color: 'white', border: 'none', borderRadius: 8,
-              padding: '8px 12px', fontWeight: 700
-            }}
-          >Save</button>
-          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Needed only if server has ADMIN_KEY set.</span>
+        <div style={{ 
+          ...box, 
+          padding: '16px', 
+          marginBottom: 16, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '12px',
+          alignItems: 'stretch'
+        }}>
+          <span style={{ 
+            color: 'rgba(255,255,255,0.75)', 
+            fontSize: '0.9rem',
+            textAlign: 'center'
+          }}>Admin Key (Optional)</span>
+          
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'stretch',
+            flexWrap: 'wrap'
+          }}>
+            <input
+              value={adminKey}
+              onChange={(e) => setAdminKey(e.target.value)}
+              placeholder="Enter admin key if server has ADMIN_KEY set"
+              style={{ 
+                padding: '10px 12px', 
+                borderRadius: 8, 
+                border: '1px solid rgba(255,255,255,0.2)', 
+                background: '#111827', 
+                color: 'white', 
+                fontSize: '0.9rem',
+                flex: '1 1 200px',
+                minWidth: '200px'
+              }}
+            />
+            <button
+              onClick={() => localStorage.setItem('af_admin_key', adminKey)}
+              style={{
+                background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: 8,
+                padding: '10px 16px', 
+                fontWeight: 700,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flex: '0 0 auto'
+              }}
+            >Save</button>
+          </div>
+          
+          <span style={{ 
+            color: 'rgba(255,255,255,0.5)', 
+            fontSize: '0.8rem',
+            textAlign: 'center',
+            fontStyle: 'italic'
+          }}>Only needed if server has ADMIN_KEY configured</span>
         </div>
 
         {error && (
