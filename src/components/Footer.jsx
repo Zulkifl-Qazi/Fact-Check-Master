@@ -81,17 +81,25 @@ const Footer = () => {
             minWidth: 'auto'
           }}>
             <style>{`
-              @media (min-width: 768px) {
+              /* Mobile-first responsive design */
+              @media (max-width: 768px) {
+                .footer-nav {
+                  order: 2 !important;
+                  flex-basis: 100% !important;
+                  gap: 0.5rem !important;
+                  justify-content: center !important;
+                }
+                .footer-nav button {
+                  font-size: 0.75rem !important;
+                  padding: 6px 8px !important;
+                  white-space: nowrap !important;
+                }
+              }
+              @media (min-width: 769px) {
                 .footer-nav {
                   order: unset !important;
                   flex-basis: auto !important;
                   gap: 1.5rem !important;
-                }
-              }
-              @media (max-width: 767px) {
-                .footer-nav button {
-                  font-size: 0.8rem !important;
-                  padding: 4px 8px !important;
                 }
               }
             `}</style>

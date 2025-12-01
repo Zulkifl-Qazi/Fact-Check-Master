@@ -76,21 +76,8 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        navigate('/');
-        // Use setTimeout to ensure navigation completes before scrolling
-        setTimeout(() => {
-            const element = document.getElementById('live-feed');
-            if (element) {
-                const navOffset = 80; // Navbar height
-                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = elementPosition - navOffset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }, 100);
+        // Use window.location for immediate redirect with hash
+        window.location.href = '/#live-feed';
     };
 
     if (loading) {
