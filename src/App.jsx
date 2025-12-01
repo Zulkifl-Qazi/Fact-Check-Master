@@ -76,16 +76,15 @@ function ScrollToHash() {
       setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
-          const navOffset = 72; // approx navbar height
+          const navOffset = 80; // approx navbar height
           const rect = el.getBoundingClientRect();
           const absoluteY = rect.top + window.scrollY - navOffset;
           window.scrollTo({ top: absoluteY < 0 ? 0 : absoluteY, behavior: 'smooth' });
         }
-      }, 0);
-      return;
+      }, 100);
     }
-    // If no hash and path is root, clicking Home can land here; ensure we are at top
-    if (location.pathname === '/') {
+    // Only scroll to top if explicitly navigating to home without a hash
+    else if (location.pathname === '/' && !location.state?.preventScroll) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [location]);
