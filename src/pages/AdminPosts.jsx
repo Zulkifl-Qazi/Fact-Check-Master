@@ -156,13 +156,37 @@ const AdminPosts = () => {
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
       paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
     }}>
+      {/* Force mobile styles with CSS */}
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-posts-header-mobile {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1rem !important;
+            width: 100% !important;
+            margin-bottom: 1.5rem !important;
+          }
+          .admin-posts-nav-mobile {
+            order: 1 !important;
+          }
+          .admin-posts-title-mobile {
+            order: 2 !important;
+            text-align: center !important;
+          }
+          .admin-posts-add-mobile {
+            order: 3 !important;
+            align-self: center !important;
+          }
+        }
+      `}</style>
+      
       <div style={{ 
         maxWidth: 1200, 
         margin: '0 auto',
         width: '100%'
       }}>
-        {/* Header */}
-        <div style={{ 
+        {/* Mobile-First Header */}
+        <div className="admin-posts-header-mobile" style={{ 
           display: 'flex', 
           alignItems: 'flex-start', 
           justifyContent: 'space-between', 
@@ -170,7 +194,8 @@ const AdminPosts = () => {
           flexWrap: 'wrap',
           gap: '1rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
+          {/* Back Navigation */}
+          <div className="admin-posts-nav-mobile" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
             <button
               onClick={() => navigate('/admin/feedback')}
               style={{
@@ -186,22 +211,27 @@ const AdminPosts = () => {
             >
               ← Back to Feedback
             </button>
-            <div style={{ minWidth: '0' }}>
-              <h1 style={{ 
-                fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
-                fontWeight: '800', 
-                color: 'white', 
-                marginBottom: '0.5rem',
-                lineHeight: '1.2'
-              }}>Posts Management</h1>
-              <p style={{ 
-                color: 'rgba(255,255,255,0.7)', 
-                fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                margin: '0'
-              }}>Create and manage posts for the Latest News</p>
-            </div>
           </div>
+          
+          {/* Title Section */}
+          <div className="admin-posts-title-mobile" style={{ minWidth: '0' }}>
+            <h1 style={{ 
+              fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
+              fontWeight: '800', 
+              color: 'white', 
+              marginBottom: '0.5rem',
+              lineHeight: '1.2'
+            }}>Posts Management</h1>
+            <p style={{ 
+              color: 'rgba(255,255,255,0.7)', 
+              fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+              margin: '0'
+            }}>Create and manage posts for the Latest News</p>
+          </div>
+          
+          {/* Add Button */}
           <button
+            className="admin-posts-add-mobile"
             onClick={() => setShowAddForm(!showAddForm)}
             style={{
               display: 'flex',
