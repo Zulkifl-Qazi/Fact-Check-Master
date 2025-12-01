@@ -10,6 +10,9 @@ const PostView = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // Scroll to top when component mounts
+        window.scrollTo(0, 0);
+        
         const loadPost = async () => {
             try {
                 setLoading(true);
@@ -76,8 +79,17 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        // Use window.location for immediate redirect with hash
-        window.location.href = '/#live-feed';
+        // Navigate to home and scroll to Latest News section
+        navigate('/', { replace: true });
+        setTimeout(() => {
+            const liveFeedSection = document.getElementById('live-feed');
+            if (liveFeedSection) {
+                liveFeedSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }, 100);
     };
 
     if (loading) {
