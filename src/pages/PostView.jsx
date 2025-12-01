@@ -79,17 +79,8 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        // Use hash navigation which works reliably
-        navigate('/');
-        // Wait for navigation, then scroll
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                const element = document.getElementById('live-feed');
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 300);
-        });
+        // Navigate with hash - the ScrollToHash component in App.jsx will handle the scroll
+        navigate('/#live-feed');
     };
 
     if (loading) {
