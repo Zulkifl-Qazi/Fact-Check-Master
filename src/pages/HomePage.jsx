@@ -1,10 +1,32 @@
 // src/pages/HomePage.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import LiveFeed from '../components/LiveFeed';
 import About from '../components/About';
 
 const HomePage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we should scroll to Latest News
+    if (location.state?.scrollToFeed) {
+      setTimeout(() => {
+        const liveFeedSection = document.getElementById('live-feed');
+        if (liveFeedSection) {
+          const offset = 80;
+          const elementPosition = liveFeedSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
+  }, [location]);
+
   return (
     <div className="w-full">
       <div id="top" />

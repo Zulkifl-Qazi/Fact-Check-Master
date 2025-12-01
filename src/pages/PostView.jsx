@@ -79,21 +79,8 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        // Navigate to home with state to scroll to Latest News
-        window.location.href = '/#live-feed';
-        setTimeout(() => {
-            const liveFeedSection = document.getElementById('live-feed');
-            if (liveFeedSection) {
-                const offset = 80; // Account for navbar height
-                const elementPosition = liveFeedSection.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }, 100);
+        // Navigate to home with state to trigger scroll
+        navigate('/', { replace: true, state: { scrollToFeed: true } });
     };
 
     if (loading) {
