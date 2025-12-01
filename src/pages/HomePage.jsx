@@ -9,19 +9,22 @@ const HomePage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we should scroll to Latest News
+    // Handle hash navigation (e.g., /#live-feed)
+    if (location.hash === '#live-feed') {
+      setTimeout(() => {
+        const element = document.getElementById('live-feed');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+    
+    // Check if we should scroll to Latest News from state
     if (location.state?.scrollToFeed) {
       setTimeout(() => {
         const liveFeedSection = document.getElementById('live-feed');
         if (liveFeedSection) {
-          const offset = 80;
-          const elementPosition = liveFeedSection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - offset;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
+          liveFeedSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, 100);
     }

@@ -79,8 +79,17 @@ const PostView = () => {
     };
 
     const handleGoBack = () => {
-        // Navigate to home with state to trigger scroll
-        navigate('/', { replace: true, state: { scrollToFeed: true } });
+        // Use hash navigation which works reliably
+        navigate('/');
+        // Wait for navigation, then scroll
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                const element = document.getElementById('live-feed');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        });
     };
 
     if (loading) {
