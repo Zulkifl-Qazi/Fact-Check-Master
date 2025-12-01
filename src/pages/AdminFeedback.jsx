@@ -102,47 +102,15 @@ export default function AdminFeedback() {
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
       paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
     }}>
-      {/* Force mobile styles with CSS */}
-      <style>{`
-        @media (max-width: 768px) {
-          .admin-header-mobile {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 1rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-          }
-          .admin-controls-mobile {
-            display: flex !important;
-            flex-direction: column !important;
-            width: 100% !important;
-            gap: 0.75rem !important;
-            align-items: stretch !important;
-          }
-          .admin-buttons-mobile {
-            display: flex !important;
-            gap: 0.5rem !important;
-            width: 100% !important;
-          }
-          .admin-buttons-mobile button {
-            flex: 1 !important;
-            padding: 12px !important;
-            font-size: 0.85rem !important;
-            white-space: nowrap !important;
-          }
-          .admin-search-mobile {
-            width: 100% !important;
-            padding: 12px !important;
-            font-size: 0.9rem !important;
-            box-sizing: border-box !important;
-          }
-        }
-      `}</style>
-      
       <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
         {/* Mobile-First Header */}
-        <div className="admin-header-mobile" style={{ marginBottom: '1.5rem' }}>
+        <div style={{ 
+          marginBottom: '1.5rem',
+          display: 'flex',
+          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+          gap: '1rem',
+          alignItems: window.innerWidth <= 768 ? 'center' : 'flex-start'
+        }}>
           {/* Title */}
           <h1 style={{ 
             fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
@@ -153,9 +121,21 @@ export default function AdminFeedback() {
           }}>Feedback Admin</h1>
           
           {/* Mobile Controls */}
-          <div className="admin-controls-mobile">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: '0.75rem',
+            alignItems: 'stretch',
+            maxWidth: '500px',
+            margin: '0 auto'
+          }}>
             {/* Buttons Row */}
-            <div className="admin-buttons-mobile">
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              width: '100%'
+            }}>
               <button
                 onClick={() => navigate('/admin/posts')}
                 style={{
@@ -166,9 +146,9 @@ export default function AdminFeedback() {
                   background: 'linear-gradient(90deg, #059669, #10b981)',
                   color: 'white',
                   cursor: 'pointer',
-                  fontSize: '0.85rem'
-                }}
-              >
+                  fontSize: '0.85rem',
+                  flex: 1
+                }}>
                 Manage Posts
               </button>
               <button
@@ -181,14 +161,13 @@ export default function AdminFeedback() {
                   background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
                   color: 'white',
                   cursor: 'pointer',
-                  fontSize: '0.85rem'
-                }}
-              >Sign out</button>
+                  fontSize: '0.85rem',
+                  flex: 1
+                }}>Sign out</button>
             </div>
             
             {/* Search Row */}
             <input
-              className="admin-search-mobile"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search feedback..."

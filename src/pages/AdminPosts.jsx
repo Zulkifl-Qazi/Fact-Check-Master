@@ -156,29 +156,6 @@ const AdminPosts = () => {
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
       paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
     }}>
-      {/* Force mobile styles with CSS */}
-      <style>{`
-        @media (max-width: 768px) {
-          .admin-posts-header-mobile {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 1rem !important;
-            width: 100% !important;
-            margin-bottom: 1.5rem !important;
-          }
-          .admin-posts-nav-mobile {
-            order: 1 !important;
-          }
-          .admin-posts-title-mobile {
-            order: 2 !important;
-            text-align: center !important;
-          }
-          .admin-posts-add-mobile {
-            order: 3 !important;
-            align-self: center !important;
-          }
-        }
-      `}</style>
       
       <div style={{ 
         maxWidth: 1200, 
@@ -186,16 +163,20 @@ const AdminPosts = () => {
         width: '100%'
       }}>
         {/* Mobile-First Header */}
-        <div className="admin-posts-header-mobile" style={{ 
+        <div style={{ 
           display: 'flex', 
           alignItems: 'flex-start', 
           justifyContent: 'space-between', 
           marginBottom: '2rem',
           flexWrap: 'wrap',
-          gap: '1rem'
+          gap: '1rem',
+          '@media (maxWidth: 768px)': {
+            flexDirection: 'column',
+            alignItems: 'center'
+          }
         }}>
           {/* Back Navigation */}
-          <div className="admin-posts-nav-mobile" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
             <button
               onClick={() => navigate('/admin/feedback')}
               style={{
@@ -214,7 +195,7 @@ const AdminPosts = () => {
           </div>
           
           {/* Title Section */}
-          <div className="admin-posts-title-mobile" style={{ minWidth: '0' }}>
+          <div style={{ minWidth: '0' }}>
             <h1 style={{ 
               fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
               fontWeight: '800', 
@@ -231,7 +212,6 @@ const AdminPosts = () => {
           
           {/* Add Button */}
           <button
-            className="admin-posts-add-mobile"
             onClick={() => setShowAddForm(!showAddForm)}
             style={{
               display: 'flex',
