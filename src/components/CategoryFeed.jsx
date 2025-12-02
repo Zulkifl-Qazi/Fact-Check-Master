@@ -114,67 +114,111 @@ const CategoryFeed = ({ category, title, icon }) => {
     return (
         <section className="py-16 bg-slate-900" id={category}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Section Header */}
-                <div className="flex items-center gap-3 mb-10">
-                    <span className="text-3xl">{icon}</span>
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-                        {title}
-                    </h2>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-12"
+                >
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                        <span className="text-4xl">{icon}</span>
+                        <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+                            {title}
+                        </h2>
+                    </div>
+                    <p className="mt-2 text-lg text-gray-300">
+                        Verified fact-checks and updates
+                    </p>
+                </motion.div>
 
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post, index) => (
-                        <motion.div
+                        <motion.article
                             key={post.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl overflow-hidden shadow-xl border border-slate-700 hover:border-purple-500 transition-all duration-300"
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                            className="bg-slate-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 max-w-sm mx-auto border border-slate-700"
                         >
                             {/* Post Image */}
                             {post.image_url && (
-                                <div className="relative h-48 overflow-hidden">
-                                    <img 
-                                        src={post.image_url} 
+                                <div className="relative">
+                                    <img
+                                        src={post.image_url}
                                         alt={post.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-32 object-cover"
+                                        loading="lazy"
                                     />
-                                    <div className="absolute top-3 right-3">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getStatusBadge(post.fact_check_status)}`}>
-                                            {post.fact_check_status?.toUpperCase()}
+                                    <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(post.fact_check_status)}`}>
+                                            {getStatusIcon(post.fact_check_status)}
+                                            <span className="ml-1 capitalize">{post.fact_check_status}</span>
                                         </span>
                                     </div>
                                 </div>
                             )}
 
                             {/* Post Content */}
-                            <div className="p-6">
-                                <div className="flex items-start gap-2 mb-3">
-                                    {getStatusIcon(post.fact_check_status)}
-                                    <h3 className="text-lg font-bold text-white flex-1 line-clamp-2">
-                                        {post.title}
-                                    </h3>
-                                </div>
+                            <div className="p-4">
+                                <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
+                                    {post.title}
+                                </h3>
 
-                                <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                                <p className="text-gray-300 text-sm mb-3 line-clamp-3">
                                     {post.content}
                                 </p>
 
+                                <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                    <span>By {post.author || 'Admin'}</span>
+                                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                                </div>
+
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-400">
-                                        {post.author || 'Fact Check Master'}
-                                    </span>
                                     <button
                                         onClick={() => handleViewMore(post.id)}
-                                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            padding: '10px 16px',
+                                            backgroundColor: '#8b5cf6',
+                                            color: 'white',
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            borderRadius: '8px',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            outline: 'none',
+                                            boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.backgroundColor = '#7c3aed';
+                                            e.target.style.transform = 'translateY(-1px)';
+                                            e.target.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.4)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.backgroundColor = '#8b5cf6';
+                                            e.target.style.transform = 'translateY(0)';
+                                            e.target.style.boxShadow = '0 2px 4px rgba(139, 92, 246, 0.3)';
+                                        }}
                                     >
-                                        <FaEye />
+                                        <FaEye style={{ marginRight: '6px' }} />
                                         View More
                                     </button>
+                                    {post.source_url && (
+                                        <a
+                                            href={post.source_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                                        >
+                                            Source ↗
+                                        </a>
+                                    )}
                                 </div>
                             </div>
-                        </motion.div>
+                        </motion.article>
                     ))}
                 </div>
             </div>
