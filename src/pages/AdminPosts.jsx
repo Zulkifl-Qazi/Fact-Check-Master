@@ -102,14 +102,19 @@ const AdminPosts = () => {
     
     setSubmitting(true);
     try {
-      await axios.post('/api/posts', formData);
+      console.log('Submitting post data:', formData);
+      const response = await axios.post('/api/posts', formData);
+      console.log('Post created successfully:', response.data);
       setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', category: 'latest-news', postUrl: '', imageUrl: '' });
       setShowAddForm(false);
       // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
+      await loadPosts(); // Manually reload to ensure we see the new post
       alert('Post created successfully! ✅');
     } catch (error) {
       console.error('Failed to create post:', error);
-      alert('Failed to create post. Please try again.');
+      console.error('Error details:', error.response?.data);
+      const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
+      alert(`Failed to create post: ${errorMsg}\n\nCheck console for details.`);
     } finally {
       setSubmitting(false);
     }
