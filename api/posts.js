@@ -77,18 +77,25 @@ async function getAllPosts() {
 
 async function addNewPost(postData) {
   try {
+    // Prepare post data
+    const postToInsert = {
+      title: postData.title.trim(),
+      content: postData.content.trim(),
+      author: postData.author?.trim() || 'Fact Check Master',
+      status: 'published',
+      fact_check_status: postData.fact_check_status || 'verified',
+      image_url: postData.imageUrl || null,
+      source_url: postData.postUrl || null
+    };
+
+    // Only add category if provided (for backward compatibility)
+    if (postData.category) {
+      postToInsert.category = postData.category;
+    }
+
     const { data, error } = await supabase
       .from('posts')
-      .insert({
-        title: postData.title.trim(),
-        content: postData.content.trim(),
-        author: postData.author?.trim() || 'Fact Check Master',
-        status: 'published',
-        fact_check_status: postData.fact_check_status || 'verified',
-        image_url: postData.imageUrl || null,
-        source_url: postData.postUrl || null,
-        category: postData.category || 'latest-news'
-      })
+      .insert(postToInsert)
       .select()
       .single();
 
