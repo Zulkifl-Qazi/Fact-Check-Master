@@ -2,11 +2,20 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration - you'll need to set these environment variables
-const supabaseUrl = process.env.SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+// Log configuration status (without exposing sensitive data)
+console.log('[Supabase] URL configured:', !!supabaseUrl && !supabaseUrl.includes('your-project'));
+console.log('[Supabase] Key configured:', !!supabaseKey && !supabaseKey.includes('your-anon-key'));
+
+if (!supabaseUrl || supabaseUrl.includes('your-project') || !supabaseKey || supabaseKey.includes('your-anon-key')) {
+  console.error('[Supabase] WARNING: Supabase credentials not properly configured!');
+  console.error('[Supabase] Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables in Vercel');
+}
 
 // Create Supabase client
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseKey || 'placeholder-key');
 
 // Sample data for initialization
 const SAMPLE_POSTS = [
@@ -77,6 +86,8 @@ async function getAllPosts() {
 
 async function addNewPost(postData) {
   try {
+    console.log('[Database] Creating new post with data:', postData);
+    
     // Prepare post data
     const postToInsert = {
       title: postData.title.trim(),
@@ -93,19 +104,24 @@ async function addNewPost(postData) {
       postToInsert.category = postData.category;
     }
 
+    console.log('[Database] Inserting post:', postToInsert);
+
     const { data, error } = await supabase
       .from('posts')
       .insert(postToInsert)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('[Database] Supabase error:', error);
+      throw error;
+    }
 
     console.log(`[Database] Successfully created post with ID: ${data.id}`);
     return data;
   } catch (error) {
     console.error('[Database] Error creating post:', error);
-    throw new Error('Failed to create post in database');
+    throw new Error(`Failed to create post in database: ${error.message}`);
   }
 }
 
