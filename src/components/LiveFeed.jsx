@@ -24,7 +24,12 @@ const LiveFeed = () => {
             const data = await response.json();
             console.log('Posts loaded:', data);
             
-            setPosts(Array.isArray(data) ? data : []);
+            // Filter only latest-news category posts (or posts without category for backward compatibility)
+            const latestNewsPosts = Array.isArray(data) 
+                ? data.filter(post => !post.category || post.category === 'latest-news')
+                : [];
+            
+            setPosts(latestNewsPosts);
         } catch (err) {
             console.error('Failed to load posts:', err);
             setError(err.message);

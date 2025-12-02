@@ -14,6 +14,7 @@ const AdminPosts = () => {
     content: '',
     author: 'Fact Check Master',
     fact_check_status: 'verified',
+    category: 'latest-news',
     postUrl: '',
     imageUrl: ''
   });
@@ -102,7 +103,7 @@ const AdminPosts = () => {
     setSubmitting(true);
     try {
       await axios.post('/api/posts', formData);
-      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', postUrl: '', imageUrl: '' });
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', category: 'latest-news', postUrl: '', imageUrl: '' });
       setShowAddForm(false);
       // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
       alert('Post created successfully! ✅');
@@ -362,6 +363,30 @@ const AdminPosts = () => {
                   <option value="disputed">⚠️ Disputed</option>
                   <option value="false">❌ False</option>
                   <option value="investigating">🔍 Under Investigation</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Category</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    background: 'rgba(71, 85, 105, 0.5)',
+                    border: '2px solid rgb(51, 65, 85)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="latest-news">📰 Latest News</option>
+                  <option value="world-news">🌍 World News</option>
+                  <option value="viral-claims">🔥 Viral Claims</option>
+                  <option value="military-claims">⚔️ Military Claims</option>
+                  <option value="sports-news">⚽ Sports News</option>
                 </select>
               </div>
 

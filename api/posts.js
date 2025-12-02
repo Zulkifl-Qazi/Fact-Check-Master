@@ -86,7 +86,8 @@ async function addNewPost(postData) {
         status: 'published',
         fact_check_status: postData.fact_check_status || 'verified',
         image_url: postData.imageUrl || null,
-        source_url: postData.postUrl || null
+        source_url: postData.postUrl || null,
+        category: postData.category || 'latest-news'
       })
       .select()
       .single();
@@ -155,7 +156,7 @@ export default async function handler(req, res) {
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {
-      const { title, content, author, fact_check_status, imageUrl, postUrl } = req.body;
+      const { title, content, author, fact_check_status, imageUrl, postUrl, category } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
@@ -167,7 +168,8 @@ export default async function handler(req, res) {
         author,
         fact_check_status,
         imageUrl,
-        postUrl
+        postUrl,
+        category
       });
       
       res.status(201).json({ 
