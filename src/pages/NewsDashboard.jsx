@@ -98,15 +98,15 @@ const NewsDashboard = () => {
       </section>
 
       {/* Category Navigation Pills */}
-      <div className="sticky top-16 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/50 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-slate-950/98 via-slate-900/98 to-slate-950/98 backdrop-blur-xl border-b border-slate-800/60 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex flex-wrap justify-center gap-3">
             {[
-              { name: 'Latest News', icon: '📱', href: '#live-feed' },
-              { name: 'World News', icon: '🌍', href: '#world-news' },
-              { name: 'Viral Claims', icon: '🔥', href: '#viral-claims' },
-              { name: 'Military Claims', icon: '⚔️', href: '#military-claims' },
-              { name: 'Sports News', icon: '⚽', href: '#sports-news' }
+              { name: 'Latest News', icon: '📱', href: '#live-feed', color: 'from-purple-600/20 to-pink-600/20 hover:from-purple-600/40 hover:to-pink-600/40 border-purple-500/30' },
+              { name: 'World News', icon: '🌍', href: '#world-news', color: 'from-blue-600/20 to-cyan-600/20 hover:from-blue-600/40 hover:to-cyan-600/40 border-blue-500/30' },
+              { name: 'Viral Claims', icon: '🔥', href: '#viral-claims', color: 'from-orange-600/20 to-red-600/20 hover:from-orange-600/40 hover:to-red-600/40 border-orange-500/30' },
+              { name: 'Military Claims', icon: '⚔️', href: '#military-claims', color: 'from-slate-600/20 to-zinc-600/20 hover:from-slate-600/40 hover:to-zinc-600/40 border-slate-500/30' },
+              { name: 'Sports News', icon: '⚽', href: '#sports-news', color: 'from-green-600/20 to-emerald-600/20 hover:from-green-600/40 hover:to-emerald-600/40 border-green-500/30' }
             ].map((category, idx) => (
               <motion.a
                 key={category.name}
@@ -114,10 +114,10 @@ const NewsDashboard = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1, duration: 0.4 }}
-                className="group px-4 py-2 bg-slate-800/50 hover:bg-purple-600/30 border border-slate-700/50 hover:border-purple-500/50 rounded-full text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 cursor-pointer"
+                className={`group relative px-5 py-2.5 bg-gradient-to-r ${category.color} backdrop-blur-sm border rounded-xl text-sm font-semibold text-white transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg shadow-black/20`}
               >
-                <span className="mr-2">{category.icon}</span>
-                {category.name}
+                <span className="text-lg mr-2 inline-block group-hover:scale-110 transition-transform">{category.icon}</span>
+                <span className="relative z-10">{category.name}</span>
               </motion.a>
             ))}
           </div>
@@ -197,16 +197,21 @@ const NewsDashboard = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="flex justify-center pt-12 pb-8"
+            className="flex justify-center pt-16 pb-8"
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-full font-medium transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105"
+              className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:via-pink-500 hover:to-indigo-500 text-white rounded-2xl font-semibold transition-all duration-300 shadow-2xl shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 overflow-hidden"
             >
-              <svg className="w-5 h-5 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-              Back to Top
+              {/* Shine Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></div>
+              
+              <div className="relative flex items-center gap-3">
+                <svg className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+                <span className="text-base">Back to Top</span>
+              </div>
             </button>
           </motion.div>
         </div>
