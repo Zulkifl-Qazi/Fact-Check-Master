@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
+import NewsDashboard from './pages/NewsDashboard';
 import Contact from './pages/Contact';
 import AdminFeedback from './pages/AdminFeedback';
 import AdminPosts from './pages/AdminPosts';
@@ -37,6 +38,7 @@ function App() {
       <main className="relative flex-grow w-full z-10">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/news-dashboard" element={<NewsDashboard />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/post/:id" element={<PostView />} />
           <Route path="/admin/login" element={<AdminLogin />} />
