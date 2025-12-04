@@ -109,15 +109,15 @@ const NewsDashboard = () => {
       </section>
 
       {/* Category Navigation - Professional Design */}
-      <div className="sticky top-16 z-40 bg-slate-900/98 backdrop-blur-xl border-b border-slate-800/50 shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 py-5">
-          <div className="flex flex-wrap justify-center items-center gap-3">
+      <div className="sticky top-16 z-40 bg-slate-900/98 backdrop-blur-xl border-b border-slate-700 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex flex-wrap justify-center items-center gap-4">
             {[
-              { name: 'Latest News', href: '#live-feed', gradient: 'from-purple-600 to-purple-700' },
-              { name: 'World News', href: '#world-news', gradient: 'from-blue-600 to-blue-700' },
-              { name: 'Viral Claims', href: '#viral-claims', gradient: 'from-orange-600 to-orange-700' },
-              { name: 'Military Updates', href: '#military-claims', gradient: 'from-slate-600 to-slate-700' },
-              { name: 'Sports News', href: '#sports-news', gradient: 'from-green-600 to-green-700' }
+              { name: 'Latest News', href: '#live-feed', color: 'bg-purple-600 hover:bg-purple-500 border-purple-500' },
+              { name: 'World News', href: '#world-news', color: 'bg-blue-600 hover:bg-blue-500 border-blue-500' },
+              { name: 'Viral Claims', href: '#viral-claims', color: 'bg-orange-600 hover:bg-orange-500 border-orange-500' },
+              { name: 'Military Updates', href: '#military-claims', color: 'bg-slate-600 hover:bg-slate-500 border-slate-500' },
+              { name: 'Sports News', href: '#sports-news', color: 'bg-green-600 hover:bg-green-500 border-green-500' }
             ].map((category, idx) => (
               <motion.button
                 key={category.name}
@@ -125,10 +125,9 @@ const NewsDashboard = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08, duration: 0.4 }}
-                className={`group relative px-5 py-2.5 bg-gradient-to-r ${category.gradient} rounded-lg text-sm font-semibold text-white/90 hover:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95`}
+                className={`px-6 py-3 ${category.color} border-2 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg`}
               >
-                <span className="relative">{category.name}</span>
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/30 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                {category.name}
               </motion.button>
             ))}
           </div>
@@ -221,19 +220,17 @@ const NewsDashboard = () => {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="group relative px-8 py-4 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white rounded-lg font-semibold transition-all duration-300 hover:shadow-xl border border-slate-600 hover:border-slate-500"
+              className="px-10 py-5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-2xl shadow-xl border-2 border-purple-500 hover:scale-105 flex items-center gap-4"
             >
-              <div className="flex items-center gap-3">
-                <svg 
-                  className="w-5 h-5 group-hover:-translate-y-1 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                </svg>
-                <span className="text-base">Back to Top</span>
-              </div>
+              <svg 
+                className="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              <span>Back to Top</span>
             </button>
           </motion.div>
         </div>
