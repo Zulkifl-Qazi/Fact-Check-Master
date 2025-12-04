@@ -113,11 +113,11 @@ const NewsDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-wrap justify-center items-center gap-4">
             {[
-              { name: 'Latest News', href: '#live-feed', color: 'bg-purple-600 hover:bg-purple-500 border-purple-500' },
-              { name: 'World News', href: '#world-news', color: 'bg-blue-600 hover:bg-blue-500 border-blue-500' },
-              { name: 'Viral Claims', href: '#viral-claims', color: 'bg-orange-600 hover:bg-orange-500 border-orange-500' },
-              { name: 'Military Updates', href: '#military-claims', color: 'bg-slate-600 hover:bg-slate-500 border-slate-500' },
-              { name: 'Sports News', href: '#sports-news', color: 'bg-green-600 hover:bg-green-500 border-green-500' }
+              { name: 'Latest News', href: '#live-feed' },
+              { name: 'World News', href: '#world-news' },
+              { name: 'Viral Claims', href: '#viral-claims' },
+              { name: 'Military Updates', href: '#military-claims' },
+              { name: 'Sports News', href: '#sports-news' }
             ].map((category, idx) => (
               <motion.button
                 key={category.name}
@@ -125,7 +125,7 @@ const NewsDashboard = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08, duration: 0.4 }}
-                className={`px-6 py-3 ${category.color} border-2 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg`}
+                className="px-6 py-3 bg-purple-600 hover:bg-purple-500 border-2 border-purple-500 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
               >
                 {category.name}
               </motion.button>
@@ -223,7 +223,7 @@ const NewsDashboard = () => {
               className="px-10 py-5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-2xl shadow-xl border-2 border-purple-500 hover:scale-105 flex items-center gap-4"
             >
               <svg 
-                className="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" 
+                className="w-6 h-6" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
