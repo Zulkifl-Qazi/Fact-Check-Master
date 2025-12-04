@@ -125,7 +125,8 @@ const NewsDashboard = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08, duration: 0.4 }}
-                className="px-6 py-3 bg-purple-600 hover:bg-purple-500 border-2 border-purple-500 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
+                style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
+                className="px-6 py-3 hover:brightness-110 border-2 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg shadow-purple-500/50"
               >
                 {category.name}
               </motion.button>
@@ -220,7 +221,8 @@ const NewsDashboard = () => {
           >
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="px-10 py-5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-2xl shadow-xl border-2 border-purple-500 hover:scale-105 flex items-center gap-4"
+              style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
+              className="px-10 py-5 hover:brightness-110 text-white rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-2xl shadow-xl shadow-purple-500/50 border-2 hover:scale-105 flex items-center gap-4"
             >
               <svg 
                 className="w-6 h-6" 
