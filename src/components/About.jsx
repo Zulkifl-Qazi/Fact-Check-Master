@@ -161,12 +161,6 @@ const About = () => {
             Our team consists of experienced journalists, researchers, data analysts, and technology experts 
             who are passionate about truth and committed to the highest standards of fact-checking.
           </p>
-          <button className="group relative inline-flex items-center justify-center overflow-hidden bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold px-10 py-4 rounded-xl shadow-xl hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105">
-            <span className="relative flex items-center gap-2">
-              Meet Our Team
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-purple-600 transition-opacity duration-300 opacity-0 group-hover:opacity-100 -z-10 rounded-xl"></div>
-          </button>
         </motion.div>
       </div>
     </section>
