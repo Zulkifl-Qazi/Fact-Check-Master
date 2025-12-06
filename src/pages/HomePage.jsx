@@ -22,9 +22,9 @@ const HomePage = () => {
           <div className="text-center py-8">
             <button
               onClick={() => navigate('/news-dashboard')}
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
+              className="group relative inline-flex items-center gap-3 px-10 py-5 text-white font-bold text-lg rounded-lg shadow-2xl hover:brightness-110 transition-all duration-300 transform hover:scale-105 border-2"
             >
-              <span className="text-2xl">📊</span>
               <span>View All News Categories</span>
               <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
             </button>
