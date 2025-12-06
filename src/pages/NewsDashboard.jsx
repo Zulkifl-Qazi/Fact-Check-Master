@@ -206,7 +206,8 @@ const NewsDashboard = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7 }}
             id="sports-news"
-            className="scroll-mt-32 mb-24"
+            className="scroll-mt-32"
+            style={{ marginBottom: '150px' }}
           >
             <CategoryFeed category="sports-news" title="Sports News" icon="⚽" />
           </motion.div>
