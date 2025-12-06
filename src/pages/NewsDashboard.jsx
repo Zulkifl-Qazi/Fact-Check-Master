@@ -137,7 +137,7 @@ const NewsDashboard = () => {
 
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-        <div className="container mx-auto px-4 py-16 pb-32 space-y-20">
+        <div className="container mx-auto px-4 py-16 pb-48 space-y-20">
           
           {/* Latest News Section */}
           <motion.div
