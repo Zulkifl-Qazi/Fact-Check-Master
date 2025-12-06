@@ -210,31 +210,6 @@ const NewsDashboard = () => {
           >
             <CategoryFeed category="sports-news" title="Sports News" icon="⚽" />
           </motion.div>
-
-          {/* Back to Top - Professional Design */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex justify-center pt-20 pb-12"
-          >
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
-              className="px-10 py-5 hover:brightness-110 text-white rounded-lg text-lg font-bold transition-all duration-300 hover:shadow-2xl shadow-xl shadow-purple-500/50 border-2 hover:scale-105 flex items-center gap-4"
-            >
-              <svg 
-                className="w-6 h-6" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-              </svg>
-              <span>Back to Top</span>
-            </button>
-          </motion.div>
         </div>
       </div>
     </div>
