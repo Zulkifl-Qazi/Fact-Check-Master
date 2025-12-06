@@ -14,7 +14,7 @@ const AdminPosts = () => {
     content: '',
     author: 'Fact Check Master',
     fact_check_status: 'verified',
-    category: 'latest-news',
+    categories: ['latest-news'], // Changed to array for multiple categories
     postUrl: '',
     imageUrl: ''
   });
@@ -105,7 +105,7 @@ const AdminPosts = () => {
       console.log('Submitting post data:', formData);
       const response = await axios.post('/api/posts', formData);
       console.log('Post created successfully:', response.data);
-      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', category: 'latest-news', postUrl: '', imageUrl: '' });
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
       setShowAddForm(false);
       // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
       await loadPosts(); // Manually reload to ensure we see the new post
@@ -372,27 +372,89 @@ const AdminPosts = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Category</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: 'rgba(71, 85, 105, 0.5)',
-                    border: '2px solid rgb(51, 65, 85)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    outline: 'none'
-                  }}
-                >
-                  <option value="latest-news">📰 Latest News</option>
-                  <option value="world-news">🌍 World News</option>
-                  <option value="viral-claims">🔥 Viral Claims</option>
-                  <option value="military-claims">⚔️ Military Claims</option>
-                  <option value="sports-news">⚽ Sports News</option>
-                </select>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.75rem', fontSize: '1rem' }}>
+                  Categories (Select one or more)
+                </label>
+                <div style={{ 
+                  background: 'rgba(71, 85, 105, 0.3)',
+                  border: '2px solid rgb(51, 65, 85)',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '0.75rem'
+                }}>
+                  {[
+                    { value: 'latest-news', label: 'Latest News', icon: '📰' },
+                    { value: 'world-news', label: 'World News', icon: '🌍' },
+                    { value: 'viral-claims', label: 'Viral Claims', icon: '🔥' },
+                    { value: 'military-claims', label: 'Military Claims', icon: '⚔️' },
+                    { value: 'sports-news', label: 'Sports News', icon: '⚽' }
+                  ].map(category => (
+                    <label 
+                      key={category.value}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        padding: '0.75rem 1rem',
+                        background: formData.categories.includes(category.value) 
+                          ? 'rgba(147, 51, 234, 0.3)' 
+                          : 'rgba(71, 85, 105, 0.5)',
+                        border: formData.categories.includes(category.value)
+                          ? '2px solid rgb(168, 85, 247)'
+                          : '2px solid transparent',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        userSelect: 'none'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!formData.categories.includes(category.value)) {
+                          e.currentTarget.style.background = 'rgba(71, 85, 105, 0.7)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!formData.categories.includes(category.value)) {
+                          e.currentTarget.style.background = 'rgba(71, 85, 105, 0.5)';
+                        }
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.categories.includes(category.value)}
+                        onChange={(e) => {
+                          const newCategories = e.target.checked
+                            ? [...formData.categories, category.value]
+                            : formData.categories.filter(c => c !== category.value);
+                          setFormData({ ...formData, categories: newCategories.length > 0 ? newCategories : ['latest-news'] });
+                        }}
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          cursor: 'pointer',
+                          accentColor: 'rgb(168, 85, 247)'
+                        }}
+                      />
+                      <span style={{ fontSize: '1.25rem' }}>{category.icon}</span>
+                      <span style={{ 
+                        color: 'white', 
+                        fontWeight: formData.categories.includes(category.value) ? '600' : '500',
+                        fontSize: '0.95rem'
+                      }}>
+                        {category.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p style={{ 
+                  marginTop: '0.5rem', 
+                  fontSize: '0.875rem', 
+                  color: 'rgba(255,255,255,0.6)',
+                  fontStyle: 'italic'
+                }}>
+                  💡 Select multiple categories to display the post in different sections
+                </p>
               </div>
 
               <div>

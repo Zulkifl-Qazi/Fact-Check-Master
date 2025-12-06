@@ -99,26 +99,53 @@ async function addNewPost(postData) {
       source_url: postData.postUrl || null
     };
 
-    // Only add category if provided (for backward compatibility)
-    if (postData.category) {
+    // Handle both single category and multiple categories
+    if (postData.categories && Array.isArray(postData.categories)) {
+      // For multiple categories, store as comma-separated string or create multiple entries
+      // For now, store the primary category (first in array)
+      postToInsert.category = postData.categories[0];
+    } else if (postData.category) {
+      // Backward compatibility for single category
       postToInsert.category = postData.category;
     }
 
     console.log('[Database] Inserting post:', postToInsert);
 
-    const { data, error } = await supabase
-      .from('posts')
-      .insert(postToInsert)
-      .select()
-      .single();
+    // If multiple categories, create duplicate entries for each category
+    if (postData.categories && postData.categories.length > 1) {
+      const allPosts = [];
+      for (const category of postData.categories) {
+        const categoryPost = { ...postToInsert, category };
+        const { data, error } = await supabase
+          .from('posts')
+          .insert(categoryPost)
+          .select()
+          .single();
+        
+        if (error) {
+          console.error(`[Database] Supabase error for category ${category}:`, error);
+          throw error;
+        }
+        allPosts.push(data);
+        console.log(`[Database] Successfully created post with ID: ${data.id} for category: ${category}`);
+      }
+      return allPosts[0]; // Return first post as primary
+    } else {
+      // Single category insertion
+      const { data, error } = await supabase
+        .from('posts')
+        .insert(postToInsert)
+        .select()
+        .single();
 
-    if (error) {
-      console.error('[Database] Supabase error:', error);
-      throw error;
+      if (error) {
+        console.error('[Database] Supabase error:', error);
+        throw error;
+      }
+
+      console.log(`[Database] Successfully created post with ID: ${data.id}`);
+      return data;
     }
-
-    console.log(`[Database] Successfully created post with ID: ${data.id}`);
-    return data;
   } catch (error) {
     console.error('[Database] Error creating post:', error);
     throw new Error(`Failed to create post in database: ${error.message}`);
