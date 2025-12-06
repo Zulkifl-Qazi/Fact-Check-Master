@@ -19,7 +19,7 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
-    methods: ["GET", "POST", "DELETE"]
+    methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
 const PORT = process.env.PORT || 3001;
@@ -583,6 +583,47 @@ app.post('/api/posts', async (req, res) => {
       id: result.lastID,
       success: true,
       message: 'Post created successfully'
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/posts', async (req, res) => {
+  try {
+    const { id } = req.query;
+    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl, categories } = req.body;
+    
+    if (!id) {
+      return res.status(400).json({ error: 'Post ID is required' });
+    }
+    
+    if (!title || !content) {
+      return res.status(400).json({ error: 'Title and content are required' });
+    }
+
+    // Update the post
+    const result = await db.run(
+      'UPDATE posts SET title = ?, content = ?, author = ?, fact_check_status = ?, image_url = ?, source_url = ? WHERE id = ?',
+      [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null, id]
+    );
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const updatedPost = await db.get('SELECT * FROM posts WHERE id = ?', [id]);
+    
+    // Broadcast to all connected clients
+    if (global.broadcastPostsUpdate) {
+      global.broadcastPostsUpdate('updated', updatedPost);
+    }
+
+    res.status(200).json({ 
+      success: true,
+      message: 'Post updated successfully',
+      post: updatedPost
     });
   } catch (error) {
     console.error('Database error:', error);

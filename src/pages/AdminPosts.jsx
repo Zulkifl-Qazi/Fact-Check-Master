@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen } from 'react-icons/fa';
 
 const AdminPosts = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -136,6 +137,49 @@ const AdminPosts = () => {
     }
   };
 
+  const handleEdit = (post) => {
+    setEditingPost(post);
+    setFormData({
+      title: post.title,
+      content: post.content,
+      author: post.author,
+      fact_check_status: post.fact_check_status,
+      categories: post.category ? [post.category] : ['latest-news'],
+      postUrl: post.source_url || '',
+      imageUrl: post.image_url || ''
+    });
+    setShowAddForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!formData.title.trim() || !formData.content.trim()) return;
+    
+    setSubmitting(true);
+    try {
+      console.log('Updating post:', editingPost.id, formData);
+      const response = await axios.put(`/api/posts?id=${editingPost.id}`, formData);
+      console.log('Post updated successfully:', response.data);
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
+      setShowAddForm(false);
+      setEditingPost(null);
+      await loadPosts();
+      alert('Post updated successfully! ✅');
+    } catch (error) {
+      console.error('Failed to update post:', error);
+      alert(`Failed to update post: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPost(null);
+    setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
+    setShowAddForm(false);
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'verified':
@@ -255,8 +299,10 @@ const AdminPosts = () => {
               border: '2px solid rgba(168, 85, 247, 0.3)'
             }}
           >
-            <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem' }}>Create New Post</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem' }}>
+              {editingPost ? 'Edit Post' : 'Create New Post'}
+            </h2>
+            <form onSubmit={editingPost ? handleUpdate : handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* URL Fetching Section */}
               <div style={{ padding: '1rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
                 <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>
@@ -515,7 +561,7 @@ const AdminPosts = () => {
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button
                   type="button"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={editingPost ? handleCancelEdit : () => setShowAddForm(false)}
                   style={{
                     padding: '0.75rem 1.5rem',
                     background: 'rgba(71, 85, 105, 0.5)',
@@ -540,7 +586,7 @@ const AdminPosts = () => {
                     fontWeight: '600'
                   }}
                 >
-                  {submitting ? 'Creating...' : 'Create Post'}
+                  {submitting ? (editingPost ? 'Updating...' : 'Creating...') : (editingPost ? 'Update Post' : 'Create Post')}
                 </button>
               </div>
             </form>
@@ -607,6 +653,23 @@ const AdminPosts = () => {
                   </div>
                   
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleEdit(post)}
+                      style={{
+                        padding: '0.5rem',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        color: 'rgb(147, 197, 253)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      title="Edit post"
+                    >
+                      <FaPen />
+                    </button>
                     <button
                       onClick={() => handleDelete(post.id)}
                       style={{
