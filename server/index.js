@@ -27,7 +27,10 @@ const EXPORT_KEY = process.env.EXPORT_KEY || null; // optional simple guard for 
 const ADMIN_KEY = process.env.ADMIN_KEY || null;   // optional simple guard for admin-write actions
 const X_API_BEARER_TOKEN = process.env.X_API_BEARER_TOKEN || null;  // X API token for fetching real tweets
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 app.use(express.json());
 
 let db;
