@@ -152,6 +152,37 @@ async function addNewPost(postData) {
   }
 }
 
+async function updatePost(postId, postData) {
+  try {
+    console.log('[Database] Updating post with ID:', postId, 'Data:', postData);
+    
+    const postToUpdate = {
+      title: postData.title.trim(),
+      content: postData.content.trim(),
+      author: postData.author?.trim() || 'Fact Check Master',
+      fact_check_status: postData.fact_check_status || 'verified',
+      image_url: postData.imageUrl || null,
+      source_url: postData.postUrl || null,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('posts')
+      .update(postToUpdate)
+      .eq('id', postId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    console.log(`[Database] Successfully updated post with ID: ${postId}`);
+    return data;
+  } catch (error) {
+    console.error('[Database] Error updating post:', error);
+    throw new Error(`Failed to update post in database: ${error.message}`);
+  }
+}
+
 async function removePost(postId) {
   try {
     const { error } = await supabase
@@ -189,7 +220,7 @@ async function initializeSamplePosts() {
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   if (req.method === 'OPTIONS') {
@@ -226,6 +257,34 @@ export default async function handler(req, res) {
         id: newPost.id,
         success: true,
         message: 'Post created successfully in permanent database'
+      });
+
+    } else if (req.method === 'PUT') {
+      const postId = parseInt(req.query.id);
+      
+      if (!postId) {
+        return res.status(400).json({ error: 'Post ID is required' });
+      }
+
+      const { title, content, author, fact_check_status, imageUrl, postUrl, categories } = req.body;
+      
+      if (!title || !content) {
+        return res.status(400).json({ error: 'Title and content are required' });
+      }
+
+      const updatedPost = await updatePost(postId, {
+        title,
+        content,
+        author,
+        fact_check_status,
+        imageUrl,
+        postUrl
+      });
+      
+      res.status(200).json({ 
+        success: true,
+        message: 'Post updated successfully in permanent database',
+        post: updatedPost
       });
 
     } else if (req.method === 'DELETE') {
