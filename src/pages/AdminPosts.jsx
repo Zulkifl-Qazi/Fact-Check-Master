@@ -6,40 +6,203 @@ import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-// Custom styles for Quill editor
+// Custom styles for Quill editor with dark theme
 const quillStyles = `
+  .ql-container {
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid rgba(147, 51, 234, 0.3) !important;
+    border-top: none !important;
+    border-radius: 0 0 12px 12px;
+    font-size: 16px;
+    min-height: 250px;
+  }
+  
   .ql-toolbar {
-    background: rgba(71, 85, 105, 0.3);
-    border: none !important;
-    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+    background: rgba(51, 65, 85, 0.8);
+    border: 2px solid rgba(147, 51, 234, 0.3) !important;
+    border-bottom: 1px solid rgba(147, 51, 234, 0.2) !important;
+    border-radius: 12px 12px 0 0;
+    padding: 12px;
   }
+  
   .ql-toolbar .ql-stroke {
-    stroke: rgba(255,255,255,0.8);
+    stroke: rgba(255, 255, 255, 0.9);
   }
+  
   .ql-toolbar .ql-fill {
-    fill: rgba(255,255,255,0.8);
+    fill: rgba(255, 255, 255, 0.9);
   }
+  
+  .ql-toolbar .ql-picker-label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .ql-toolbar button:hover,
+  .ql-toolbar button:focus,
+  .ql-toolbar button.ql-active {
+    background: rgba(147, 51, 234, 0.2);
+    border-radius: 6px;
+  }
+  
   .ql-toolbar button:hover .ql-stroke,
   .ql-toolbar button:focus .ql-stroke,
   .ql-toolbar button.ql-active .ql-stroke {
-    stroke: #9333ea;
+    stroke: #a855f7;
   }
+  
   .ql-toolbar button:hover .ql-fill,
   .ql-toolbar button:focus .ql-fill,
   .ql-toolbar button.ql-active .ql-fill {
-    fill: #9333ea;
+    fill: #a855f7;
   }
-  .ql-container {
-    border: none !important;
-    font-size: 16px;
-  }
+  
   .ql-editor {
-    min-height: 200px;
-    font-family: inherit;
+    min-height: 250px;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    padding: 20px;
   }
+  
   .ql-editor.ql-blank::before {
-    color: rgba(0,0,0,0.4);
+    color: rgba(255, 255, 255, 0.4);
     font-style: normal;
+    left: 20px;
+  }
+  
+  .ql-editor p,
+  .ql-editor ol,
+  .ql-editor ul {
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  .ql-editor strong {
+    font-weight: 700;
+    color: rgba(255, 255, 255, 1);
+  }
+  
+  .ql-editor em {
+    font-style: italic;
+  }
+  
+  .ql-editor u {
+    text-decoration: underline;
+  }
+  
+  .ql-editor a {
+    color: #a855f7;
+    text-decoration: underline;
+  }
+  
+  .ql-editor ol,
+  .ql-editor ul {
+    padding-left: 1.5em;
+  }
+  
+  .ql-snow .ql-tooltip {
+    background-color: rgba(30, 41, 59, 0.98);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .ql-snow .ql-tooltip input[type=text] {
+    background: rgba(51, 65, 85, 0.8);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  
+  .ql-snow .ql-tooltip input[type=text]::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .ql-snow .ql-tooltip a.ql-action::after,
+  .ql-snow .ql-tooltip a.ql-remove::before {
+    color: #a855f7;
+  }
+  
+  .ql-snow .ql-picker-options {
+    background-color: rgba(30, 41, 59, 0.98);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+  }
+  
+  .ql-snow .ql-picker-options .ql-picker-item {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .ql-snow .ql-picker-options .ql-picker-item:hover {
+    background-color: rgba(147, 51, 234, 0.2);
+    color: #a855f7;
+  }
+  
+  /* Post content display styling */
+  .post-content-display p {
+    margin: 0 0 1em 0;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .post-content-display strong {
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  .post-content-display em {
+    font-style: italic;
+  }
+  
+  .post-content-display u {
+    text-decoration: underline;
+  }
+  
+  .post-content-display s {
+    text-decoration: line-through;
+  }
+  
+  .post-content-display a {
+    color: #a855f7;
+    text-decoration: underline;
+  }
+  
+  .post-content-display a:hover {
+    color: #c084fc;
+  }
+  
+  .post-content-display h1,
+  .post-content-display h2,
+  .post-content-display h3 {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 700;
+    margin: 0.75em 0 0.5em 0;
+  }
+  
+  .post-content-display h1 {
+    font-size: 1.5em;
+  }
+  
+  .post-content-display h2 {
+    font-size: 1.3em;
+  }
+  
+  .post-content-display h3 {
+    font-size: 1.1em;
+  }
+  
+  .post-content-display ol,
+  .post-content-display ul {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .post-content-display ol li,
+  .post-content-display ul li {
+    margin: 0.25em 0;
   }
 `;
 
@@ -576,31 +739,30 @@ const AdminPosts = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Content</label>
-                <div style={{
-                  background: 'white',
-                  borderRadius: '8px',
-                  overflow: 'hidden'
+                <label style={{ 
+                  display: 'block', 
+                  color: 'rgba(255,255,255,0.9)', 
+                  fontWeight: '600', 
+                  marginBottom: '0.75rem',
+                  fontSize: '15px'
                 }}>
-                  <ReactQuill
-                    theme="snow"
-                    value={formData.content}
-                    onChange={(value) => setFormData({ ...formData, content: value })}
-                    modules={{
-                      toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        ['link'],
-                        ['clean']
-                      ]
-                    }}
-                    placeholder="Write your post content here..."
-                    style={{
-                      minHeight: '200px',
-                      background: 'white'
-                    }}
-                  />
-                </div>
+                  Content *
+                </label>
+                <ReactQuill
+                  theme="snow"
+                  value={formData.content}
+                  onChange={(value) => setFormData({ ...formData, content: value })}
+                  modules={{
+                    toolbar: [
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'header': [1, 2, 3, false] }],
+                      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                      ['link'],
+                      ['clean']
+                    ]
+                  }}
+                  placeholder="Write your post content here... Use the toolbar to format text with bold, italic, underline, headers, lists, and links."
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
@@ -690,7 +852,13 @@ const AdminPosts = () => {
                       </div>
                     </div>
                     <div 
-                      style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.6', margin: '0 0 0.75rem 0' }}
+                      className="post-content-display"
+                      style={{ 
+                        color: 'rgba(255,255,255,0.85)', 
+                        lineHeight: '1.7', 
+                        margin: '0 0 0.75rem 0',
+                        fontSize: '15px'
+                      }}
                       dangerouslySetInnerHTML={{ __html: post.content }}
                     />
                     <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
