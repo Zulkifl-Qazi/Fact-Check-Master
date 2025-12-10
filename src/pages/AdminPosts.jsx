@@ -3,6 +3,45 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen } from 'react-icons/fa';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+// Custom styles for Quill editor
+const quillStyles = `
+  .ql-toolbar {
+    background: rgba(71, 85, 105, 0.3);
+    border: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  }
+  .ql-toolbar .ql-stroke {
+    stroke: rgba(255,255,255,0.8);
+  }
+  .ql-toolbar .ql-fill {
+    fill: rgba(255,255,255,0.8);
+  }
+  .ql-toolbar button:hover .ql-stroke,
+  .ql-toolbar button:focus .ql-stroke,
+  .ql-toolbar button.ql-active .ql-stroke {
+    stroke: #9333ea;
+  }
+  .ql-toolbar button:hover .ql-fill,
+  .ql-toolbar button:focus .ql-fill,
+  .ql-toolbar button.ql-active .ql-fill {
+    fill: #9333ea;
+  }
+  .ql-container {
+    border: none !important;
+    font-size: 16px;
+  }
+  .ql-editor {
+    min-height: 200px;
+    font-family: inherit;
+  }
+  .ql-editor.ql-blank::before {
+    color: rgba(0,0,0,0.4);
+    font-style: normal;
+  }
+`;
 
 const AdminPosts = () => {
   const navigate = useNavigate();
@@ -206,6 +245,7 @@ const AdminPosts = () => {
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
       paddingRight: 'clamp(0.5rem, 2vw, 1rem)' 
     }}>
+      <style>{quillStyles}</style>
       
       <div style={{ 
         maxWidth: 1200, 
@@ -537,25 +577,30 @@ const AdminPosts = () => {
 
               <div>
                 <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Content</label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleChange}
-                  required
-                  rows={4}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: 'rgba(71, 85, 105, 0.5)',
-                    border: '2px solid rgb(51, 65, 85)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    outline: 'none',
-                    resize: 'vertical',
-                    fontFamily: 'inherit'
-                  }}
-                  placeholder="Write your post content here..."
-                />
+                <div style={{
+                  background: 'white',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}>
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.content}
+                    onChange={(value) => setFormData({ ...formData, content: value })}
+                    modules={{
+                      toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                      ]
+                    }}
+                    placeholder="Write your post content here..."
+                    style={{
+                      minHeight: '200px',
+                      background: 'white'
+                    }}
+                  />
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
@@ -644,7 +689,10 @@ const AdminPosts = () => {
                         </span>
                       </div>
                     </div>
-                    <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.6', margin: '0 0 0.75rem 0' }}>{post.content}</p>
+                    <div 
+                      style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.6', margin: '0 0 0.75rem 0' }}
+                      dangerouslySetInnerHTML={{ __html: post.content }}
+                    />
                     <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
                       <span>By {post.author}</span>
                       <span>•</span>
