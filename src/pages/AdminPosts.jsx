@@ -58,46 +58,60 @@ const quillStyles = `
   
   .ql-editor {
     min-height: 250px;
-    color: rgba(255, 255, 255, 0.95);
+    color: rgba(255, 255, 255, 0.95) !important;
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     line-height: 1.8;
     padding: 20px;
   }
   
+  .ql-editor * {
+    color: rgba(255, 255, 255, 0.95) !important;
+    background-color: transparent !important;
+  }
+  
   .ql-editor.ql-blank::before {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.4) !important;
     font-style: normal;
     left: 20px;
   }
   
   .ql-editor p,
   .ql-editor ol,
-  .ql-editor ul {
-    color: rgba(255, 255, 255, 0.95);
+  .ql-editor ul,
+  .ql-editor li,
+  .ql-editor h1,
+  .ql-editor h2,
+  .ql-editor h3,
+  .ql-editor span,
+  .ql-editor div {
+    color: rgba(255, 255, 255, 0.95) !important;
   }
   
   .ql-editor strong {
     font-weight: 700;
-    color: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1) !important;
   }
   
   .ql-editor em {
     font-style: italic;
+    color: rgba(255, 255, 255, 0.95) !important;
   }
   
   .ql-editor u {
     text-decoration: underline;
+    color: rgba(255, 255, 255, 0.95) !important;
   }
   
   .ql-editor a {
-    color: #a855f7;
+    color: #a855f7 !important;
     text-decoration: underline;
   }
   
   .ql-editor ol,
   .ql-editor ul {
     padding-left: 1.5em;
+    color: rgba(255, 255, 255, 0.95) !important;
   }
   
   .ql-snow .ql-tooltip {
@@ -759,8 +773,17 @@ const AdminPosts = () => {
                       [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                       ['link'],
                       ['clean']
-                    ]
+                    ],
+                    clipboard: {
+                      matchVisual: false
+                    }
                   }}
+                  formats={[
+                    'bold', 'italic', 'underline', 'strike',
+                    'header',
+                    'list', 'bullet',
+                    'link'
+                  ]}
                   placeholder="Write your post content here... Use the toolbar to format text with bold, italic, underline, headers, lists, and links."
                 />
               </div>
