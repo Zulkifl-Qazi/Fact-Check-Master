@@ -148,7 +148,10 @@ const LiveFeed = () => {
 
                                 {/* Content */}
                                 <h3 className="text-white font-bold text-lg mb-3">{post.title}</h3>
-                                <p className="text-white/80 mb-4 leading-relaxed">{post.content}</p>
+                                <div 
+                                    className="text-white/80 mb-4 leading-relaxed"
+                                    dangerouslySetInnerHTML={{ __html: post.content }}
+                                />
 
                                 {/* Image */}
                                 {post.image_url && (

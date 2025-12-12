@@ -277,15 +277,15 @@ const PostView = () => {
                         </div>
 
                         {/* Content */}
-                        <div style={{
-                            color: '#e2e8f0',
-                            lineHeight: '1.7',
-                            fontSize: '18px',
-                            marginBottom: '40px',
-                            whiteSpace: 'pre-wrap'
-                        }}>
-                            {post.content}
-                        </div>
+                        <div 
+                            style={{
+                                color: '#e2e8f0',
+                                lineHeight: '1.7',
+                                fontSize: '18px',
+                                marginBottom: '40px'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: post.content }}
+                        />
 
                         {/* Source link */}
                         {post.source_url && (

@@ -466,3 +466,106 @@ body {
 /* Text utilities */
 .text-xs { font-size: 0.75rem; line-height: 1rem; }
 .capitalize { text-transform: capitalize; }
+
+/* Rich text content styling for posts */
+.text-gray-300 strong,
+.text-white\/80 strong,
+div[style*="color: #e2e8f0"] strong {
+  font-weight: 700;
+  color: inherit;
+  opacity: 1;
+}
+
+.text-gray-300 em,
+.text-white\/80 em,
+div[style*="color: #e2e8f0"] em {
+  font-style: italic;
+}
+
+.text-gray-300 u,
+.text-white\/80 u,
+div[style*="color: #e2e8f0"] u {
+  text-decoration: underline;
+}
+
+.text-gray-300 s,
+.text-white\/80 s,
+div[style*="color: #e2e8f0"] s {
+  text-decoration: line-through;
+}
+
+.text-gray-300 a,
+.text-white\/80 a,
+div[style*="color: #e2e8f0"] a {
+  color: #a855f7;
+  text-decoration: underline;
+}
+
+.text-gray-300 a:hover,
+.text-white\/80 a:hover,
+div[style*="color: #e2e8f0"] a:hover {
+  color: #c084fc;
+}
+
+.text-gray-300 h1,
+.text-gray-300 h2,
+.text-gray-300 h3,
+.text-white\/80 h1,
+.text-white\/80 h2,
+.text-white\/80 h3,
+div[style*="color: #e2e8f0"] h1,
+div[style*="color: #e2e8f0"] h2,
+div[style*="color: #e2e8f0"] h3 {
+  font-weight: 700;
+  color: inherit;
+  margin: 0.5em 0 0.3em 0;
+}
+
+.text-gray-300 h1,
+.text-white\/80 h1,
+div[style*="color: #e2e8f0"] h1 {
+  font-size: 1.5em;
+}
+
+.text-gray-300 h2,
+.text-white\/80 h2,
+div[style*="color: #e2e8f0"] h2 {
+  font-size: 1.3em;
+}
+
+.text-gray-300 h3,
+.text-white\/80 h3,
+div[style*="color: #e2e8f0"] h3 {
+  font-size: 1.1em;
+}
+
+.text-gray-300 ol,
+.text-gray-300 ul,
+.text-white\/80 ol,
+.text-white\/80 ul,
+div[style*="color: #e2e8f0"] ol,
+div[style*="color: #e2e8f0"] ul {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.text-gray-300 ol li,
+.text-gray-300 ul li,
+.text-white\/80 ol li,
+.text-white\/80 ul li,
+div[style*="color: #e2e8f0"] ol li,
+div[style*="color: #e2e8f0"] ul li {
+  margin: 0.25em 0;
+}
+
+.text-gray-300 p,
+.text-white\/80 p,
+div[style*="color: #e2e8f0"] p {
+  margin: 0 0 0.5em 0;
+}
+
+.text-gray-300 p:last-child,
+.text-white\/80 p:last-child,
+div[style*="color: #e2e8f0"] p:last-child {
+  margin-bottom: 0;
+}

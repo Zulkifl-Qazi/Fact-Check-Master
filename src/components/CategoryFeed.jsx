@@ -165,9 +165,10 @@ const CategoryFeed = ({ category, title, icon }) => {
                                     {post.title}
                                 </h3>
 
-                                <p className="text-gray-300 text-sm mb-3 line-clamp-3">
-                                    {post.content}
-                                </p>
+                                <div 
+                                    className="text-gray-300 text-sm mb-3 line-clamp-3"
+                                    dangerouslySetInnerHTML={{ __html: post.content }}
+                                />
 
                                 <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
                                     <span>By {post.author || 'Admin'}</span>
