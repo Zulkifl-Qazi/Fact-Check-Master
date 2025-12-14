@@ -443,7 +443,7 @@ const AdminPosts = () => {
           }
         }}>
           {/* Back Navigation */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px', flexWrap: 'wrap' }}>
             <button
               onClick={() => navigate('/admin/feedback')}
               style={{
@@ -458,6 +458,21 @@ const AdminPosts = () => {
               }}
             >
               ← Back to Feedback
+            </button>
+            <button
+              onClick={() => navigate('/admin/devices')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(59, 130, 246, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              🔒 Devices
             </button>
           </div>
           

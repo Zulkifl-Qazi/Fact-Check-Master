@@ -8,6 +8,7 @@ import Contact from './pages/Contact';
 import AdminFeedback from './pages/AdminFeedback';
 import AdminPosts from './pages/AdminPosts';
 import AdminLogin from './pages/AdminLogin';
+import DeviceManagement from './pages/DeviceManagement';
 import PostView from './pages/PostView';
 import Footer from './components/Footer';
 
@@ -55,6 +56,14 @@ function App() {
             element={
               <RequireAdmin>
                 <AdminPosts />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/devices"
+            element={
+              <RequireAdmin>
+                <DeviceManagement />
               </RequireAdmin>
             }
           />
