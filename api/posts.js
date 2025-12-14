@@ -166,6 +166,11 @@ async function updatePost(postId, postData) {
       updated_at: new Date().toISOString()
     };
 
+    // Handle categories - update the category field with the first category
+    if (postData.categories && Array.isArray(postData.categories) && postData.categories.length > 0) {
+      postToUpdate.category = postData.categories[0];
+    }
+
     const { data, error } = await supabase
       .from('posts')
       .update(postToUpdate)
@@ -237,7 +242,7 @@ export default async function handler(req, res) {
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {
-      const { title, content, author, fact_check_status, imageUrl, postUrl, category } = req.body;
+      const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
@@ -250,7 +255,7 @@ export default async function handler(req, res) {
         fact_check_status,
         imageUrl,
         postUrl,
-        category
+        categories: categories || (category ? [category] : ['latest-news'])
       });
       
       res.status(201).json({ 
@@ -266,7 +271,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Post ID is required' });
       }
 
-      const { title, content, author, fact_check_status, imageUrl, postUrl, categories } = req.body;
+      const { title, content, author, fact_check_status, imageUrl, postUrl, categories, category } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
@@ -278,7 +283,8 @@ export default async function handler(req, res) {
         author,
         fact_check_status,
         imageUrl,
-        postUrl
+        postUrl,
+        categories: categories || (category ? [category] : ['latest-news'])
       });
       
       res.status(200).json({ 
