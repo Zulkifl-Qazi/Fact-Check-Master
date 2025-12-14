@@ -200,21 +200,36 @@ const CategoryFeed = ({ category, title, icon }) => {
                                         }}
                                         onMouseLeave={(e) => {
                                             e.target.style.backgroundColor = '#8b5cf6';
-                                            e.target.style.transform = 'translateY(0)';
+                                            e.target.style.transform = 'translateY(0px)';
                                             e.target.style.boxShadow = '0 2px 4px rgba(139, 92, 246, 0.3)';
                                         }}
                                     >
-                                        <FaEye style={{ marginRight: '6px' }} />
+                                        <FaEye style={{ marginRight: '8px', width: '14px', height: '14px' }} />
                                         View More
                                     </button>
+                                    
                                     {post.source_url && (
                                         <a
                                             href={post.source_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                color: '#60a5fa',
+                                                fontSize: '14px',
+                                                fontWeight: '500',
+                                                textDecoration: 'none',
+                                                transition: 'color 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.color = '#93c5fd'}
+                                            onMouseLeave={(e) => e.target.style.color = '#60a5fa'}
                                         >
-                                            Source ↗
+                                            Source
+                                            <svg style={{ marginLeft: '4px', width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
+                                            </svg>
                                         </a>
                                     )}
                                 </div>
