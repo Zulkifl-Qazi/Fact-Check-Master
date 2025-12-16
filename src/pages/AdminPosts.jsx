@@ -667,7 +667,9 @@ const AdminPosts = () => {
                     { value: 'world-news', label: 'World News', icon: '🌍' },
                     { value: 'viral-claims', label: 'Viral Claims', icon: '🔥' },
                     { value: 'military-claims', label: 'Military Claims', icon: '⚔️' },
-                    { value: 'sports-news', label: 'Sports News', icon: '⚽' }
+                    { value: 'sports-news', label: 'Sports News', icon: '⚽' },
+                    { value: 'indian-claims', label: 'Indian Claims', icon: '🇮🇳' },
+                    { value: 'afghan-claims', label: 'Afghan Claims', icon: '🇦🇫' }
                   ].map(category => (
                     <label 
                       key={category.value}
