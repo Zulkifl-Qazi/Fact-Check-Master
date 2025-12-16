@@ -85,7 +85,7 @@ const NewsDashboard = () => {
               className="flex flex-wrap justify-center gap-6 md:gap-8 mt-16 max-w-5xl mx-auto"
             >
               {[
-                { value: '5', label: 'News Categories', sublabel: 'Tracked', gradient: 'from-purple-500 to-purple-600' },
+                { value: '7', label: 'News Categories', sublabel: 'Tracked', gradient: 'from-purple-500 to-purple-600' },
                 { value: '24/7', label: 'Active Monitoring', sublabel: 'Real-time', gradient: 'from-blue-500 to-blue-600' },
                 { value: '100%', label: 'Verified Sources', sublabel: 'Accuracy', gradient: 'from-green-500 to-green-600' }
               ].map((stat, idx) => (
@@ -117,7 +117,9 @@ const NewsDashboard = () => {
               { name: 'World News', href: '#world-news' },
               { name: 'Viral Claims', href: '#viral-claims' },
               { name: 'Military Updates', href: '#military-claims' },
-              { name: 'Sports News', href: '#sports-news' }
+              { name: 'Sports News', href: '#sports-news' },
+              { name: 'Indian Claims', href: '#indian-claims' },
+              { name: 'Afghan Claims', href: '#afghan-claims' }
             ].map((category, idx) => (
               <motion.button
                 key={category.name}
@@ -207,9 +209,33 @@ const NewsDashboard = () => {
             transition={{ duration: 0.7 }}
             id="sports-news"
             className="scroll-mt-32"
-            style={{ marginBottom: '150px' }}
           >
             <CategoryFeed category="sports-news" title="Sports News" icon="⚽" />
+          </motion.div>
+
+          {/* Indian Claims */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            id="indian-claims"
+            className="scroll-mt-32"
+          >
+            <CategoryFeed category="indian-claims" title="Indian Claims" icon="🇮🇳" />
+          </motion.div>
+
+          {/* Afghan Claims */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7 }}
+            id="afghan-claims"
+            className="scroll-mt-32"
+            style={{ marginBottom: '150px' }}
+          >
+            <CategoryFeed category="afghan-claims" title="Afghan Claims" icon="🇦🇫" />
           </motion.div>
         </div>
       </div>
