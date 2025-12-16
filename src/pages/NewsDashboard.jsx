@@ -222,7 +222,7 @@ const NewsDashboard = () => {
             id="indian-claims"
             className="scroll-mt-32"
           >
-            <CategoryFeed category="indian-claims" title="Indian Claims" icon="🇮🇳" />
+            <CategoryFeed category="indian-claims" title="Indian Claims" icon="" />
           </motion.div>
 
           {/* Afghan Claims */}
@@ -235,7 +235,7 @@ const NewsDashboard = () => {
             className="scroll-mt-32"
             style={{ marginBottom: '150px' }}
           >
-            <CategoryFeed category="afghan-claims" title="Afghan Claims" icon="🇦🇫" />
+            <CategoryFeed category="afghan-claims" title="Afghan Claims" icon="" />
           </motion.div>
         </div>
       </div>
