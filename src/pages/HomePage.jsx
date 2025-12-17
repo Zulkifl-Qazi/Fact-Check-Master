@@ -29,7 +29,7 @@ const HomePage = () => {
               <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
             </button>
             <p className="text-gray-400 mt-4 text-sm">
-              Explore World News, Viral Claims, Military Claims, Sports News and more
+              Explore World News, Viral Claims, Military Claims and more
             </p>
           </div>
           
