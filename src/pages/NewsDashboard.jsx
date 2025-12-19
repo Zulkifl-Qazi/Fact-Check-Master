@@ -16,54 +16,6 @@ const NewsDashboard = () => {
 
   return (
     <div className="w-full min-h-screen bg-slate-950">
-      {/* Category Navigation - Professional Design */}
-      <div className="sticky top-16 z-40 bg-slate-900/98 backdrop-blur-xl border-b border-slate-700 shadow-2xl">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex flex-col items-center gap-4">
-            {/* First Row - 3 categories */}
-            <div className="flex flex-wrap justify-center items-center gap-4">
-              {[
-                { name: 'Latest News', href: '#live-feed' },
-                { name: 'World News', href: '#world-news' },
-                { name: 'Viral Claims', href: '#viral-claims' }
-              ].map((category, idx) => (
-                <motion.button
-                  key={category.name}
-                  onClick={() => scrollToSection(category.href)}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.08, duration: 0.4 }}
-                  style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
-                  className="px-6 py-3 hover:brightness-110 border-2 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg shadow-purple-500/50"
-                >
-                  {category.name}
-                </motion.button>
-              ))}
-            </div>
-            {/* Second Row - 3 categories */}
-            <div className="flex flex-wrap justify-center items-center gap-4">
-              {[
-                { name: 'Military Updates', href: '#military-claims' },
-                { name: 'Indian Claims', href: '#indian-claims' },
-                { name: 'Afghan Claims', href: '#afghan-claims' }
-              ].map((category, idx) => (
-                <motion.button
-                  key={category.name}
-                  onClick={() => scrollToSection(category.href)}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: (idx + 3) * 0.08, duration: 0.4 }}
-                  style={{ backgroundColor: '#9333ea', borderColor: '#a855f7' }}
-                  className="px-6 py-3 hover:brightness-110 border-2 rounded-lg text-base font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg shadow-purple-500/50"
-                >
-                  {category.name}
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
         <div className="container mx-auto px-4 py-16 pb-48 space-y-20">
