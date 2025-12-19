@@ -17,89 +17,92 @@ const NewsDashboard = () => {
   return (
     <div className="w-full min-h-screen bg-slate-950">
       {/* Hero Section - AFP Style with Image */}
-      <section className="relative h-[70vh] md:h-[75vh] overflow-hidden">
+      <section className="relative h-[500px] md:h-[600px] overflow-hidden">
         {/* Hero Background Image */}
-        <div className="absolute inset-0">
-          <img 
-            src="/back.jpg" 
-            alt="News Dashboard Hero"
-            className="w-full h-full object-cover"
+        <div className="absolute inset-0 bg-slate-900">
+          <div 
+            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop')`
+            }}
           />
           {/* Dark Overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-slate-950"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-slate-950"></div>
         </div>
 
         {/* Hero Content - Positioned at bottom like AFP */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/95 to-transparent">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              {/* Live Badge */}
+        <div className="absolute inset-0 flex items-end">
+          <div className="w-full bg-gradient-to-t from-slate-950 via-slate-950/98 to-transparent pt-32 pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-purple-600/90 backdrop-blur-sm rounded-md"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
               >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
-                </span>
-                <span className="text-xs font-bold text-white tracking-wider uppercase">Live Updates</span>
-              </motion.div>
+                {/* Live Badge */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-purple-600 rounded-md"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+                  </span>
+                  <span className="text-xs font-bold text-white tracking-wider uppercase">Live Updates</span>
+                </motion.div>
 
-              {/* Main Headline */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight max-w-5xl"
-              >
-                News Dashboard
-              </motion.h1>
-              
-              {/* Subtitle */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed"
-              >
-                Comprehensive fact-checking and verification across all news categories
-              </motion.p>
+                {/* Main Headline */}
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 leading-tight max-w-5xl"
+                >
+                  News Dashboard
+                </motion.h1>
+                
+                {/* Subtitle */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="text-base md:text-lg text-gray-300 max-w-3xl mb-6"
+                >
+                  Comprehensive fact-checking and verification across all news categories
+                </motion.p>
 
-              {/* Stats Row - Compact Design */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="flex flex-wrap gap-8 mt-8"
-              >
-                {[
-                  { value: '6', label: 'News Categories Tracked' },
-                  { value: '24/7', label: 'Active Monitoring Real-time' },
-                  { value: '100%', label: 'Verified Sources Accuracy' }
-                ].map((stat, idx) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 + idx * 0.1, duration: 0.5 }}
-                    className="flex items-baseline gap-2"
-                  >
-                    <span className="text-3xl md:text-4xl font-bold text-purple-400">
-                      {stat.value}
-                    </span>
-                    <span className="text-sm text-gray-400 font-medium">
-                      {stat.label}
-                    </span>
-                  </motion.div>
-                ))}
+                {/* Stats Row - Compact Design */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="flex flex-wrap gap-6 md:gap-8"
+                >
+                  {[
+                    { value: '6', label: 'News Categories Tracked' },
+                    { value: '24/7', label: 'Active Monitoring Real-time' },
+                    { value: '100%', label: 'Verified Sources Accuracy' }
+                  ].map((stat, idx) => (
+                    <motion.div
+                      key={stat.label}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.6 + idx * 0.1, duration: 0.5 }}
+                      className="flex items-baseline gap-2"
+                    >
+                      <span className="text-2xl md:text-3xl font-bold text-purple-400">
+                        {stat.value}
+                      </span>
+                      <span className="text-xs md:text-sm text-gray-400 font-medium">
+                        {stat.label}
+                      </span>
+                    </motion.div>
+                  ))}
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
