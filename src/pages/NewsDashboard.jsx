@@ -23,32 +23,78 @@ const NewsDashboard = () => {
   return (
     <div className="w-full min-h-screen bg-slate-950">
       {/* Navigation Bar - Premium Style */}
-      <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y border-purple-500/30 shadow-2xl backdrop-blur-sm">
+      <div 
+        className="fixed left-0 right-0 z-40 backdrop-blur-sm"
+        style={{
+          top: '80px',
+          background: 'linear-gradient(to right, rgb(15, 23, 42), rgb(30, 41, 59), rgb(15, 23, 42))',
+          borderTop: '1px solid rgba(168, 85, 247, 0.3)',
+          borderBottom: '1px solid rgba(168, 85, 247, 0.3)',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+        }}
+      >
         <div className="container mx-auto px-6 sm:px-10 lg:px-16 max-w-7xl">
           {/* Main Navigation Tabs */}
-          <div className="flex items-center gap-5 pt-6 pb-5 border-b border-slate-700/50">
+          <div 
+            className="flex items-center gap-5 border-b"
+            style={{ 
+              paddingTop: '24px', 
+              paddingBottom: '20px',
+              borderBottomColor: 'rgba(51, 65, 85, 0.5)'
+            }}
+          >
             <button
               onClick={() => {
                 setActiveTab('latest');
                 setActiveCategory(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                activeTab === 'latest'
-                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
-                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
+              className={`font-bold rounded-lg transition-all duration-300 ${
+                activeTab === 'latest' ? '' : 'hover:scale-105'
               }`}
+              style={activeTab === 'latest' 
+                ? {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247), rgb(37, 99, 235))',
+                    color: 'white',
+                    boxShadow: '0 25px 50px -12px rgba(147, 51, 234, 0.6)',
+                    border: 'none'
+                  }
+                : {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'rgba(30, 41, 59, 0.7)',
+                    color: 'rgb(203, 213, 225)',
+                    border: '1px solid rgba(71, 85, 105, 0.5)'
+                  }
+              }
             >
               Latest news
             </button>
             
             <button
               onClick={() => setActiveTab('regions')}
-              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 flex items-center gap-3 transform hover:scale-105 ${
-                activeTab === 'regions'
-                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
-                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
+              className={`font-bold rounded-lg transition-all duration-300 flex items-center gap-3 ${
+                activeTab === 'regions' ? '' : 'hover:scale-105'
               }`}
+              style={activeTab === 'regions' 
+                ? {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247), rgb(37, 99, 235))',
+                    color: 'white',
+                    boxShadow: '0 25px 50px -12px rgba(147, 51, 234, 0.6)',
+                    border: 'none'
+                  }
+                : {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'rgba(30, 41, 59, 0.7)',
+                    color: 'rgb(203, 213, 225)',
+                    border: '1px solid rgba(71, 85, 105, 0.5)'
+                  }
+              }
             >
               Regions
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,11 +104,26 @@ const NewsDashboard = () => {
             
             <button
               onClick={() => setActiveTab('topics')}
-              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 flex items-center gap-3 transform hover:scale-105 ${
-                activeTab === 'topics'
-                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
-                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
+              className={`font-bold rounded-lg transition-all duration-300 flex items-center gap-3 ${
+                activeTab === 'topics' ? '' : 'hover:scale-105'
               }`}
+              style={activeTab === 'topics' 
+                ? {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247), rgb(37, 99, 235))',
+                    color: 'white',
+                    boxShadow: '0 25px 50px -12px rgba(147, 51, 234, 0.6)',
+                    border: 'none'
+                  }
+                : {
+                    padding: '14px 40px',
+                    fontSize: '16px',
+                    background: 'rgba(30, 41, 59, 0.7)',
+                    color: 'rgb(203, 213, 225)',
+                    border: '1px solid rgba(71, 85, 105, 0.5)'
+                  }
+              }
             >
               Topics
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,19 +133,36 @@ const NewsDashboard = () => {
           </div>
 
           {/* Category Pills */}
-          <div className="py-6 overflow-x-auto scrollbar-hide">
+          <div className="overflow-x-auto scrollbar-hide" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
             <div className="flex gap-4 min-w-max">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`px-8 py-3.5 text-base font-bold rounded-lg transition-all duration-300 whitespace-nowrap transform hover:scale-105 ${
-                    activeCategory === category.id
-                      ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 text-white shadow-2xl shadow-blue-600/70 ring-2 ring-purple-400/60 scale-105'
-                      : 'bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white hover:from-blue-500 hover:to-purple-500 shadow-lg hover:shadow-2xl border border-blue-400/30'
+                  className={`font-bold rounded-lg transition-all duration-300 whitespace-nowrap ${
+                    activeCategory === category.id ? '' : 'hover:scale-105'
                   }`}
+                  style={activeCategory === category.id
+                    ? {
+                        padding: '14px 32px',
+                        fontSize: '16px',
+                        background: 'linear-gradient(to right, rgb(37, 99, 235), rgb(59, 130, 246), rgb(147, 51, 234))',
+                        color: 'white',
+                        boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.7)',
+                        border: '2px solid rgba(168, 85, 247, 0.6)',
+                        transform: 'scale(1.05)'
+                      }
+                    : {
+                        padding: '14px 32px',
+                        fontSize: '16px',
+                        background: 'linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(59, 130, 246, 0.9))',
+                        color: 'white',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(96, 165, 250, 0.3)'
+                      }
+                  }
                 >
-                  {category.icon && <span className="mr-2.5 text-xl">{category.icon}</span>}
+                  {category.icon && <span style={{ marginRight: '10px', fontSize: '20px' }}>{category.icon}</span>}
                   {category.label}
                 </button>
               ))}
@@ -94,7 +172,7 @@ const NewsDashboard = () => {
       </div>
 
       {/* Spacer for fixed navigation */}
-      <div className="h-64"></div>
+      <div style={{ height: '256px' }}></div>
 
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
