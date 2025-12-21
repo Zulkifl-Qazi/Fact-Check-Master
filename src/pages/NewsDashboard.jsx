@@ -18,96 +18,86 @@ const NewsDashboard = () => {
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      const offset = 180;
+      const navHeight = 140; // Height of sticky navigation
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      const offsetPosition = elementPosition + window.pageYOffset - navHeight;
       window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     }
   };
 
   const handleCategoryClick = (categoryId) => {
     setActiveCategory(categoryId);
-    setActiveTab('topics');
     scrollToSection(`#${categoryId}`);
   };
 
   return (
     <div className="w-full min-h-screen bg-slate-950">
-      {/* Sticky Navigation */}
-      <div className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800">
-        <div className="container mx-auto px-4">
+      {/* Sticky Navigation - AFP Style */}
+      <div className="sticky top-0 z-50 bg-slate-900/98 backdrop-blur-md border-b border-slate-700/50">
+        <div className="container mx-auto px-4 sm:px-6">
           {/* Main Navigation Tabs */}
-          <div className="flex items-center gap-8 py-4 border-b border-slate-800/50">
+          <div className="flex items-center gap-1 py-3">
             <button
               onClick={() => {
                 setActiveTab('latest');
                 setActiveCategory(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`text-base font-medium transition-all relative pb-1 ${
+              className={`px-4 py-2 text-sm font-semibold rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'latest'
-                  ? 'text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-transparent text-slate-300 hover:text-white'
               }`}
             >
-              Latest News
-              {activeTab === 'latest' && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
-                />
-              )}
+              Latest news
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
             
             <button
               onClick={() => setActiveTab('regions')}
-              className={`text-base font-medium transition-all relative pb-1 ${
+              className={`px-4 py-2 text-sm font-semibold rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'regions'
-                  ? 'text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-transparent text-slate-300 hover:text-white'
               }`}
             >
-              By Region
-              {activeTab === 'regions' && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
-                />
-              )}
+              Regions
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </button>
             
             <button
               onClick={() => setActiveTab('topics')}
-              className={`text-base font-medium transition-all relative pb-1 ${
+              className={`px-4 py-2 text-sm font-semibold rounded transition-all flex items-center gap-1.5 ${
                 activeTab === 'topics'
-                  ? 'text-white'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-transparent text-slate-300 hover:text-white'
               }`}
             >
-              By Topic
-              {activeTab === 'topics' && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
-                />
-              )}
+              Topics
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </button>
           </div>
 
           {/* Category Pills */}
-          <div className="py-4 overflow-x-auto">
-            <div className="flex gap-3 min-w-max">
+          <div className="pb-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 min-w-max">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`px-5 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-4 py-1.5 text-sm font-semibold rounded transition-all whitespace-nowrap ${
                     activeCategory === category.id
                       ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      : 'bg-blue-600/90 text-white hover:bg-blue-500'
                   }`}
                 >
-                  {category.icon && <span className="mr-2">{category.icon}</span>}
+                  {category.icon && <span className="mr-1.5">{category.icon}</span>}
                   {category.label}
                 </button>
               ))}
