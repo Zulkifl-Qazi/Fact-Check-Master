@@ -23,20 +23,20 @@ const NewsDashboard = () => {
   return (
     <div className="w-full min-h-screen bg-slate-950">
       {/* Sticky Navigation - AFP Style */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 shadow-xl">
-        <div className="container mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-slate-900 to-slate-800 border-b-2 border-slate-700 shadow-2xl">
+        <div className="container mx-auto px-8 sm:px-10 lg:px-16">
           {/* Main Navigation Tabs */}
-          <div className="flex items-center gap-4 pt-6 pb-4">
+          <div className="flex items-center gap-6 pt-8 pb-5">
             <button
               onClick={() => {
                 setActiveTab('latest');
                 setActiveCategory(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`px-6 py-2.5 text-sm font-bold rounded transition-all ${
+              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 ${
                 activeTab === 'latest'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                  : 'bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
+                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
               }`}
             >
               Latest news
@@ -44,47 +44,47 @@ const NewsDashboard = () => {
             
             <button
               onClick={() => setActiveTab('regions')}
-              className={`px-6 py-2.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
+              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 flex items-center gap-2.5 ${
                 activeTab === 'regions'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                  : 'bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
+                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
               }`}
             >
               Regions
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
               </svg>
             </button>
             
             <button
               onClick={() => setActiveTab('topics')}
-              className={`px-6 py-2.5 text-sm font-bold rounded transition-all flex items-center gap-2 ${
+              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 flex items-center gap-2.5 ${
                 activeTab === 'topics'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                  : 'bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
+                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
               }`}
             >
               Topics
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
           {/* Category Pills */}
-          <div className="pb-6 pt-2 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-3 min-w-max">
+          <div className="pb-8 pt-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-4 min-w-max">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`px-6 py-2.5 text-sm font-bold rounded transition-all whitespace-nowrap ${
+                  className={`px-7 py-3 text-base font-bold rounded-md transition-all duration-300 whitespace-nowrap ${
                     activeCategory === category.id
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40 ring-2 ring-blue-400/50'
-                      : 'bg-blue-600/90 text-white hover:bg-blue-500 shadow-md'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/60 ring-4 ring-blue-400/40 scale-105'
+                      : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 shadow-xl hover:shadow-2xl hover:scale-105'
                   }`}
                 >
-                  {category.icon && <span className="mr-2 text-base">{category.icon}</span>}
+                  {category.icon && <span className="mr-2.5 text-lg">{category.icon}</span>}
                   {category.label}
                 </button>
               ))}
@@ -94,7 +94,7 @@ const NewsDashboard = () => {
       </div>
 
       {/* Spacer for fixed navigation */}
-      <div className="h-40"></div>
+      <div className="h-48"></div>
 
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
