@@ -15,6 +15,12 @@ const NewsDashboard = () => {
     { id: 'afghan-claims', label: 'Afghan Claims', icon: '' },
   ];
 
+  const regions = [
+    { id: 'pakistan', label: 'Pakistan', icon: '🇵🇰' },
+    { id: 'india', label: 'India', icon: '🇮🇳' },
+    { id: 'afghanistan', label: 'Afghanistan', icon: '🇦🇫' },
+  ];
+
   const handleCategoryClick = (categoryId) => {
     setActiveCategory(categoryId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -36,11 +42,11 @@ const NewsDashboard = () => {
         <div className="container mx-auto px-6 sm:px-10 lg:px-16 max-w-7xl">
           {/* Main Navigation Tabs */}
           <div 
-            className="flex items-center gap-5 border-b"
+            className="flex items-center gap-5"
             style={{ 
               paddingTop: '24px', 
-              paddingBottom: '20px',
-              borderBottomColor: 'rgba(51, 65, 85, 0.5)'
+              paddingBottom: '16px',
+              borderBottom: activeTab === 'latest' ? 'none' : '1px solid rgba(51, 65, 85, 0.5)'
             }}
           >
             <button
@@ -132,42 +138,74 @@ const NewsDashboard = () => {
             </button>
           </div>
 
-          {/* Category Pills */}
-          <div className="overflow-x-auto scrollbar-hide" style={{ paddingTop: '24px', paddingBottom: '24px' }}>
-            <div className="flex gap-4 min-w-max">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryClick(category.id)}
-                  className={`font-bold rounded-lg transition-all duration-300 whitespace-nowrap ${
-                    activeCategory === category.id ? '' : 'hover:scale-105'
-                  }`}
-                  style={activeCategory === category.id
-                    ? {
-                        padding: '14px 32px',
-                        fontSize: '16px',
-                        background: 'linear-gradient(to right, rgb(37, 99, 235), rgb(59, 130, 246), rgb(147, 51, 234))',
-                        color: 'white',
-                        boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.7)',
-                        border: '2px solid rgba(168, 85, 247, 0.6)',
-                        transform: 'scale(1.05)'
-                      }
-                    : {
-                        padding: '14px 32px',
-                        fontSize: '16px',
-                        background: 'linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(59, 130, 246, 0.9))',
-                        color: 'white',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
-                        border: '1px solid rgba(96, 165, 250, 0.3)'
-                      }
-                  }
-                >
-                  {category.icon && <span style={{ marginRight: '10px', fontSize: '20px' }}>{category.icon}</span>}
-                  {category.label}
-                </button>
-              ))}
+          {/* Region Pills - Show when Regions tab is active */}
+          {activeTab === 'regions' && (
+            <div className="overflow-x-auto scrollbar-hide" style={{ paddingTop: '20px', paddingBottom: '24px' }}>
+              <div className="flex gap-4 min-w-max">
+                {regions.map((region) => (
+                  <button
+                    key={region.id}
+                    onClick={() => {
+                      // Non-functional for now
+                    }}
+                    className="font-bold rounded-lg transition-all duration-300 whitespace-nowrap hover:scale-105"
+                    style={{
+                      padding: '14px 32px',
+                      fontSize: '16px',
+                      background: 'linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(59, 130, 246, 0.9))',
+                      color: 'white',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(96, 165, 250, 0.3)',
+                      cursor: 'default',
+                      opacity: '0.8'
+                    }}
+                  >
+                    {region.icon && <span style={{ marginRight: '10px', fontSize: '20px' }}>{region.icon}</span>}
+                    {region.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Category Pills - Show when Topics tab is active */}
+          {activeTab === 'topics' && (
+            <div className="overflow-x-auto scrollbar-hide" style={{ paddingTop: '20px', paddingBottom: '24px' }}>
+              <div className="flex gap-4 min-w-max">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.id)}
+                    className={`font-bold rounded-lg transition-all duration-300 whitespace-nowrap ${
+                      activeCategory === category.id ? '' : 'hover:scale-105'
+                    }`}
+                    style={activeCategory === category.id
+                      ? {
+                          padding: '14px 32px',
+                          fontSize: '16px',
+                          background: 'linear-gradient(to right, rgb(37, 99, 235), rgb(59, 130, 246), rgb(147, 51, 234))',
+                          color: 'white',
+                          boxShadow: '0 25px 50px -12px rgba(37, 99, 235, 0.7)',
+                          border: '2px solid rgba(168, 85, 247, 0.6)',
+                          transform: 'scale(1.05)'
+                        }
+                      : {
+                          padding: '14px 32px',
+                          fontSize: '16px',
+                          background: 'linear-gradient(to right, rgba(37, 99, 235, 0.9), rgba(59, 130, 246, 0.9))',
+                          color: 'white',
+                          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+                          border: '1px solid rgba(96, 165, 250, 0.3)'
+                        }
+                    }
+                  >
+                    {category.icon && <span style={{ marginRight: '10px', fontSize: '20px' }}>{category.icon}</span>}
+                    {category.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
