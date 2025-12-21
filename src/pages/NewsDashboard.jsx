@@ -1,21 +1,121 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import LiveFeed from '../components/LiveFeed';
 import CategoryFeed from '../components/CategoryFeed';
 
 const NewsDashboard = () => {
+  const [activeTab, setActiveTab] = useState('latest');
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const categories = [
+    { id: 'world-news', label: 'World News', icon: '🌍' },
+    { id: 'viral-claims', label: 'Viral Claims', icon: '🔥' },
+    { id: 'military-claims', label: 'Military Claims', icon: '⚔️' },
+    { id: 'indian-claims', label: 'Indian Claims', icon: '' },
+    { id: 'afghan-claims', label: 'Afghan Claims', icon: '' },
+  ];
+
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      const offset = 100;
+      const offset = 180;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
     }
   };
 
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory(categoryId);
+    setActiveTab('topics');
+    scrollToSection(`#${categoryId}`);
+  };
+
   return (
     <div className="w-full min-h-screen bg-slate-950">
+      {/* Sticky Navigation */}
+      <div className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800">
+        <div className="container mx-auto px-4">
+          {/* Main Navigation Tabs */}
+          <div className="flex items-center gap-8 py-4 border-b border-slate-800/50">
+            <button
+              onClick={() => {
+                setActiveTab('latest');
+                setActiveCategory(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`text-base font-medium transition-all relative pb-1 ${
+                activeTab === 'latest'
+                  ? 'text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Latest News
+              {activeTab === 'latest' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
+                />
+              )}
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('regions')}
+              className={`text-base font-medium transition-all relative pb-1 ${
+                activeTab === 'regions'
+                  ? 'text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              By Region
+              {activeTab === 'regions' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
+                />
+              )}
+            </button>
+            
+            <button
+              onClick={() => setActiveTab('topics')}
+              className={`text-base font-medium transition-all relative pb-1 ${
+                activeTab === 'topics'
+                  ? 'text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              By Topic
+              {activeTab === 'topics' && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
+                />
+              )}
+            </button>
+          </div>
+
+          {/* Category Pills */}
+          <div className="py-4 overflow-x-auto">
+            <div className="flex gap-3 min-w-max">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryClick(category.id)}
+                  className={`px-5 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    activeCategory === category.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  {category.icon && <span className="mr-2">{category.icon}</span>}
+                  {category.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
         <div className="container mx-auto px-4 py-16 pb-48 space-y-20">
