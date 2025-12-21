@@ -22,7 +22,7 @@ const NewsDashboard = () => {
 
   return (
     <div className="w-full min-h-screen bg-slate-950">
-      {/* Sticky Navigation - Premium Style */}
+      {/* Navigation Bar - Premium Style */}
       <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y border-purple-500/30 shadow-2xl backdrop-blur-sm">
         <div className="container mx-auto px-6 sm:px-10 lg:px-16 max-w-7xl">
           {/* Main Navigation Tabs */}
