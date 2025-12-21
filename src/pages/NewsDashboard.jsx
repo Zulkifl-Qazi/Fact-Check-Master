@@ -22,21 +22,21 @@ const NewsDashboard = () => {
 
   return (
     <div className="w-full min-h-screen bg-slate-950">
-      {/* Sticky Navigation - AFP Style */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-slate-900 to-slate-800 border-b-2 border-slate-700 shadow-2xl">
-        <div className="container mx-auto px-8 sm:px-10 lg:px-16">
+      {/* Sticky Navigation - Premium Style */}
+      <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y border-purple-500/30 shadow-2xl backdrop-blur-sm">
+        <div className="container mx-auto px-6 sm:px-10 lg:px-16 max-w-7xl">
           {/* Main Navigation Tabs */}
-          <div className="flex items-center gap-6 pt-8 pb-5">
+          <div className="flex items-center gap-5 pt-6 pb-5 border-b border-slate-700/50">
             <button
               onClick={() => {
                 setActiveTab('latest');
                 setActiveCategory(null);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 ${
+              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 transform hover:scale-105 ${
                 activeTab === 'latest'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
-                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
+                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
+                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
               }`}
             >
               Latest news
@@ -44,10 +44,10 @@ const NewsDashboard = () => {
             
             <button
               onClick={() => setActiveTab('regions')}
-              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 flex items-center gap-2.5 ${
+              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 flex items-center gap-3 transform hover:scale-105 ${
                 activeTab === 'regions'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
-                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
+                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
+                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
               }`}
             >
               Regions
@@ -58,10 +58,10 @@ const NewsDashboard = () => {
             
             <button
               onClick={() => setActiveTab('topics')}
-              className={`px-8 py-3 text-base font-bold rounded-md transition-all duration-300 flex items-center gap-2.5 ${
+              className={`px-10 py-3.5 text-base font-bold rounded-lg transition-all duration-300 flex items-center gap-3 transform hover:scale-105 ${
                 activeTab === 'topics'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/50 scale-105'
-                  : 'bg-slate-700/60 text-slate-200 hover:text-white hover:bg-slate-600 hover:shadow-lg'
+                  ? 'bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 text-white shadow-2xl shadow-purple-600/60'
+                  : 'bg-slate-800/70 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-600/50 hover:border-purple-500/50'
               }`}
             >
               Topics
@@ -72,19 +72,19 @@ const NewsDashboard = () => {
           </div>
 
           {/* Category Pills */}
-          <div className="pb-8 pt-3 overflow-x-auto scrollbar-hide">
+          <div className="py-6 overflow-x-auto scrollbar-hide">
             <div className="flex gap-4 min-w-max">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`px-7 py-3 text-base font-bold rounded-md transition-all duration-300 whitespace-nowrap ${
+                  className={`px-8 py-3.5 text-base font-bold rounded-lg transition-all duration-300 whitespace-nowrap transform hover:scale-105 ${
                     activeCategory === category.id
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-2xl shadow-blue-600/60 ring-4 ring-blue-400/40 scale-105'
-                      : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 shadow-xl hover:shadow-2xl hover:scale-105'
+                      ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 text-white shadow-2xl shadow-blue-600/70 ring-2 ring-purple-400/60 scale-105'
+                      : 'bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white hover:from-blue-500 hover:to-purple-500 shadow-lg hover:shadow-2xl border border-blue-400/30'
                   }`}
                 >
-                  {category.icon && <span className="mr-2.5 text-lg">{category.icon}</span>}
+                  {category.icon && <span className="mr-2.5 text-xl">{category.icon}</span>}
                   {category.label}
                 </button>
               ))}
@@ -94,7 +94,7 @@ const NewsDashboard = () => {
       </div>
 
       {/* Spacer for fixed navigation */}
-      <div className="h-48"></div>
+      <div className="h-64"></div>
 
       {/* Content Section with Better Spacing */}
       <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
