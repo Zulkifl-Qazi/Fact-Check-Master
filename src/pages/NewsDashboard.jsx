@@ -68,7 +68,7 @@ const NewsDashboard = () => {
                 onClick={() => handleCategoryClick(category.id)}
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative overflow-hidden rounded-xl transition-all duration-300 ${
+                className={`relative overflow-hidden rounded-xl transition-all duration-300 flex flex-col ${
                   activeCategory === category.id 
                     ? 'ring-4 ring-purple-500' 
                     : 'hover:ring-2 hover:ring-purple-400'
@@ -80,37 +80,61 @@ const NewsDashboard = () => {
                   border: activeCategory === category.id
                     ? '2px solid rgba(168, 85, 247, 0.8)'
                     : '1px solid rgba(71, 85, 105, 0.5)',
-                  minHeight: '260px',
+                  background: activeCategory === category.id
+                    ? 'linear-gradient(135deg, rgb(147, 51, 234), rgb(168, 85, 247), rgb(37, 99, 235))'
+                    : 'linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(51, 65, 85, 0.95))',
                 }}
               >
-                {/* Background Image with Overlay */}
+                {/* Image Section */}
                 <div 
-                  className="absolute inset-0"
+                  className="w-full relative"
                   style={{
-                    backgroundImage: `url(${category.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: 'brightness(0.4)',
+                    height: '180px',
+                    overflow: 'hidden'
                   }}
-                />
-                <div 
-                  className="absolute inset-0"
-                  style={{
-                    background: activeCategory === category.id
-                      ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.85), rgba(168, 85, 247, 0.85), rgba(37, 99, 235, 0.85))'
-                      : 'linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(51, 65, 85, 0.75))',
-                  }}
-                />
+                >
+                  <img 
+                    src={category.image} 
+                    alt={category.label}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                  {/* Active indicator on image */}
+                  {activeCategory === category.id && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute top-3 right-3 bg-white rounded-full p-1"
+                      style={{ zIndex: 10 }}
+                    >
+                      <svg 
+                        className="w-5 h-5 text-purple-600" 
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
+                        <path 
+                          fillRule="evenodd" 
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                          clipRule="evenodd" 
+                        />
+                      </svg>
+                    </motion.div>
+                  )}
+                </div>
 
-                {/* Content */}
-                <div className="relative z-10 p-6 h-full flex flex-col items-center justify-center gap-3">
+                {/* Content Section */}
+                <div className="p-6 flex flex-col items-center justify-center gap-3 flex-grow">
                   {/* Icon */}
                   <div 
-                    className="text-5xl mb-2"
+                    className="text-4xl"
                     style={{
                       filter: activeCategory === category.id 
                         ? 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))'
-                        : 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))'
+                        : 'none'
                     }}
                   >
                     {category.icon}
@@ -120,10 +144,11 @@ const NewsDashboard = () => {
                   <div 
                     className="font-bold text-center"
                     style={{
-                      fontSize: '20px',
+                      fontSize: '18px',
                       color: 'white',
-                      textShadow: '0 2px 10px rgba(0, 0, 0, 0.7)',
-                      marginBottom: '8px'
+                      textShadow: activeCategory === category.id
+                        ? '0 2px 10px rgba(0, 0, 0, 0.5)'
+                        : 'none'
                     }}
                   >
                     {category.label}
@@ -131,37 +156,15 @@ const NewsDashboard = () => {
 
                   {/* Description */}
                   <p 
-                    className="text-center text-sm leading-relaxed"
+                    className="text-center text-xs leading-relaxed"
                     style={{
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+                      color: 'rgba(255, 255, 255, 0.85)',
                       maxWidth: '200px'
                     }}
                   >
                     {category.description}
                   </p>
                 </div>
-
-                {/* Active indicator */}
-                {activeCategory === category.id && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute top-3 right-3 bg-white rounded-full p-1 z-20"
-                  >
-                    <svg 
-                      className="w-5 h-5 text-purple-600" 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path 
-                        fillRule="evenodd" 
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                        clipRule="evenodd" 
-                      />
-                    </svg>
-                  </motion.div>
-                )}
               </motion.button>
             ))}
           </motion.div>
