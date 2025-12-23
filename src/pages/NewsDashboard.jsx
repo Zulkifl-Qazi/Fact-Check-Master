@@ -58,10 +58,24 @@ const NewsDashboard = () => {
       {/* Spacer for navbar */}
       <div style={{ height: '80px' }}></div>
 
+      {/* Page Title */}
+      <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+        <div className="container mx-auto px-4 py-12">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl md:text-5xl font-bold text-white text-center mb-12"
+          >
+            Select a Category
+          </motion.h1>
+        </div>
+      </div>
+
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
         <div className="w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-          <div className="container mx-auto px-4 py-12">
+          <div className="container mx-auto px-4 py-0">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -168,22 +182,6 @@ const NewsDashboard = () => {
                 />
               </motion.button>
             ))}
-          </motion.div>
-
-          {/* Show message when no category selected */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-20"
-          >
-            <div className="text-6xl mb-6">📰</div>
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Select a Category
-            </h2>
-            <p className="text-gray-400 text-lg">
-              Click on any category block above to view posts
-            </p>
           </motion.div>
         </div>
       </div>
