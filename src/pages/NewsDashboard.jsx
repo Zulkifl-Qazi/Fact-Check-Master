@@ -121,7 +121,7 @@ const NewsDashboard = () => {
 
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
-        <div className="w-full pb-40 md:pb-48 lg:pb-56">
+        <div className="w-full" style={{ paddingBottom: '160px' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -269,7 +269,7 @@ const NewsDashboard = () => {
 
       {/* Show selected category posts - Full width when active */}
       {activeCategory && (
-        <div className="w-full pb-40 md:pb-48 lg:pb-56">
+        <div className="w-full" style={{ paddingBottom: '160px' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
