@@ -80,7 +80,7 @@ const NewsDashboard = () => {
                   background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(51, 65, 85, 0.98))',
                 }}
               >
-                {/* Image Section with Gradient Overlay */}
+                {/* Image Section */}
                 <div 
                   className="w-full relative overflow-hidden"
                   style={{
@@ -96,14 +96,6 @@ const NewsDashboard = () => {
                       height: '100%',
                       objectFit: 'cover',
                       display: 'block',
-                      filter: 'brightness(0.85)',
-                    }}
-                  />
-                  {/* Gradient overlay on hover */}
-                  <div 
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.6), rgba(59, 130, 246, 0.6))',
                     }}
                   />
                 </div>
