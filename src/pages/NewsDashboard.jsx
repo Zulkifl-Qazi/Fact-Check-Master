@@ -59,7 +59,7 @@ const NewsDashboard = () => {
       <div style={{ height: '80px' }}></div>
 
       {/* Professional Header Section */}
-      <div className="w-full relative overflow-hidden mb-6 md:mb-8">
+      <div className="w-full relative overflow-hidden mb-12 md:mb-16 lg:mb-20">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-pink-600/10"></div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)'
@@ -121,7 +121,7 @@ const NewsDashboard = () => {
 
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
-        <div className="w-full pb-32 md:pb-40">
+        <div className="w-full pb-40 md:pb-48 lg:pb-56">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -269,7 +269,7 @@ const NewsDashboard = () => {
 
       {/* Show selected category posts - Full width when active */}
       {activeCategory && (
-        <div className="w-full pb-32 md:pb-40">
+        <div className="w-full pb-40 md:pb-48 lg:pb-56">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
