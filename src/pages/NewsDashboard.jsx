@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import CategoryFeed from '../components/CategoryFeed';
+import worldNewsImg from '../assets/Latests news.jpeg';
+import viralNewsImg from '../assets/Viral news.jpeg';
+import militaryNewsImg from '../assets/Militar news.jpeg';
+import indianClaimsImg from '../assets/Indian claims.jpeg';
+import afghanClaimsImg from '../assets/Afghan .jpeg';
 
 const NewsDashboard = () => {
   const [activeCategory, setActiveCategory] = useState(null);
@@ -11,35 +16,35 @@ const NewsDashboard = () => {
       label: 'World News', 
       icon: '🌍',
       description: 'Global events and international breaking news',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80'
+      image: worldNewsImg
     },
     { 
       id: 'viral-claims', 
       label: 'Viral Claims', 
       icon: '🔥',
       description: 'Fact-checking trending stories and social media claims',
-      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80'
+      image: viralNewsImg
     },
     { 
       id: 'military-claims', 
       label: 'Military Claims', 
       icon: '⚔️',
       description: 'Defense updates and military operations verification',
-      image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80'
+      image: militaryNewsImg
     },
     { 
       id: 'indian-claims', 
       label: 'Indian Claims', 
       icon: '🇮🇳',
       description: 'News and fact-checks from India region',
-      image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=80'
+      image: indianClaimsImg
     },
     { 
       id: 'afghan-claims', 
       label: 'Afghan Claims', 
       icon: '🇦🇫',
       description: 'Afghanistan news and claim verification updates',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80'
+      image: afghanClaimsImg
     },
   ];
 
