@@ -86,17 +86,17 @@ const NewsDashboard = () => {
               >
                 <motion.button
                   onClick={() => setActiveCategory(null)}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.08, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-5 py-2.5 md:px-6 md:py-3 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl font-bold text-sm md:text-base"
+                  className="px-6 py-3 md:px-8 md:py-3.5 rounded-full transition-all duration-300 flex items-center gap-2.5 font-bold text-base md:text-lg"
                   style={{
-                    background: 'linear-gradient(135deg, rgb(147, 51, 234), rgb(168, 85, 247))',
+                    background: 'linear-gradient(135deg, rgb(147, 51, 234), rgb(168, 85, 247), rgb(192, 132, 252))',
                     color: 'white',
-                    boxShadow: '0 10px 25px -5px rgba(147, 51, 234, 0.5), 0 0 0 1px rgba(147, 51, 234, 0.3)',
+                    boxShadow: '0 15px 35px -5px rgba(147, 51, 234, 0.6), 0 0 25px rgba(147, 51, 234, 0.4)',
                   }}
                 >
-                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                   Back
                 </motion.button>
@@ -121,7 +121,7 @@ const NewsDashboard = () => {
 
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
-        <div className="w-full pb-20 md:pb-32">
+        <div className="w-full pb-32 md:pb-40">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -269,7 +269,7 @@ const NewsDashboard = () => {
 
       {/* Show selected category posts - Full width when active */}
       {activeCategory && (
-        <div className="w-full pb-20 md:pb-32">
+        <div className="w-full pb-32 md:pb-40">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
