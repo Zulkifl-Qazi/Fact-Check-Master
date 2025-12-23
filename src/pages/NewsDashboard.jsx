@@ -54,7 +54,7 @@ const NewsDashboard = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950">
+    <div className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950" style={{ paddingBottom: '200px' }}>
       {/* Spacer for navbar */}
       <div style={{ height: '80px' }}></div>
 
@@ -121,7 +121,7 @@ const NewsDashboard = () => {
 
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
-        <div className="w-full" style={{ paddingBottom: '160px' }}>
+        <div className="w-full">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -269,7 +269,7 @@ const NewsDashboard = () => {
 
       {/* Show selected category posts - Full width when active */}
       {activeCategory && (
-        <div className="w-full" style={{ paddingBottom: '160px' }}>
+        <div className="w-full">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
