@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CategoryFeed from '../components/CategoryFeed';
 import worldNewsImg from '../assets/latest-news.jpeg';
@@ -9,6 +9,11 @@ import afghanClaimsImg from '../assets/afghan-claims.jpeg';
 
 const NewsDashboard = () => {
   const [activeCategory, setActiveCategory] = useState(null);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const categories = [
     { 
@@ -67,93 +72,108 @@ const NewsDashboard = () => {
               <motion.button
                 key={category.id}
                 onClick={() => handleCategoryClick(category.id)}
-                whileHover={{ scale: 1.05, y: -5 }}
-                whileTap={{ scale: 0.95 }}
-                className={`relative overflow-hidden rounded-xl transition-all duration-300 flex flex-col ${
-                  activeCategory === category.id 
-                    ? 'ring-4 ring-purple-500' 
-                    : 'hover:ring-2 hover:ring-purple-400'
-                }`}
+                whileHover={{ scale: 1.08, y: -8 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative overflow-hidden rounded-2xl transition-all duration-500 flex flex-col group"
                 style={{
-                  boxShadow: activeCategory === category.id
-                    ? '0 25px 50px -12px rgba(147, 51, 234, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)'
-                    : '0 10px 30px -5px rgba(0, 0, 0, 0.5)',
-                  border: activeCategory === category.id
-                    ? '2px solid rgba(168, 85, 247, 0.8)'
-                    : '1px solid rgba(71, 85, 105, 0.5)',
-                  background: activeCategory === category.id
-                    ? 'linear-gradient(135deg, rgb(147, 51, 234), rgb(168, 85, 247), rgb(37, 99, 235))'
-                    : 'linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(51, 65, 85, 0.95))',
+                  boxShadow: '0 20px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                  background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(51, 65, 85, 0.98))',
                 }}
               >
-                {/* Image Section */}
+                {/* Image Section with Gradient Overlay */}
                 <div 
-                  className="w-full relative"
+                  className="w-full relative overflow-hidden"
                   style={{
-                    height: '180px',
-                    overflow: 'hidden'
+                    height: '200px',
                   }}
                 >
                   <img 
                     src={category.image} 
                     alt={category.label}
+                    className="transition-transform duration-700 group-hover:scale-110"
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      display: 'block'
+                      display: 'block',
+                      filter: 'brightness(0.85)',
                     }}
                   />
-                  {/* Active indicator on image */}
-                  {activeCategory === category.id && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute top-3 right-3 bg-white rounded-full p-1"
-                      style={{ zIndex: 10 }}
-                    >
-                      <svg 
-                        className="w-5 h-5 text-purple-600" 
-                        fill="currentColor" 
-                        viewBox="0 0 20 20"
-                      >
-                        <path 
-                          fillRule="evenodd" 
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                          clipRule="evenodd" 
-                        />
-                      </svg>
-                    </motion.div>
-                  )}
+                  {/* Gradient overlay on hover */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.6), rgba(59, 130, 246, 0.6))',
+                    }}
+                  />
                 </div>
 
-                {/* Content Section */}
-                <div className="p-6 flex flex-col items-center justify-center gap-3 flex-grow">
-                  {/* Label */}
+                {/* Content Section with Enhanced Styling */}
+                <div 
+                  className="p-6 flex flex-col items-center justify-center gap-3 flex-grow relative"
+                  style={{
+                    background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95))',
+                  }}
+                >
+                  {/* Decorative line */}
                   <div 
-                    className="font-bold text-center"
+                    className="w-12 h-1 rounded-full mb-2 transition-all duration-500 group-hover:w-20"
                     style={{
-                      fontSize: '20px',
+                      background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(59, 130, 246))',
+                    }}
+                  />
+                  
+                  {/* Label */}
+                  <h3 
+                    className="font-bold text-center transition-all duration-300 group-hover:text-purple-300"
+                    style={{
+                      fontSize: '22px',
                       color: 'white',
-                      textShadow: activeCategory === category.id
-                        ? '0 2px 10px rgba(0, 0, 0, 0.5)'
-                        : 'none'
+                      letterSpacing: '0.5px',
+                      textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
                     }}
                   >
                     {category.label}
-                  </div>
+                  </h3>
 
                   {/* Description */}
                   <p 
-                    className="text-center text-xs leading-relaxed"
+                    className="text-center text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-300"
                     style={{
-                      color: 'rgba(255, 255, 255, 0.85)',
-                      maxWidth: '200px'
+                      color: 'rgba(203, 213, 225, 0.9)',
+                      maxWidth: '220px',
                     }}
                   >
                     {category.description}
                   </p>
+                  
+                  {/* Arrow indicator on hover */}
+                  <div className="mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                    <svg 
+                      className="w-6 h-6 text-purple-400" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      />
+                    </svg>
+                  </div>
                 </div>
+
+                {/* Shine effect on hover */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)',
+                    transform: 'translateX(-100%)',
+                    animation: 'shine 2s infinite',
+                  }}
+                />
               </motion.button>
             ))}
           </motion.div>
