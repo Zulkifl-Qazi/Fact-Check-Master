@@ -97,14 +97,8 @@ const CategoryFeed = ({ category, title, icon }) => {
 
     if (posts.length === 0) {
         return (
-            <section className="py-16 bg-slate-900" id={category}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3 mb-10">
-                        <span className="text-3xl">{icon}</span>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-                            {title}
-                        </h2>
-                    </div>
+            <section className="py-8" id={category}>
+                <div className="max-w-7xl mx-auto">
                     <p className="text-gray-400 text-center py-8">No posts available in this category yet.</p>
                 </div>
             </section>
@@ -112,25 +106,8 @@ const CategoryFeed = ({ category, title, icon }) => {
     }
 
     return (
-        <section className="py-16 bg-slate-900" id={category}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-12"
-                >
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-4xl">{icon}</span>
-                        <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                            {title}
-                        </h2>
-                    </div>
-                    <p className="mt-2 text-lg text-gray-300">
-                        Verified fact-checks and updates
-                    </p>
-                </motion.div>
-
+        <section className="py-8" id={category}>
+            <div className="max-w-7xl mx-auto">
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post, index) => (
