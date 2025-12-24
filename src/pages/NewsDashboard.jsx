@@ -281,8 +281,7 @@ const NewsDashboard = () => {
               }}
             >
               <CategoryFeed 
-                category={activeCategory} 
-                title={categories.find(c => c.id === activeCategory)?.label} 
+                category={activeCategory}
               />
             </motion.div>
           </div>
