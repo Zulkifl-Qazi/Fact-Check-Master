@@ -100,10 +100,6 @@ const NewsDashboard = () => {
                   </svg>
                   Back
                 </motion.button>
-                <div className="hidden sm:block h-8 md:h-10 w-px bg-gradient-to-b from-transparent via-purple-400 to-transparent"></div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 px-2">
-                  {categories.find(c => c.id === activeCategory)?.label}
-                </h2>
               </motion.div>
             ) : (
               <motion.p 
