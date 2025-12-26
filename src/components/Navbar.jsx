@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaShieldAlt, FaSearch } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   // Handle window resize
   useEffect(() => {
@@ -25,6 +27,15 @@ const Navbar = () => {
   // Close mobile menu when a link is clicked
   const handleLinkClick = () => {
     setIsOpen(false);
+  };
+
+  // Handle search submission
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
   };
 
   return (
@@ -126,6 +137,9 @@ const Navbar = () => {
                 type="text"
                 placeholder="Search facts..."
                 autoFocus={isSearchOpen}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
                 style={{
                   width: '100%',
                   fontSize: '0.875rem',

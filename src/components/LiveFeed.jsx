@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye } from 'react-icons/fa';
+import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye, FaTimes } from 'react-icons/fa';
 
-const LiveFeed = () => {
+const LiveFeed = ({ searchQuery = '' }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -74,6 +74,21 @@ const LiveFeed = () => {
         navigate(`/post/${post.id}`);
     };
 
+    // Filter posts based on search query
+    const filteredPosts = posts.filter(post => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            post.title.toLowerCase().includes(query) ||
+            post.content.toLowerCase().includes(query) ||
+            (post.author && post.author.toLowerCase().includes(query))
+        );
+    });
+
+    const clearSearch = () => {
+        navigate('/');
+    };
+
     if (loading) {
         return (
             <motion.div 
@@ -117,25 +132,44 @@ const LiveFeed = () => {
                     className="text-center mb-12"
                 >
                     <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                        Latest News
+                        {searchQuery ? `Search Results for "${searchQuery}"` : 'Latest News'}
                     </h2>
                     <p className="mt-4 text-lg text-gray-300">
-                        Real-time updates on the latest fact-checks and verified information
+                        {searchQuery ? `Found ${filteredPosts.length} result${filteredPosts.length !== 1 ? 's' : ''}` : 'Real-time updates on the latest fact-checks and verified information'}
                     </p>
+                    {searchQuery && (
+                        <button
+                            onClick={clearSearch}
+                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                        >
+                            <FaTimes />
+                            Clear Search
+                        </button>
+                    )}
                 </motion.div>
 
-                {posts.length === 0 ? (
+                {filteredPosts.length === 0 ? (
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="text-center py-12"
                     >
                         <FaRss className="text-gray-400 text-4xl mx-auto mb-4" />
-                        <p className="text-gray-400">No posts available at the moment.</p>
+                        <p className="text-gray-400">
+                            {searchQuery ? `No posts found matching "${searchQuery}"` : 'No posts available at the moment.'}
+                        </p>
+                        {searchQuery && (
+                            <button
+                                onClick={clearSearch}
+                                className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                            >
+                                View All Posts
+                            </button>
+                        )}
                     </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {posts.map((post, index) => (
+                        {filteredPosts.map((post, index) => (
                             <motion.article
                                 key={post.id}
                                 initial={{ opacity: 0, y: 20 }}
