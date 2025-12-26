@@ -146,18 +146,18 @@ const Navbar = () => {
                   padding: '0.65rem 0.9rem',
                   borderRadius: '6px',
                   border: '1px solid rgba(168, 85, 247, 0.6)',
-                  background: 'rgba(0, 0, 0, 0.3)',
+                  background: 'rgb(30, 30, 50)',
                   color: 'rgba(255, 255, 255, 0.9)',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)',
                   transition: 'all 200ms'
                 }}
                 onFocus={(e) => {
-                  e.target.style.background = 'rgba(0, 0, 0, 0.4)';
+                  e.target.style.background = 'rgb(40, 40, 60)';
                   e.target.style.borderColor = 'rgb(168, 85, 247)';
                   e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(168, 85, 247, 0.4)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.background = 'rgba(0, 0, 0, 0.3)';
+                  e.target.style.background = 'rgb(30, 30, 50)';
                   e.target.style.borderColor = 'rgba(168, 85, 247, 0.6)';
                   e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)';
                 }}

@@ -140,7 +140,10 @@ const LiveFeed = ({ searchQuery = '' }) => {
                     {searchQuery && (
                         <button
                             onClick={clearSearch}
-                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
+                            style={{ backgroundColor: '#8b5cf6' }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
                         >
                             <FaTimes />
                             Clear Search
@@ -161,7 +164,10 @@ const LiveFeed = ({ searchQuery = '' }) => {
                         {searchQuery && (
                             <button
                                 onClick={clearSearch}
-                                className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                className="mt-4 px-4 py-2 text-white rounded-lg transition-colors"
+                                style={{ backgroundColor: '#8b5cf6' }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
                             >
                                 View All Posts
                             </button>
