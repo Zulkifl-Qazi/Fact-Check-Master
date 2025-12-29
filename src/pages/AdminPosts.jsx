@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { parseVideoUrl, getVideoPlatformIcon, getVideoPlatformName } from '../utils/videoParser';
+import MediaCarousel from '../components/MediaCarousel';
 
 // Custom styles for Quill editor with dark theme
 const quillStyles = `
@@ -231,12 +233,18 @@ const AdminPosts = () => {
     content: '',
     author: 'Fact Check Master',
     fact_check_status: 'verified',
-    categories: ['latest-news'], // Changed to array for multiple categories
+    categories: ['latest-news'],
     postUrl: '',
-    imageUrl: ''
+    media: {
+      images: [],
+      videos: []
+    }
   });
   const [submitting, setSubmitting] = useState(false);
   const [fetchingUrl, setFetchingUrl] = useState(false);
+  const [mediaTab, setMediaTab] = useState('images');
+  const [tempImageUrl, setTempImageUrl] = useState('');
+  const [tempVideoUrl, setTempVideoUrl] = useState('');
 
   // Auto-refresh posts every 15 seconds for live collaboration
   useEffect(() => {
@@ -293,7 +301,10 @@ const AdminPosts = () => {
         title: title || prev.title,
         content: content || prev.content,
         author: author || prev.author,
-        imageUrl: imageUrl || prev.imageUrl
+        media: {
+          images: imageUrl ? [imageUrl, ...prev.media.images] : prev.media.images,
+          videos: prev.media.videos
+        }
       }));
       
       if (message) {
@@ -322,8 +333,10 @@ const AdminPosts = () => {
       console.log('Submitting post data:', formData);
       const response = await axios.post('/api/posts', formData);
       console.log('Post created successfully:', response.data);
-      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
       setShowAddForm(false);
+      setTempImageUrl('');
+      setTempVideoUrl('');
       // WebSocket will automatically trigger loadPosts via the 'posts_updated' event
       await loadPosts(); // Manually reload to ensure we see the new post
       alert('Post created successfully! ✅');
@@ -355,6 +368,11 @@ const AdminPosts = () => {
 
   const handleEdit = (post) => {
     setEditingPost(post);
+    const media = post.media || { images: [], videos: [] };
+    // Handle backward compatibility with old image_url field
+    if (post.image_url && !media.images?.includes(post.image_url)) {
+      media.images = [post.image_url, ...(media.images || [])];
+    }
     setFormData({
       title: post.title,
       content: post.content,
@@ -362,7 +380,7 @@ const AdminPosts = () => {
       fact_check_status: post.fact_check_status,
       categories: post.category ? [post.category] : ['latest-news'],
       postUrl: post.source_url || '',
-      imageUrl: post.image_url || ''
+      media: media
     });
     setShowAddForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -377,9 +395,11 @@ const AdminPosts = () => {
       console.log('Updating post:', editingPost.id, formData);
       const response = await axios.put(`/api/posts?id=${editingPost.id}`, formData);
       console.log('Post updated successfully:', response.data);
-      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
+      setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
       setShowAddForm(false);
       setEditingPost(null);
+      setTempImageUrl('');
+      setTempVideoUrl('');
       await loadPosts();
       alert('Post updated successfully! ✅');
     } catch (error) {
@@ -392,8 +412,10 @@ const AdminPosts = () => {
 
   const handleCancelEdit = () => {
     setEditingPost(null);
-    setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', imageUrl: '' });
+    setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
     setShowAddForm(false);
+    setTempImageUrl('');
+    setTempVideoUrl('');
   };
 
   const getStatusIcon = (status) => {
@@ -736,34 +758,368 @@ const AdminPosts = () => {
                 </p>
               </div>
 
-              <div>
-                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '600', marginBottom: '0.5rem' }}>Image URL (Optional)</label>
-                <input
-                  type="url"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    background: 'rgba(71, 85, 105, 0.5)',
-                    border: '2px solid rgb(51, 65, 85)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    outline: 'none'
-                  }}
-                  placeholder="Direct image URL or fetched automatically..."
-                />
-                {formData.imageUrl && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <img 
-                      src={formData.imageUrl} 
-                      alt="Preview" 
-                      style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '8px', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
+              {/* Media Management Section */}
+              <div style={{ 
+                padding: '1.5rem', 
+                background: 'rgba(51, 65, 85, 0.3)', 
+                borderRadius: '12px', 
+                border: '2px solid rgba(147, 51, 234, 0.3)' 
+              }}>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '700', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                  📷 Media (Images & Videos)
+                </label>
+                
+                {/* Media Tabs */}
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setMediaTab('images')}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      background: mediaTab === 'images' ? 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))' : 'rgba(71, 85, 105, 0.5)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    <FaImage /> Images ({formData.media.images.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMediaTab('videos')}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      background: mediaTab === 'videos' ? 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))' : 'rgba(71, 85, 105, 0.5)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    <FaVideo /> Videos ({formData.media.videos.length})
+                  </button>
+                </div>
+
+                {/* Images Tab */}
+                {mediaTab === 'images' && (
+                  <div>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <input
+                        type="url"
+                        value={tempImageUrl}
+                        onChange={(e) => setTempImageUrl(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (tempImageUrl.trim()) {
+                              setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                  ...prev.media,
+                                  images: [...prev.media.images, tempImageUrl.trim()]
+                                }
+                              }));
+                              setTempImageUrl('');
+                            }
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '0.75rem',
+                          background: 'rgba(71, 85, 105, 0.5)',
+                          border: '2px solid rgb(51, 65, 85)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          outline: 'none'
+                        }}
+                        placeholder="Paste image URL and press Enter..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tempImageUrl.trim()) {
+                            setFormData(prev => ({
+                              ...prev,
+                              media: {
+                                ...prev.media,
+                                images: [...prev.media.images, tempImageUrl.trim()]
+                              }
+                            }));
+                            setTempImageUrl('');
+                          }
+                        }}
+                        style={{
+                          padding: '0.75rem 1.5rem',
+                          background: 'linear-gradient(to right, rgb(34, 197, 94), rgb(22, 163, 74))',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        + Add Image
+                      </button>
+                    </div>
+
+                    {/* Image List */}
+                    {formData.media.images.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {formData.media.images.map((url, index) => (
+                          <div key={index} style={{
+                            display: 'flex',
+                            gap: '0.75rem',
+                            padding: '0.75rem',
+                            background: 'rgba(71, 85, 105, 0.3)',
+                            borderRadius: '8px',
+                            alignItems: 'center'
+                          }}>
+                            <img
+                              src={url}
+                              alt={`Preview ${index + 1}`}
+                              style={{
+                                width: '80px',
+                                height: '60px',
+                                objectFit: 'cover',
+                                borderRadius: '6px',
+                                flexShrink: 0
+                              }}
+                              onError={(e) => {
+                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="60"%3E%3Crect fill="%23374151" width="80" height="60"/%3E%3Ctext x="50%25" y="50%25" fill="%23fff" font-size="12" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E';
+                              }}
+                            />
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <div style={{ 
+                                color: 'rgba(255,255,255,0.8)', 
+                                fontSize: '0.875rem',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {url}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  media: {
+                                    ...prev.media,
+                                    images: prev.media.images.filter((_, i) => i !== index)
+                                  }
+                                }));
+                              }}
+                              style={{
+                                padding: '0.5rem',
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                color: 'rgb(252, 165, 165)',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        padding: '2rem', 
+                        textAlign: 'center', 
+                        color: 'rgba(255,255,255,0.5)',
+                        border: '2px dashed rgba(255,255,255,0.2)',
+                        borderRadius: '8px'
+                      }}>
+                        No images added yet. Paste URLs above to add images.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Videos Tab */}
+                {mediaTab === 'videos' && (
+                  <div>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <input
+                        type="url"
+                        value={tempVideoUrl}
+                        onChange={(e) => setTempVideoUrl(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (tempVideoUrl.trim()) {
+                              const video = parseVideoUrl(tempVideoUrl.trim());
+                              if (video) {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  media: {
+                                    ...prev.media,
+                                    videos: [...prev.media.videos, video]
+                                  }
+                                }));
+                                setTempVideoUrl('');
+                              } else {
+                                alert('Invalid video URL. Please enter a valid YouTube, Vimeo, Twitter, or direct video link.');
+                              }
+                            }
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          padding: '0.75rem',
+                          background: 'rgba(71, 85, 105, 0.5)',
+                          border: '2px solid rgb(51, 65, 85)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          outline: 'none'
+                        }}
+                        placeholder="Paste video URL (YouTube, Vimeo, Twitter, etc.)..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tempVideoUrl.trim()) {
+                            const video = parseVideoUrl(tempVideoUrl.trim());
+                            if (video) {
+                              setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                  ...prev.media,
+                                  videos: [...prev.media.videos, video]
+                                }
+                              }));
+                              setTempVideoUrl('');
+                            } else {
+                              alert('Invalid video URL. Please enter a valid YouTube, Vimeo, Twitter, or direct video link.');
+                            }
+                          }
+                        }}
+                        style={{
+                          padding: '0.75rem 1.5rem',
+                          background: 'linear-gradient(to right, rgb(239, 68, 68), rgb(220, 38, 38))',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        + Add Video
+                      </button>
+                    </div>
+
+                    <div style={{ 
+                      fontSize: '0.875rem', 
+                      color: 'rgba(255,255,255,0.6)',
+                      marginBottom: '1rem',
+                      padding: '0.75rem',
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '6px'
+                    }}>
+                      <strong>Supported:</strong> YouTube, Vimeo, Twitter/X, TikTok, Facebook, Direct video files (.mp4, .webm, etc.)
+                    </div>
+
+                    {/* Video List */}
+                    {formData.media.videos.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {formData.media.videos.map((video, index) => (
+                          <div key={index} style={{
+                            display: 'flex',
+                            gap: '0.75rem',
+                            padding: '0.75rem',
+                            background: 'rgba(71, 85, 105, 0.3)',
+                            borderRadius: '8px',
+                            alignItems: 'center'
+                          }}>
+                            <div style={{
+                              width: '80px',
+                              height: '60px',
+                              background: 'rgba(0, 0, 0, 0.5)',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '2rem',
+                              flexShrink: 0
+                            }}>
+                              {getVideoPlatformIcon(video.platform)}
+                            </div>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <div style={{ 
+                                color: 'rgba(255,255,255,0.9)', 
+                                fontSize: '0.875rem',
+                                fontWeight: '600',
+                                marginBottom: '0.25rem'
+                              }}>
+                                {getVideoPlatformName(video.platform)}
+                              </div>
+                              <div style={{ 
+                                color: 'rgba(255,255,255,0.6)', 
+                                fontSize: '0.75rem',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }}>
+                                {video.url}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  media: {
+                                    ...prev.media,
+                                    videos: prev.media.videos.filter((_, i) => i !== index)
+                                  }
+                                }));
+                              }}
+                              style={{
+                                padding: '0.5rem',
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                color: 'rgb(252, 165, 165)',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        padding: '2rem', 
+                        textAlign: 'center', 
+                        color: 'rgba(255,255,255,0.5)',
+                        border: '2px dashed rgba(255,255,255,0.2)',
+                        borderRadius: '8px'
+                      }}>
+                        No videos added yet. Paste video URLs above to add videos.
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -890,6 +1246,14 @@ const AdminPosts = () => {
                         </span>
                       </div>
                     </div>
+                    
+                    {/* Media Display */}
+                    {((post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url) && (
+                      <div style={{ marginBottom: '1rem' }}>
+                        <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
+                      </div>
+                    )}
+                    
                     <div 
                       className="post-content-display"
                       style={{ 

@@ -21,6 +21,34 @@ END $$;
 UPDATE posts 
 SET category = 'latest-news' 
 WHERE category IS NULL;
+
+-- Add media column to support multiple images and videos
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'posts' 
+        AND column_name = 'media'
+    ) THEN
+        ALTER TABLE posts ADD COLUMN media JSONB DEFAULT '{"images": [], "videos": []}'::jsonb;
+        RAISE NOTICE 'Media column added successfully';
+    ELSE
+        RAISE NOTICE 'Media column already exists';
+    END IF;
+END $$;
+
+-- Migrate existing image_url data to media column
+UPDATE posts 
+SET media = jsonb_build_object(
+    'images', 
+    CASE 
+        WHEN image_url IS NOT NULL THEN jsonb_build_array(image_url)
+        ELSE '[]'::jsonb
+    END,
+    'videos', '[]'::jsonb
+)
+WHERE media IS NULL OR media = '{}'::jsonb OR media = '{"images": [], "videos": []}'::jsonb;
 -- Create approved_devices table for device-based authentication
 CREATE TABLE IF NOT EXISTS approved_devices (
   id SERIAL PRIMARY KEY,

@@ -95,9 +95,24 @@ async function addNewPost(postData) {
       author: postData.author?.trim() || 'Fact Check Master',
       status: 'published',
       fact_check_status: postData.fact_check_status || 'verified',
-      image_url: postData.imageUrl || null,
       source_url: postData.postUrl || null
     };
+
+    // Handle media (images and videos)
+    if (postData.media) {
+      postToInsert.media = postData.media;
+      // Backward compatibility: set image_url to first image if exists
+      if (postData.media.images && postData.media.images.length > 0) {
+        postToInsert.image_url = postData.media.images[0];
+      }
+    } else if (postData.imageUrl) {
+      // Backward compatibility for old imageUrl field
+      postToInsert.image_url = postData.imageUrl;
+      postToInsert.media = { images: [postData.imageUrl], videos: [] };
+    } else {
+      postToInsert.image_url = null;
+      postToInsert.media = { images: [], videos: [] };
+    }
 
     // Handle both single category and multiple categories
     if (postData.categories && Array.isArray(postData.categories)) {
@@ -161,10 +176,27 @@ async function updatePost(postId, postData) {
       content: postData.content.trim(),
       author: postData.author?.trim() || 'Fact Check Master',
       fact_check_status: postData.fact_check_status || 'verified',
-      image_url: postData.imageUrl || null,
       source_url: postData.postUrl || null,
       updated_at: new Date().toISOString()
     };
+
+    // Handle media (images and videos)
+    if (postData.media) {
+      postToUpdate.media = postData.media;
+      // Backward compatibility: set image_url to first image if exists
+      if (postData.media.images && postData.media.images.length > 0) {
+        postToUpdate.image_url = postData.media.images[0];
+      } else {
+        postToUpdate.image_url = null;
+      }
+    } else if (postData.imageUrl) {
+      // Backward compatibility for old imageUrl field
+      postToUpdate.image_url = postData.imageUrl;
+      postToUpdate.media = { images: [postData.imageUrl], videos: [] };
+    } else {
+      postToUpdate.image_url = null;
+      postToUpdate.media = { images: [], videos: [] };
+    }
 
     // Handle categories - update the category field with the first category
     if (postData.categories && Array.isArray(postData.categories) && postData.categories.length > 0) {
