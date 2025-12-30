@@ -38,6 +38,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
   };
 
   const renderMedia = (item, isFullscreen = false) => {
+    console.log('Rendering media item:', item);
     if (item.type === 'image') {
       return (
         <img
@@ -45,11 +46,15 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
           alt="Post media"
           style={{
             width: '100%',
-            height: isFullscreen ? '80vh' : '100%',
+            height: isFullscreen ? '80vh' : 'auto',
+            maxHeight: isFullscreen ? '80vh' : '400px',
             objectFit: 'contain',
-            borderRadius: isFullscreen ? '0' : '12px'
+            borderRadius: isFullscreen ? '0' : '12px',
+            display: 'block'
           }}
           onClick={() => !isFullscreen && setIsFullscreen(true)}
+          onLoad={() => console.log('Image loaded successfully:', item.url)}
+          onError={(e) => console.error('Image failed to load:', item.url, e)}
         />
       );
     }
@@ -223,6 +228,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
       <div style={{
         position: 'relative',
         width: '100%',
+        minHeight: '300px',
         borderRadius: '12px',
         overflow: 'hidden',
         background: 'rgba(0, 0, 0, 0.3)'
