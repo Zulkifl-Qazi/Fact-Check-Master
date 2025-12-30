@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaCheckCircle, FaExclamationTriangle, FaRss, FaClock, FaUser } from 'react-icons/fa';
+import MediaCarousel from '../components/MediaCarousel';
 
 const PostView = () => {
     const { id } = useParams();
@@ -29,6 +30,29 @@ const PostView = () => {
                 if (!foundPost) {
                     setError('Post not found');
                     return;
+                }
+                
+                // Parse media field if it's a string
+                if (foundPost.media && typeof foundPost.media === 'string') {
+                    try {
+                        foundPost.media = JSON.parse(foundPost.media);
+                    } catch (e) {
+                        console.error('Failed to parse media:', e);
+                        foundPost.media = { images: [], videos: [] };
+                    }
+                }
+                
+                // Ensure media has correct structure
+                if (!foundPost.media || typeof foundPost.media !== 'object') {
+                    foundPost.media = { images: [], videos: [] };
+                }
+                
+                // Backward compatibility - if no media but has image_url
+                if (foundPost.image_url && (!foundPost.media.images || foundPost.media.images.length === 0)) {
+                    foundPost.media = {
+                        images: [foundPost.image_url],
+                        videos: []
+                    };
                 }
                 
                 setPost(foundPost);
@@ -211,19 +235,10 @@ const PostView = () => {
                         </span>
                     </div>
 
-                    {/* Image */}
-                    {post.image_url && (
+                    {/* Media Gallery */}
+                    {((post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url) && (
                         <div style={{ padding: '24px 32px 0' }}>
-                            <img
-                                src={post.image_url}
-                                alt={post.title}
-                                style={{
-                                    width: '100%',
-                                    maxHeight: '400px',
-                                    objectFit: 'cover',
-                                    borderRadius: '12px'
-                                }}
-                            />
+                            <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
                         </div>
                     )}
 
