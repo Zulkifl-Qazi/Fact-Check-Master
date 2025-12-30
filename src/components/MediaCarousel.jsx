@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { getVideoPlatformIcon } from '../utils/videoParser';
 
@@ -8,6 +8,24 @@ import { getVideoPlatformIcon } from '../utils/videoParser';
  */
 const MediaCarousel = ({ media, autoPlay = false }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const twitterRef = useRef(null);
+
+  // Load Twitter widget script
+  useEffect(() => {
+    if (!window.twttr) {
+      const script = document.createElement('script');
+      script.src = 'https://platform.twitter.com/widgets.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // Re-render Twitter embeds when tweet changes
+  useEffect(() => {
+    if (window.twttr && window.twttr.widgets && twitterRef.current) {
+      window.twttr.widgets.load(twitterRef.current);
+    }
+  }, [currentIndex]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   console.log('MediaCarousel received media:', media);
@@ -112,66 +130,20 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         );
 
       case 'twitter':
-        // Twitter/X videos - open in new window with better styling
         return (
           <div 
-            onClick={() => window.open(video.url, '_blank')}
+            ref={twitterRef}
             style={{ 
-              ...style, 
-              display: 'flex', 
-              alignItems: 'center', 
+              ...style,
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
-              background: 'linear-gradient(135deg, rgba(29, 161, 242, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%)',
-              color: 'white',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              border: '2px solid rgba(29, 161, 242, 0.3)',
-              position: 'relative',
-              overflow: 'hidden'
+              overflow: 'auto'
             }}
           >
-            {/* Background pattern */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'radial-gradient(circle at 20% 50%, rgba(29, 161, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(29, 161, 242, 0.1) 0%, transparent 50%)',
-              pointerEvents: 'none'
-            }} />
-            
-            {/* Content */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '1.5rem',
-              zIndex: 1
-            }}>
-              <div style={{
-                fontSize: '4rem',
-                filter: 'drop-shadow(0 4px 8px rgba(29, 161, 242, 0.3))'
-              }}>
-                🐦
-              </div>
-              <div style={{
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: '#1DA1F2',
-                textAlign: 'center'
-              }}>
-                Click to View on X
-              </div>
-              <div style={{
-                fontSize: '0.875rem',
-                color: 'rgba(255, 255, 255, 0.6)',
-                textAlign: 'center',
-                maxWidth: '80%'
-              }}>
-                {video.videoId ? `Tweet ID: ${video.videoId}` : 'External Video Link'}
-              </div>
-            </div>
+            <blockquote className="twitter-tweet" data-theme="dark">
+              <a href={video.url}></a>
+            </blockquote>
           </div>
         );
 
