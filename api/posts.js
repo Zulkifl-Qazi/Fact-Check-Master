@@ -326,11 +326,14 @@ export default async function handler(req, res) {
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {
-      const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories } = req.body;
+      console.log('[API] POST request body:', JSON.stringify(req.body, null, 2));
+      const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories, media } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
+
+      console.log('[API] Extracted media from request:', media);
 
       const newPost = await addNewPost({
         title,
@@ -339,6 +342,7 @@ export default async function handler(req, res) {
         fact_check_status,
         imageUrl,
         postUrl,
+        media,
         categories: categories || (category ? [category] : ['latest-news'])
       });
       
@@ -355,11 +359,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Post ID is required' });
       }
 
-      const { title, content, author, fact_check_status, imageUrl, postUrl, categories, category } = req.body;
+      console.log('[API] PUT request body:', JSON.stringify(req.body, null, 2));
+      const { title, content, author, fact_check_status, imageUrl, postUrl, categories, category, media } = req.body;
       
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
+
+      console.log('[API] Extracted media from request:', media);
 
       const updatedPost = await updatePost(postId, {
         title,
@@ -368,7 +375,8 @@ export default async function handler(req, res) {
         fact_check_status,
         imageUrl,
         postUrl,
-        categories: categories || (category ? [category] : ['latest-news'])
+        media,
+        categories: categories || (category ? [category] : null)
       });
       
       res.status(200).json({ 
