@@ -228,7 +228,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
       <div style={{
         position: 'relative',
         width: '100%',
-        minHeight: '300px',
+        minHeight: '250px',
         borderRadius: '12px',
         overflow: 'hidden',
         background: 'rgba(0, 0, 0, 0.3)'
@@ -242,21 +242,22 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
               onClick={goToPrev}
               style={{
                 position: 'absolute',
-                left: '10px',
+                left: '5px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(0, 0, 0, 0.7)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
-                width: '40px',
-                height: '40px',
+                width: window.innerWidth < 768 ? '35px' : '40px',
+                height: window.innerWidth < 768 ? '35px' : '40px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.2rem',
-                zIndex: 10
+                fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+                zIndex: 10,
+                touchAction: 'manipulation'
               }}
             >
               <FaChevronLeft />
@@ -265,21 +266,22 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
               onClick={goToNext}
               style={{
                 position: 'absolute',
-                right: '10px',
+                right: '5px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'rgba(0, 0, 0, 0.7)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
-                width: '40px',
-                height: '40px',
+                width: window.innerWidth < 768 ? '35px' : '40px',
+                height: window.innerWidth < 768 ? '35px' : '40px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.2rem',
-                zIndex: 10
+                fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+                zIndex: 10,
+                touchAction: 'manipulation'
               }}
             >
               <FaChevronRight />
@@ -294,9 +296,9 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
           right: '10px',
           background: 'rgba(0, 0, 0, 0.7)',
           color: 'white',
-          padding: '5px 10px',
+          padding: window.innerWidth < 768 ? '4px 8px' : '5px 10px',
           borderRadius: '20px',
-          fontSize: '0.875rem',
+          fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
           fontWeight: '600'
         }}>
           {currentIndex + 1} / {allMedia.length}
@@ -309,9 +311,9 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
           left: '10px',
           background: 'rgba(147, 51, 234, 0.8)',
           color: 'white',
-          padding: '5px 10px',
+          padding: window.innerWidth < 768 ? '4px 8px' : '5px 10px',
           borderRadius: '20px',
-          fontSize: '0.875rem',
+          fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
           fontWeight: '600',
           display: 'flex',
           alignItems: 'center',
@@ -325,18 +327,19 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
       {allMedia.length > 1 && (
         <div style={{
           display: 'flex',
-          gap: '10px',
+          gap: window.innerWidth < 768 ? '6px' : '10px',
           marginTop: '10px',
           overflowX: 'auto',
-          padding: '5px'
+          padding: '5px',
+          scrollbarWidth: 'thin'
         }}>
           {allMedia.map((item, index) => (
             <div
               key={index}
               onClick={() => setCurrentIndex(index)}
               style={{
-                width: '80px',
-                height: '60px',
+                width: window.innerWidth < 768 ? '60px' : '80px',
+                height: window.innerWidth < 768 ? '45px' : '60px',
                 borderRadius: '8px',
                 overflow: 'hidden',
                 cursor: 'pointer',
@@ -346,7 +349,8 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                position: 'relative'
+                position: 'relative',
+                touchAction: 'manipulation'
               }}
             >
               {item.type === 'image' ? (
@@ -356,7 +360,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
-                <div style={{ color: 'white', fontSize: '1.5rem' }}>
+                <div style={{ color: 'white', fontSize: window.innerWidth < 768 ? '1.2rem' : '1.5rem' }}>
                   {getVideoPlatformIcon(item.platform)}
                 </div>
               )}

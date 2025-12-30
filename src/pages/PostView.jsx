@@ -188,7 +188,7 @@ const PostView = () => {
             <div style={{
                 maxWidth: '900px',
                 margin: '0 auto',
-                padding: '20px'
+                padding: window.innerWidth < 768 ? '10px' : '20px'
             }}>
                 {/* Back button */}
                 <button
@@ -196,14 +196,15 @@ const PostView = () => {
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        padding: '8px 16px',
+                        padding: window.innerWidth < 768 ? '6px 12px' : '8px 16px',
                         backgroundColor: 'transparent',
                         color: '#9ca3af',
                         border: '1px solid #334155',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        marginBottom: '32px',
-                        transition: 'all 0.2s'
+                        marginBottom: window.innerWidth < 768 ? '16px' : '32px',
+                        transition: 'all 0.2s',
+                        fontSize: window.innerWidth < 768 ? '0.875rem' : '1rem'
                     }}
                     onMouseEnter={(e) => {
                         e.target.style.backgroundColor = '#1e293b';
@@ -226,9 +227,13 @@ const PostView = () => {
                     overflow: 'hidden'
                 }}>
                     {/* Status badge */}
-                    <div style={{ padding: '24px 32px 0' }}>
+                    <div style={{ padding: window.innerWidth < 768 ? '16px 16px 0' : '24px 32px 0' }}>
                         <span 
                             className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border ${getStatusBadge(post.fact_check_status)}`}
+                            style={{
+                                fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
+                                padding: window.innerWidth < 768 ? '6px 12px' : '8px 16px'
+                            }}
                         >
                             {getStatusIcon(post.fact_check_status)}
                             <span style={{ marginLeft: '8px', textTransform: 'capitalize' }}>{post.fact_check_status}</span>
@@ -237,15 +242,15 @@ const PostView = () => {
 
                     {/* Media Gallery */}
                     {((post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url) && (
-                        <div style={{ padding: '24px 32px 0' }}>
+                        <div style={{ padding: window.innerWidth < 768 ? '16px 16px 0' : '24px 32px 0' }}>
                             <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
                         </div>
                     )}
 
-                    <div style={{ padding: '32px' }}>
+                    <div style={{ padding: window.innerWidth < 768 ? '16px' : '32px' }}>
                         {/* Title */}
                         <h1 style={{
-                            fontSize: '36px',
+                            fontSize: window.innerWidth < 768 ? '24px' : '36px',
                             fontWeight: 'bold',
                             color: 'white',
                             marginBottom: '24px',
@@ -259,16 +264,16 @@ const PostView = () => {
                             display: 'flex',
                             alignItems: 'center',
                             flexWrap: 'wrap',
-                            gap: '16px',
-                            marginBottom: '32px',
-                            paddingBottom: '24px',
+                            gap: window.innerWidth < 768 ? '12px' : '16px',
+                            marginBottom: window.innerWidth < 768 ? '20px' : '32px',
+                            paddingBottom: window.innerWidth < 768 ? '16px' : '24px',
                             borderBottom: '1px solid #334155'
                         }}>
                             <div style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 color: '#9ca3af',
-                                fontSize: '14px'
+                                fontSize: window.innerWidth < 768 ? '12px' : '14px'
                             }}>
                                 <FaUser style={{ marginRight: '8px', color: '#8b5cf6' }} />
                                 <span style={{ fontWeight: '500' }}>{post.author || 'Admin'}</span>
@@ -278,7 +283,7 @@ const PostView = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 color: '#9ca3af',
-                                fontSize: '14px'
+                                fontSize: window.innerWidth < 768 ? '12px' : '14px'
                             }}>
                                 <FaClock style={{ marginRight: '8px', color: '#8b5cf6' }} />
                                 <span>{new Date(post.created_at).toLocaleDateString('en-US', {
