@@ -112,45 +112,66 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         );
 
       case 'twitter':
-        // If we have a video ID (status ID), embed it; otherwise show link
-        if (video.videoId) {
-          return (
-            <iframe
-              src={video.embedUrl}
-              style={style}
-              allow="autoplay; fullscreen"
-              allowFullScreen
-              title="Twitter/X video"
-            />
-          );
-        }
-        // Fallback to link if no status ID extracted
+        // Twitter/X videos - open in new window with better styling
         return (
-          <div style={{ 
-            ...style, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            background: 'rgba(0, 0, 0, 0.5)',
-            color: 'white'
-          }}>
-            <a 
-              href={video.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ 
-                color: '#1DA1F2', 
-                textDecoration: 'none', 
-                fontSize: '1.2rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1rem'
-              }}
-            >
-              <span style={{ fontSize: '3rem' }}>🐦</span>
-              <span>View Tweet/Video on X</span>
-            </a>
+          <div 
+            onClick={() => window.open(video.url, '_blank')}
+            style={{ 
+              ...style, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              background: 'linear-gradient(135deg, rgba(29, 161, 242, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%)',
+              color: 'white',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              border: '2px solid rgba(29, 161, 242, 0.3)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Background pattern */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'radial-gradient(circle at 20% 50%, rgba(29, 161, 242, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(29, 161, 242, 0.1) 0%, transparent 50%)',
+              pointerEvents: 'none'
+            }} />
+            
+            {/* Content */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '1.5rem',
+              zIndex: 1
+            }}>
+              <div style={{
+                fontSize: '4rem',
+                filter: 'drop-shadow(0 4px 8px rgba(29, 161, 242, 0.3))'
+              }}>
+                🐦
+              </div>
+              <div style={{
+                fontSize: '1.5rem',
+                fontWeight: '600',
+                color: '#1DA1F2',
+                textAlign: 'center'
+              }}>
+                Click to View on X
+              </div>
+              <div style={{
+                fontSize: '0.875rem',
+                color: 'rgba(255, 255, 255, 0.6)',
+                textAlign: 'center',
+                maxWidth: '80%'
+              }}>
+                {video.videoId ? `Tweet ID: ${video.videoId}` : 'External Video Link'}
+              </div>
+            </div>
           </div>
         );
 
