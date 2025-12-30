@@ -50,7 +50,9 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
             maxHeight: isFullscreen ? '80vh' : '400px',
             objectFit: 'contain',
             borderRadius: isFullscreen ? '0' : '12px',
-            display: 'block'
+            display: 'block',
+            margin: 0,
+            padding: 0
           }}
           onClick={() => !isFullscreen && setIsFullscreen(true)}
           onLoad={() => console.log('Image loaded successfully:', item.url)}
@@ -228,10 +230,12 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
       <div style={{
         position: 'relative',
         width: '100%',
-        minHeight: '250px',
         borderRadius: '12px',
         overflow: 'hidden',
-        background: 'rgba(0, 0, 0, 0.3)'
+        background: 'rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
         {renderMedia(currentMedia)}
 
