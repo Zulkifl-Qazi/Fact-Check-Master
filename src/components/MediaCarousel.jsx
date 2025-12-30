@@ -10,7 +10,10 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  console.log('MediaCarousel received media:', media);
+
   if (!media || (!media.images?.length && !media.videos?.length)) {
+    console.log('MediaCarousel: No media to display');
     return null;
   }
 
@@ -19,6 +22,8 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
     ...(media.images || []).map(url => ({ type: 'image', url })),
     ...(media.videos || []).map(video => ({ type: 'video', ...video }))
   ];
+
+  console.log('MediaCarousel: allMedia array:', allMedia);
 
   if (allMedia.length === 0) return null;
 
