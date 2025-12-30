@@ -133,10 +133,12 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         if (video.videoId) {
           return (
             <iframe
-              src={`https://twitframe.com/show?url=${encodeURIComponent(video.url)}`}
+              src={`https://platform.twitter.com/embed/Tweet.html?id=${video.videoId}&theme=dark`}
               style={style}
               allowFullScreen
               title="Twitter video"
+              frameBorder="0"
+              scrolling="no"
             />
           );
         }
