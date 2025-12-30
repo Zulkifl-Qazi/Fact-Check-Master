@@ -130,20 +130,21 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         );
 
       case 'twitter':
+        if (video.videoId) {
+          return (
+            <iframe
+              src={`https://twitframe.com/show?url=${encodeURIComponent(video.url)}`}
+              style={style}
+              allowFullScreen
+              title="Twitter video"
+            />
+          );
+        }
         return (
-          <div 
-            ref={twitterRef}
-            style={{ 
-              ...style,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'auto'
-            }}
-          >
-            <blockquote className="twitter-tweet" data-theme="dark">
-              <a href={video.url}></a>
-            </blockquote>
+          <div style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <a href={video.url} target="_blank" rel="noopener noreferrer" style={{ color: '#1DA1F2' }}>
+              View on X
+            </a>
           </div>
         );
 
