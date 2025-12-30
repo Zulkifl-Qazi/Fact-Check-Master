@@ -41,7 +41,8 @@ function extractTikTokId(url) {
 export function parseVideoUrl(url) {
   if (!url || typeof url !== 'string') return null;
   
-  const trimmedUrl = url.trim();
+  // Trim and normalize URL (fix multiple slashes)
+  const trimmedUrl = url.trim().replace(/([^:]\/)\/+/g, '$1');
   
   // YouTube
   if (trimmedUrl.includes('youtube.com') || trimmedUrl.includes('youtu.be')) {
@@ -73,10 +74,16 @@ export function parseVideoUrl(url) {
   
   // Twitter/X
   if (trimmedUrl.includes('twitter.com') || trimmedUrl.includes('x.com')) {
+    // Extract tweet/status ID from various URL formats
+    // Supports: /status/123456789, /status/123456789/video/1, /status/123456789/photo/1
+    const statusMatch = trimmedUrl.match(/\/status\/(\d+)/);
+    const statusId = statusMatch ? statusMatch[1] : null;
+    
     return {
       url: trimmedUrl,
       platform: 'twitter',
-      embedUrl: trimmedUrl,
+      videoId: statusId,
+      embedUrl: statusId ? `https://platform.twitter.com/embed/Tweet.html?id=${statusId}` : trimmedUrl,
       thumbnail: null
     };
   }

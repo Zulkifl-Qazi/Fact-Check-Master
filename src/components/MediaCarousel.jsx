@@ -112,6 +112,19 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         );
 
       case 'twitter':
+        // If we have a video ID (status ID), embed it; otherwise show link
+        if (video.videoId) {
+          return (
+            <iframe
+              src={video.embedUrl}
+              style={style}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              title="Twitter/X video"
+            />
+          );
+        }
+        // Fallback to link if no status ID extracted
         return (
           <div style={{ 
             ...style, 
