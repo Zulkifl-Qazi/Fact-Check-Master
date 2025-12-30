@@ -144,7 +144,9 @@ async function addNewPost(postData) {
       postToInsert.category = postData.category;
     }
 
-    console.log('[Database] Inserting post:', postToInsert);
+    console.log('[Database] Inserting post:', JSON.stringify(postToInsert, null, 2));
+    console.log('[Database] Media value:', postToInsert.media);
+    console.log('[Database] Media type:', typeof postToInsert.media);
 
     // If multiple categories, create duplicate entries for each category
     if (postData.categories && postData.categories.length > 1) {
@@ -163,6 +165,7 @@ async function addNewPost(postData) {
         }
         allPosts.push(data);
         console.log(`[Database] Successfully created post with ID: ${data.id} for category: ${category}`);
+        console.log('[Database] Created post data:', JSON.stringify(data, null, 2));
       }
       return allPosts[0]; // Return first post as primary
     } else {
@@ -179,6 +182,7 @@ async function addNewPost(postData) {
       }
 
       console.log(`[Database] Successfully created post with ID: ${data.id}`);
+      console.log('[Database] Created post data:', JSON.stringify(data, null, 2));
       return data;
     }
   } catch (error) {
@@ -244,6 +248,9 @@ async function updatePost(postId, postData) {
       postToUpdate.category = postData.categories[0];
     }
 
+    console.log('[Database] About to update with:', postToUpdate);
+    console.log('[Database] Media value type:', typeof postToUpdate.media);
+
     const { data, error } = await supabase
       .from('posts')
       .update(postToUpdate)
@@ -251,9 +258,13 @@ async function updatePost(postId, postData) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('[Database] Supabase update error:', error);
+      throw error;
+    }
 
     console.log(`[Database] Successfully updated post with ID: ${postId}`);
+    console.log('[Database] Updated post data:', JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
     console.error('[Database] Error updating post:', error);
