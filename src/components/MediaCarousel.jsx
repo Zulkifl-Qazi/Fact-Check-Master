@@ -303,24 +303,6 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
         }}>
           {currentIndex + 1} / {allMedia.length}
         </div>
-
-        {/* Media Type Badge */}
-        <div style={{
-          position: 'absolute',
-          top: '10px',
-          left: '10px',
-          background: 'rgba(147, 51, 234, 0.8)',
-          color: 'white',
-          padding: window.innerWidth < 768 ? '4px 8px' : '5px 10px',
-          borderRadius: '20px',
-          fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
-          fontWeight: '600',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px'
-        }}>
-          {currentMedia.type === 'image' ? '📷 Image' : `${getVideoPlatformIcon(currentMedia.platform)} Video`}
-        </div>
       </div>
 
       {/* Thumbnail Navigation */}
