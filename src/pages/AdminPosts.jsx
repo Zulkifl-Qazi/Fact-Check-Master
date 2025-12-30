@@ -272,6 +272,11 @@ const AdminPosts = () => {
     try {
       const response = await axios.get('/api/posts');
       const posts = response.data || [];
+      console.log('Raw posts from API:', posts.length, 'posts');
+      if (posts.length > 0) {
+        console.log('First post sample:', posts[0]);
+        console.log('First post media:', posts[0].media, 'Type:', typeof posts[0].media);
+      }
       
       // Parse media field if it comes as string from database
       const parsedPosts = posts.map(post => {
@@ -297,6 +302,10 @@ const AdminPosts = () => {
         return post;
       });
       
+      console.log('Parsed posts:', parsedPosts.length);
+      if (parsedPosts.length > 0) {
+        console.log('First parsed post media:', parsedPosts[0].media);
+      }
       setPosts(parsedPosts);
     } catch (error) {
       console.error('Failed to load posts:', error);
@@ -1303,11 +1312,15 @@ const AdminPosts = () => {
                     </div>
                     
                     {/* Media Display */}
-                    {((post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url) && (
-                      <div style={{ marginBottom: '1rem' }}>
-                        <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
-                      </div>
-                    )}
+                    {(() => {
+                      const hasMedia = (post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url;
+                      console.log(`Post ${post.id} - hasMedia:`, hasMedia, 'media:', post.media, 'image_url:', post.image_url);
+                      return hasMedia ? (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
+                        </div>
+                      ) : null;
+                    })()}
                     
                     <div 
                       className="post-content-display"
