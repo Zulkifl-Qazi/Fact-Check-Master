@@ -368,11 +368,37 @@ const AdminPosts = () => {
 
   const handleEdit = (post) => {
     setEditingPost(post);
-    const media = post.media || { images: [], videos: [] };
-    // Handle backward compatibility with old image_url field
-    if (post.image_url && !media.images?.includes(post.image_url)) {
-      media.images = [post.image_url, ...(media.images || [])];
+    console.log('Editing post:', post);
+    console.log('Post media:', post.media);
+    
+    // Parse media if it's a string (from database)
+    let media = { images: [], videos: [] };
+    if (post.media) {
+      if (typeof post.media === 'string') {
+        try {
+          media = JSON.parse(post.media);
+        } catch (e) {
+          console.error('Failed to parse media:', e);
+          media = { images: [], videos: [] };
+        }
+      } else if (typeof post.media === 'object') {
+        media = post.media;
+      }
     }
+    
+    // Ensure media has the correct structure
+    media = {
+      images: Array.isArray(media.images) ? media.images : [],
+      videos: Array.isArray(media.videos) ? media.videos : []
+    };
+    
+    // Handle backward compatibility with old image_url field
+    if (post.image_url && !media.images.includes(post.image_url)) {
+      media.images = [post.image_url, ...media.images];
+    }
+    
+    console.log('Final media object:', media);
+    
     setFormData({
       title: post.title,
       content: post.content,
@@ -392,7 +418,9 @@ const AdminPosts = () => {
     
     setSubmitting(true);
     try {
-      console.log('Updating post:', editingPost.id, formData);
+      console.log('Updating post:', editingPost.id);
+      console.log('Form data being sent:', formData);
+      console.log('Media object:', formData.media);
       const response = await axios.put(`/api/posts?id=${editingPost.id}`, formData);
       console.log('Post updated successfully:', response.data);
       setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
@@ -404,6 +432,7 @@ const AdminPosts = () => {
       alert('Post updated successfully! ✅');
     } catch (error) {
       console.error('Failed to update post:', error);
+      console.error('Error response:', error.response?.data);
       alert(`Failed to update post: ${error.response?.data?.error || error.message}`);
     } finally {
       setSubmitting(false);
