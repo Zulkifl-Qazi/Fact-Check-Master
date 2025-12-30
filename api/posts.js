@@ -100,16 +100,36 @@ async function addNewPost(postData) {
 
     // Handle media (images and videos)
     if (postData.media) {
-      postToInsert.media = postData.media;
+      console.log('[Database] Media received:', postData.media);
+      console.log('[Database] Media type:', typeof postData.media);
+      
+      // Ensure media is an object, not a string
+      let mediaObj = postData.media;
+      if (typeof postData.media === 'string') {
+        try {
+          mediaObj = JSON.parse(postData.media);
+        } catch (e) {
+          console.error('[Database] Failed to parse media string:', e);
+          mediaObj = { images: [], videos: [] };
+        }
+      }
+      
+      postToInsert.media = mediaObj;
+      console.log('[Database] Media to save:', JSON.stringify(mediaObj));
+      
       // Backward compatibility: set image_url to first image if exists
-      if (postData.media.images && postData.media.images.length > 0) {
-        postToInsert.image_url = postData.media.images[0];
+      if (mediaObj.images && mediaObj.images.length > 0) {
+        postToInsert.image_url = mediaObj.images[0];
+      } else {
+        postToInsert.image_url = null;
       }
     } else if (postData.imageUrl) {
       // Backward compatibility for old imageUrl field
+      console.log('[Database] Using legacy imageUrl:', postData.imageUrl);
       postToInsert.image_url = postData.imageUrl;
       postToInsert.media = { images: [postData.imageUrl], videos: [] };
     } else {
+      console.log('[Database] No media provided');
       postToInsert.image_url = null;
       postToInsert.media = { images: [], videos: [] };
     }
@@ -169,7 +189,8 @@ async function addNewPost(postData) {
 
 async function updatePost(postId, postData) {
   try {
-    console.log('[Database] Updating post with ID:', postId, 'Data:', postData);
+    console.log('[Database] Updating post with ID:', postId);
+    console.log('[Database] Incoming postData:', JSON.stringify(postData, null, 2));
     
     const postToUpdate = {
       title: postData.title.trim(),
@@ -182,21 +203,41 @@ async function updatePost(postId, postData) {
 
     // Handle media (images and videos)
     if (postData.media) {
-      postToUpdate.media = postData.media;
+      console.log('[Database] Media received:', postData.media);
+      console.log('[Database] Media type:', typeof postData.media);
+      
+      // Ensure media is an object, not a string
+      let mediaObj = postData.media;
+      if (typeof postData.media === 'string') {
+        try {
+          mediaObj = JSON.parse(postData.media);
+        } catch (e) {
+          console.error('[Database] Failed to parse media string:', e);
+          mediaObj = { images: [], videos: [] };
+        }
+      }
+      
+      postToUpdate.media = mediaObj;
+      console.log('[Database] Media to save:', JSON.stringify(mediaObj));
+      
       // Backward compatibility: set image_url to first image if exists
-      if (postData.media.images && postData.media.images.length > 0) {
-        postToUpdate.image_url = postData.media.images[0];
+      if (mediaObj.images && mediaObj.images.length > 0) {
+        postToUpdate.image_url = mediaObj.images[0];
       } else {
         postToUpdate.image_url = null;
       }
     } else if (postData.imageUrl) {
       // Backward compatibility for old imageUrl field
+      console.log('[Database] Using legacy imageUrl:', postData.imageUrl);
       postToUpdate.image_url = postData.imageUrl;
       postToUpdate.media = { images: [postData.imageUrl], videos: [] };
     } else {
+      console.log('[Database] No media provided');
       postToUpdate.image_url = null;
       postToUpdate.media = { images: [], videos: [] };
     }
+    
+    console.log('[Database] Final update object:', JSON.stringify(postToUpdate, null, 2));
 
     // Handle categories - update the category field with the first category
     if (postData.categories && Array.isArray(postData.categories) && postData.categories.length > 0) {
