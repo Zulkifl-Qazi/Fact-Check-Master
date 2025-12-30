@@ -271,7 +271,33 @@ const AdminPosts = () => {
     setLoading(true);
     try {
       const response = await axios.get('/api/posts');
-      setPosts(response.data || []);
+      const posts = response.data || [];
+      
+      // Parse media field if it comes as string from database
+      const parsedPosts = posts.map(post => {
+        if (post.media && typeof post.media === 'string') {
+          try {
+            post.media = JSON.parse(post.media);
+          } catch (e) {
+            console.error('Failed to parse media for post', post.id, e);
+            post.media = { images: [], videos: [] };
+          }
+        }
+        // Ensure media has correct structure
+        if (!post.media || typeof post.media !== 'object') {
+          post.media = { images: [], videos: [] };
+        }
+        // Backward compatibility - if no media but has image_url
+        if (post.image_url && (!post.media.images || post.media.images.length === 0)) {
+          post.media = {
+            images: [post.image_url],
+            videos: []
+          };
+        }
+        return post;
+      });
+      
+      setPosts(parsedPosts);
     } catch (error) {
       console.error('Failed to load posts:', error);
       setPosts([]);
