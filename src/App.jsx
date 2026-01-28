@@ -1,6 +1,7 @@
 // src/App.jsx
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import NewsDashboard from './pages/NewsDashboard';
@@ -71,6 +72,7 @@ function App() {
       </main>
       <Footer />
     </div>
+    <Analytics />
     </BrowserRouter>
   );
 }
