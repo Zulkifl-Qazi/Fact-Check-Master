@@ -363,7 +363,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 style={{ color: 'white', fontWeight: '600', fontSize: '1rem', marginBottom: '0.25rem' }}>Email Us</h3>
-              <a href="mailto:contact@factcheckmaster.com" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#a78bfa'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>contact@factcheckmaster.com</a>
+              <a href="mailto:factchk0556@gmail.com" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = '#a78bfa'} onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>factchk0556@gmail.com</a>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 // src/components/Footer.jsx - Updated Nov 24, 2025 - Footer navigation working with useNavigate
 import React from 'react';
-import { FaTwitter, FaFacebook, FaLinkedin, FaGithub, FaShieldAlt } from 'react-icons/fa';
+import { FaTwitter, FaFacebook, FaLinkedin, FaShieldAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
@@ -316,33 +316,7 @@ const Footer = () => {
               <FaLinkedin style={{ fontSize: '1rem' }} />
             </a>
 
-            <a 
-              href="https://github.com/Zulkifl-Qazi/fact-check-master" 
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                padding: '0.5rem 0.65rem',
-                borderRadius: '6px',
-                border: 'none',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: 'rgba(255, 255, 255, 0.7)',
-                textDecoration: 'none',
-                transition: 'all 200ms',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onMouseEnter={(e) => { 
-                e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; 
-                e.currentTarget.style.color = 'white'; 
-              }}
-              onMouseLeave={(e) => { 
-                e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; 
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'; 
-              }}
-            >
-              <FaGithub style={{ fontSize: '1rem' }} />
-            </a>
+
           </div>
         </div>
 

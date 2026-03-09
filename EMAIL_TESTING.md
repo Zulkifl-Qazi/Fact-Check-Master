@@ -10,9 +10,9 @@ Edit the `.env` file with your actual email credentials:
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=your-real-email@gmail.com
+SMTP_USER=factchk0556@gmail.com
 SMTP_PASS=your-app-password
-FROM_EMAIL=noreply@factcheckmaster.com
+FROM_EMAIL=factchk0556@gmail.com
 ```
 
 ### 2. Test Contact Form Email

@@ -117,7 +117,7 @@ const PrivacyPolicy = () => {
                 <h2 style={{ fontSize: '1.4rem', fontWeight: '700', color: 'white', marginBottom: '0.75rem' }}>11. Contact Us</h2>
                 <p>
                   If you have any questions about this Privacy Policy, please contact us at{' '}
-                  <a href="mailto:contact@factcheckmaster.com" style={{ color: '#a78bfa', textDecoration: 'underline' }}>contact@factcheckmaster.com</a>.
+                  <a href="mailto:factchk0556@gmail.com" style={{ color: '#a78bfa', textDecoration: 'underline' }}>factchk0556@gmail.com</a>.
                 </p>
               </div>
 

@@ -30,8 +30,8 @@ const Contact = () => {
     {
       icon: FaEnvelope,
       title: "Email Us",
-      info: "contact@factcheckmaster.com",
-      link: "mailto:contact@factcheckmaster.com"
+      info: "factchk0556@gmail.com",
+      link: "mailto:factchk0556@gmail.com"
     },
     {
       icon: FaGlobe,
@@ -250,10 +250,10 @@ const Contact = () => {
               </p>
               <div className="space-y-2">
                 <p className="text-sm text-white/70">
-                  <strong className="text-white">Media:</strong> media@factcheckmaster.com
+                  <strong className="text-white">Media:</strong> factchk0556@gmail.com
                 </p>
                 <p className="text-sm text-white/70">
-                  <strong className="text-white">Tips:</strong> tips@factcheckmaster.com
+                  <strong className="text-white">Tips:</strong> factchk0556@gmail.com
                 </p>
               </div>
             </motion.div>

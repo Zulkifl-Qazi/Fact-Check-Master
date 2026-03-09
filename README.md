@@ -39,9 +39,9 @@ cp .env.example .env
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=your-email@gmail.com
+SMTP_USER=factchk0556@gmail.com
 SMTP_PASS=your-app-password
-FROM_EMAIL=noreply@factcheckmaster.com
+FROM_EMAIL=factchk0556@gmail.com
 ```
 
 **For Gmail setup:**
