@@ -11,6 +11,9 @@ import AdminPosts from './pages/AdminPosts';
 import AdminLogin from './pages/AdminLogin';
 import DeviceManagement from './pages/DeviceManagement';
 import PostView from './pages/PostView';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import AboutPage from './pages/AboutPage';
 import Footer from './components/Footer';
 
 function App() {
@@ -43,6 +46,9 @@ function App() {
           <Route path="/news-dashboard" element={<NewsDashboard />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/post/:id" element={<PostView />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/feedback"

@@ -1,7 +1,7 @@
 // src/components/Contact.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaTwitter, FaFacebook, FaLinkedin } from 'react-icons/fa';
+import { FaEnvelope, FaGlobe, FaPaperPlane, FaTwitter, FaFacebook, FaLinkedin } from 'react-icons/fa';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -34,15 +34,9 @@ const Contact = () => {
       link: "mailto:contact@factcheckmaster.com"
     },
     {
-      icon: FaPhone,
-      title: "Call Us",
-      info: "+1 (555) 123-4567",
-      link: "tel:+15551234567"
-    },
-    {
-      icon: FaMapMarkerAlt,
-      title: "Visit Us",
-      info: "123 Truth Street, Verification City, VC 12345",
+      icon: FaGlobe,
+      title: "Our Platform",
+      info: "Online-based fact-checking platform serving 25+ countries",
       link: "#"
     }
   ];
@@ -250,7 +244,7 @@ const Contact = () => {
               viewport={{ once: true }}
               className="bg-white/[0.08] backdrop-blur-md p-6 rounded-xl shadow-lg border border-white/[0.15]"
             >
-              <h4 className="text-lg font-semibold text-white mb-4">Emergency Contact</h4>
+              <h4 className="text-lg font-semibold text-white mb-4">Urgent Inquiries</h4>
               <p className="text-white/70 mb-4">
                 For urgent fact-checking requests or media inquiries:
               </p>
@@ -260,9 +254,6 @@ const Contact = () => {
                 </p>
                 <p className="text-sm text-white/70">
                   <strong className="text-white">Tips:</strong> tips@factcheckmaster.com
-                </p>
-                <p className="text-sm text-white/70">
-                  <strong className="text-white">Emergency:</strong> +1 (555) 911-FACT
                 </p>
               </div>
             </motion.div>

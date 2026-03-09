@@ -143,7 +143,7 @@ const Footer = () => {
               Latest News
             </button>
             <button 
-              onClick={() => handleNavigation('/#top')}
+              onClick={() => handleNavigation('/about')}
               className="footer-nav-btn"
               style={{ 
                 fontSize: '0.875rem', 
@@ -181,6 +181,46 @@ const Footer = () => {
               onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
             >
               Contact
+            </button>
+            <button 
+              onClick={() => handleNavigation('/privacy-policy')}
+              style={{ 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '6px 10px',
+                textDecoration: 'none', 
+                transition: 'all 200ms',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
+            >
+              Privacy Policy
+            </button>
+            <button 
+              onClick={() => handleNavigation('/terms-of-service')}
+              style={{ 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: 'rgba(255, 255, 255, 0.7)', 
+                background: 'none',
+                border: 'none',
+                padding: '6px 10px',
+                textDecoration: 'none', 
+                transition: 'all 200ms',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={(e) => { e.target.style.color = 'rgb(168, 85, 247)'; e.target.style.background = 'rgba(168, 85, 247, 0.1)'; }} 
+              onMouseLeave={(e) => { e.target.style.color = 'rgba(255, 255, 255, 0.7)'; e.target.style.background = 'none'; }}
+            >
+              Terms
             </button>
           </div>
 

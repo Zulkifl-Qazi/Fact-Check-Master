@@ -178,31 +178,7 @@ const CategoryFeed = ({ category, title, icon }) => {
                                 <div className="flex items-center justify-between">
                                     <button
                                         onClick={() => handleViewMore(post.id)}
-                                        style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            padding: '10px 16px',
-                                            backgroundColor: '#8b5cf6',
-                                            color: 'white',
-                                            fontSize: '14px',
-                                            fontWeight: '600',
-                                            borderRadius: '8px',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            outline: 'none',
-                                            boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.target.style.backgroundColor = '#7c3aed';
-                                            e.target.style.transform = 'translateY(-1px)';
-                                            e.target.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.4)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.target.style.backgroundColor = '#8b5cf6';
-                                            e.target.style.transform = 'translateY(0px)';
-                                            e.target.style.boxShadow = '0 2px 4px rgba(139, 92, 246, 0.3)';
-                                        }}
+                                        className="btn btn-primary btn-sm"
                                     >
                                         <FaEye style={{ marginRight: '8px', width: '14px', height: '14px' }} />
                                         View More

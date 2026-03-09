@@ -14,7 +14,6 @@ const LiveFeed = ({ searchQuery = '' }) => {
             setLoading(true);
             setError(null);
             
-            console.log('Loading posts from /api/posts...');
             const response = await fetch('/api/posts');
             
             if (!response.ok) {
@@ -22,7 +21,6 @@ const LiveFeed = ({ searchQuery = '' }) => {
             }
             
             const data = await response.json();
-            console.log('Posts loaded:', data);
             
             // Filter only latest-news category posts (or posts without category for backward compatibility)
             const latestNewsPosts = Array.isArray(data) 
@@ -140,10 +138,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                     {searchQuery && (
                         <button
                             onClick={clearSearch}
-                            className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-                            style={{ backgroundColor: '#8b5cf6' }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
+                            className="btn btn-primary btn-sm mt-4"
                         >
                             <FaTimes />
                             Clear Search
@@ -164,10 +159,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                         {searchQuery && (
                             <button
                                 onClick={clearSearch}
-                                className="mt-4 px-4 py-2 text-white rounded-lg transition-colors"
-                                style={{ backgroundColor: '#8b5cf6' }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
+                                className="btn btn-primary btn-sm mt-4"
                             >
                                 View All Posts
                             </button>
@@ -218,31 +210,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                     <div className="flex items-center justify-between">
                                         <button
                                             onClick={() => handleViewMore(post)}
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                padding: '10px 16px',
-                                                backgroundColor: '#8b5cf6',
-                                                color: 'white',
-                                                fontSize: '14px',
-                                                fontWeight: '600',
-                                                borderRadius: '8px',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s',
-                                                outline: 'none',
-                                                boxShadow: '0 2px 4px rgba(139, 92, 246, 0.3)'
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.backgroundColor = '#7c3aed';
-                                                e.target.style.transform = 'translateY(-1px)';
-                                                e.target.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.4)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.backgroundColor = '#8b5cf6';
-                                                e.target.style.transform = 'translateY(0px)';
-                                                e.target.style.boxShadow = '0 2px 4px rgba(139, 92, 246, 0.3)';
-                                            }}
+                                            className="btn btn-primary btn-sm"
                                         >
                                             <FaEye style={{ marginRight: '8px', width: '14px', height: '14px' }} />
                                             View More

@@ -130,9 +130,9 @@ const HeroBanner = () => {
         >
           {/* Primary Button */}
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(168, 85, 247, 0.6)' }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-bold text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+            className="btn btn-primary btn-lg"
             style={{
               background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%)',
               boxShadow: '0 10px 30px rgba(168, 85, 247, 0.5)',
@@ -144,9 +144,9 @@ const HeroBanner = () => {
 
           {/* Secondary Button */}
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(168, 85, 247, 0.6)' }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-bold text-white rounded-lg transition-all duration-300"
+            className="btn btn-ghost btn-lg"
             style={{
               background: 'rgb(88, 28, 135)',
               boxShadow: '0 10px 30px rgba(88, 28, 135, 0.5)',

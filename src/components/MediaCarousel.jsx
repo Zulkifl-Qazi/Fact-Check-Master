@@ -28,10 +28,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
   }, [currentIndex]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  console.log('MediaCarousel received media:', media);
-
   if (!media || (!media.images?.length && !media.videos?.length)) {
-    console.log('MediaCarousel: No media to display');
     return null;
   }
 
@@ -40,8 +37,6 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
     ...(media.images || []).map(url => ({ type: 'image', url })),
     ...(media.videos || []).map(video => ({ type: 'video', ...video }))
   ];
-
-  console.log('MediaCarousel: allMedia array:', allMedia);
 
   if (allMedia.length === 0) return null;
 
@@ -56,7 +51,6 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
   };
 
   const renderMedia = (item, isFullscreen = false) => {
-    console.log('Rendering media item:', item);
     if (item.type === 'image') {
       return (
         <img
@@ -73,8 +67,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
             padding: 0
           }}
           onClick={() => !isFullscreen && setIsFullscreen(true)}
-          onLoad={() => console.log('Image loaded successfully:', item.url)}
-          onError={(e) => console.error('Image failed to load:', item.url, e)}
+          onError={(e) => e.target.style.display = 'none'}
         />
       );
     }
