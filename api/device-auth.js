@@ -40,6 +40,37 @@ export default async function handler(req, res) {
         });
       }
 
+      // Bootstrap the first approved admin device so a fresh deployment can recover cleanly.
+      const { count: approvedCount, error: countError } = await supabase
+        .from('approved_devices')
+        .select('id', { count: 'exact', head: true });
+
+      if (countError) throw countError;
+
+      if ((approvedCount || 0) === 0) {
+        const { error: bootstrapError } = await supabase
+          .from('approved_devices')
+          .upsert({
+            device_id: deviceId,
+            device_name: deviceName,
+            approved: true,
+            approved_at: new Date().toISOString(),
+            approved_by: 'bootstrap',
+            requested_at: new Date().toISOString(),
+            last_used: new Date().toISOString()
+          }, {
+            onConflict: 'device_id'
+          });
+
+        if (bootstrapError) throw bootstrapError;
+
+        return res.json({
+          approved: true,
+          bootstrap: true,
+          deviceName: deviceName
+        });
+      }
+
       // Check if device is approved
       const { data: device } = await supabase
         .from('approved_devices')
