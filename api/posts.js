@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration - you'll need to set these environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Log configuration status (without exposing sensitive data)
 console.log('[Supabase] URL configured:', !!supabaseUrl && !supabaseUrl.includes('your-project'));
@@ -11,11 +11,43 @@ console.log('[Supabase] Key configured:', !!supabaseKey && !supabaseKey.includes
 
 if (!supabaseUrl || supabaseUrl.includes('your-project') || !supabaseKey || supabaseKey.includes('your-anon-key')) {
   console.error('[Supabase] WARNING: Supabase credentials not properly configured!');
-  console.error('[Supabase] Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables in Vercel');
+  console.error('[Supabase] Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables in Vercel');
 }
 
 // Create Supabase client
-const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseKey || 'placeholder-key');
+const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseKey || 'placeholder-key',
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false
+    }
+  }
+);
+
+async function requireApprovedAdmin(req, res) {
+  const deviceId = req.headers['x-device-id'];
+
+  if (!deviceId) {
+    res.status(403).json({ error: 'Approved device ID is required' });
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('approved_devices')
+    .select('device_id, device_name, approved')
+    .eq('device_id', deviceId)
+    .eq('approved', true)
+    .single();
+
+  if (error || !data) {
+    res.status(403).json({ error: 'Unauthorized device' });
+    return null;
+  }
+
+  return data;
+}
 
 // Sample data for initialization
 const SAMPLE_POSTS = [
@@ -310,7 +342,7 @@ export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Device-ID');
   
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -326,6 +358,9 @@ export default async function handler(req, res) {
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {
+      const approvedAdmin = await requireApprovedAdmin(req, res);
+      if (!approvedAdmin) return;
+
       console.log('[API] POST request body:', JSON.stringify(req.body, null, 2));
       const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories, media } = req.body;
       
@@ -353,6 +388,9 @@ export default async function handler(req, res) {
       });
 
     } else if (req.method === 'PUT') {
+      const approvedAdmin = await requireApprovedAdmin(req, res);
+      if (!approvedAdmin) return;
+
       const postId = parseInt(req.query.id);
       
       if (!postId) {
@@ -386,6 +424,9 @@ export default async function handler(req, res) {
       });
 
     } else if (req.method === 'DELETE') {
+      const approvedAdmin = await requireApprovedAdmin(req, res);
+      if (!approvedAdmin) return;
+
       const postId = parseInt(req.query.id) || parseInt(req.url.split('/').pop());
       
       if (!postId) {

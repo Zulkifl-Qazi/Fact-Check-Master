@@ -41,17 +41,11 @@ CREATE TABLE posts (
 -- Enable Row Level Security (RLS)
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 
--- Create policy to allow public read access
-CREATE POLICY "Allow public read access" ON posts
-FOR SELECT USING (true);
-
--- Create policy to allow public insert access (for admin posts)
-CREATE POLICY "Allow public insert access" ON posts
-FOR INSERT WITH CHECK (true);
-
--- Create policy to allow public delete access
-CREATE POLICY "Allow public delete access" ON posts
-FOR DELETE USING (true);
+-- The live app reads and writes posts through /api/posts using the service-role key,
+-- so direct public access to the table is not needed.
+DROP POLICY IF EXISTS "Deny public access to posts" ON posts;
+CREATE POLICY "Deny public access to posts" ON posts
+FOR ALL USING (false) WITH CHECK (false);
 
 -- Create an index for better performance
 CREATE INDEX idx_posts_created_at ON posts(created_at DESC);
@@ -77,7 +71,10 @@ CREATE INDEX idx_posts_status ON posts(status);
 ```
 SUPABASE_URL = https://your-project-ref.supabase.co
 SUPABASE_ANON_KEY = your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY = your-service-role-key-here
 ```
+
+Use `SUPABASE_SERVICE_ROLE_KEY` for the serverless APIs in this project. The browser app talks to `/api/posts` and `/api/device-auth`, not directly to Supabase tables.
 
 ## Step 5: Deploy
 

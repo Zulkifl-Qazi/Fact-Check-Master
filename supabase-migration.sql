@@ -49,6 +49,20 @@ SET media = jsonb_build_object(
     'videos', '[]'::jsonb
 )
 WHERE media IS NULL OR media = '{}'::jsonb OR media = '{"images": [], "videos": []}'::jsonb;
+
+-- Lock down posts too; the live app accesses them through /api/posts using the service-role key.
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read access" ON posts;
+DROP POLICY IF EXISTS "Allow public insert access" ON posts;
+DROP POLICY IF EXISTS "Allow public delete access" ON posts;
+DROP POLICY IF EXISTS "Deny public access to posts" ON posts;
+CREATE POLICY "Deny public access to posts"
+ON posts
+FOR ALL
+USING (false)
+WITH CHECK (false);
+
 -- Create approved_devices table for device-based authentication
 CREATE TABLE IF NOT EXISTS approved_devices (
   id SERIAL PRIMARY KEY,
@@ -61,6 +75,20 @@ CREATE TABLE IF NOT EXISTS approved_devices (
   last_used TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Lock down the table; serverless endpoints should use the service-role key.
+ALTER TABLE approved_devices ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read access" ON approved_devices;
+DROP POLICY IF EXISTS "Allow public insert access" ON approved_devices;
+DROP POLICY IF EXISTS "Allow public delete access" ON approved_devices;
+-- Optional hardening: keep direct public access disabled even when RLS is on.
+DROP POLICY IF EXISTS "Deny public access to approved_devices" ON approved_devices;
+CREATE POLICY "Deny public access to approved_devices"
+ON approved_devices
+FOR ALL
+USING (false)
+WITH CHECK (false);
 
 -- Create indexes for faster lookups
 CREATE INDEX IF NOT EXISTS idx_device_id ON approved_devices(device_id);

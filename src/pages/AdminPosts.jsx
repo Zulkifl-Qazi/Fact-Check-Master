@@ -246,6 +246,10 @@ const AdminPosts = () => {
   const [tempImageUrl, setTempImageUrl] = useState('');
   const [tempVideoUrl, setTempVideoUrl] = useState('');
 
+  const getAdminHeaders = () => ({
+    'X-Device-ID': localStorage.getItem('device_id') || ''
+  });
+
   // Auto-refresh posts every 15 seconds for live collaboration
   useEffect(() => {
     const interval = setInterval(() => {
@@ -366,7 +370,9 @@ const AdminPosts = () => {
     setSubmitting(true);
     try {
       console.log('Submitting post data:', formData);
-      const response = await axios.post('/api/posts', formData);
+      const response = await axios.post('/api/posts', formData, {
+        headers: getAdminHeaders()
+      });
       console.log('Post created successfully:', response.data);
       setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
       setShowAddForm(false);
@@ -389,7 +395,9 @@ const AdminPosts = () => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     
     try {
-      const response = await axios.delete(`/api/posts?id=${postId}`);
+      const response = await axios.delete(`/api/posts?id=${postId}`, {
+        headers: getAdminHeaders()
+      });
       console.log('Delete response:', response.data);
       
       // Reload posts immediately after deletion
@@ -456,7 +464,9 @@ const AdminPosts = () => {
       console.log('Updating post:', editingPost.id);
       console.log('Form data being sent:', formData);
       console.log('Media object:', formData.media);
-      const response = await axios.put(`/api/posts?id=${editingPost.id}`, formData);
+      const response = await axios.put(`/api/posts?id=${editingPost.id}`, formData, {
+        headers: getAdminHeaders()
+      });
       console.log('Post updated successfully:', response.data);
       setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
       setShowAddForm(false);
