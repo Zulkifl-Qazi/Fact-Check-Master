@@ -76,7 +76,7 @@ SUPABASE_SERVICE_ROLE_KEY = your-service-role-key-here
 
 Use `SUPABASE_SERVICE_ROLE_KEY` for the serverless APIs in this project. The browser app talks to `/api/posts` and `/api/device-auth`, not directly to Supabase tables.
 
-The first successful admin login will bootstrap the initial approved device automatically, so you do not need to seed the `approved_devices` table by hand.
+Approved admin devices should be created or updated in `approved_devices` through the admin flow or by a one-time manual SQL update in Supabase. The login endpoint only validates against existing approved rows.
 
 ## Step 5: Deploy
 
