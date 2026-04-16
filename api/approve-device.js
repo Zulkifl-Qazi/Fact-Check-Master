@@ -2,21 +2,28 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseConfigured = !!supabaseUrl && !!supabaseKey;
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseConfigured) {
   console.error('[Approve Device] Missing Supabase configuration. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
 }
 
-const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseKey || 'placeholder-key',
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    }
+const supabase = supabaseConfigured
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      }
+    })
+  : null;
+
+function requireSupabase(res) {
+  if (!supabase) {
+    res.status(500).json({ error: 'Supabase is not configured on the server' });
+    return false;
   }
-);
+  return true;
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +40,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (!requireSupabase(res)) return;
+
     const { deviceIdToApprove } = req.body;
     const requestingDeviceId = req.headers['x-device-id'];
 

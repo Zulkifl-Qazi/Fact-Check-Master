@@ -4,27 +4,34 @@ import { createClient } from '@supabase/supabase-js';
 // Supabase configuration - you'll need to set these environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseConfigured = !!supabaseUrl && !!supabaseKey;
 
 // Log configuration status (without exposing sensitive data)
 console.log('[Supabase] URL configured:', !!supabaseUrl && !supabaseUrl.includes('your-project'));
 console.log('[Supabase] Key configured:', !!supabaseKey && !supabaseKey.includes('your-anon-key'));
 
-if (!supabaseUrl || supabaseUrl.includes('your-project') || !supabaseKey || supabaseKey.includes('your-anon-key')) {
+if (!supabaseConfigured || supabaseUrl.includes('your-project') || supabaseKey.includes('your-anon-key')) {
   console.error('[Supabase] WARNING: Supabase credentials not properly configured!');
   console.error('[Supabase] Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables in Vercel');
 }
 
 // Create Supabase client
-const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseKey || 'placeholder-key',
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    }
+const supabase = supabaseConfigured
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false
+      }
+    })
+  : null;
+
+function requireSupabase(res) {
+  if (!supabase) {
+    res.status(500).json({ error: 'Supabase is not configured on the server' });
+    return false;
   }
-);
+  return true;
+}
 
 async function requireApprovedAdmin(req, res) {
   const deviceId = req.headers['x-device-id'];
@@ -352,6 +359,8 @@ export default async function handler(req, res) {
   console.log(`[API] ${req.method} /api/posts`);
 
   try {
+    if (!requireSupabase(res)) return;
+
     if (req.method === 'GET') {
       const posts = await getAllPosts();
       console.log(`[API] Returning ${posts.length} posts from permanent database`);
