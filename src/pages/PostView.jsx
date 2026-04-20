@@ -19,13 +19,25 @@ const PostView = () => {
                 setLoading(true);
                 setError(null);
                 
-                const response = await fetch('/api/posts');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                let foundPost = null;
+
+                // Preferred path: fetch only the requested post
+                const singleResponse = await fetch(`/api/posts?id=${encodeURIComponent(id)}`);
+                if (singleResponse.ok) {
+                    foundPost = await singleResponse.json();
+                } else if (singleResponse.status === 404) {
+                    setError('Post not found');
+                    return;
+                } else {
+                    // Backward-compatible fallback path
+                    const response = await fetch('/api/posts');
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const posts = await response.json();
+                    foundPost = posts.find(p => p.id.toString() === id);
                 }
-                
-                const posts = await response.json();
-                const foundPost = posts.find(p => p.id.toString() === id);
                 
                 if (!foundPost) {
                     setError('Post not found');

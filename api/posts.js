@@ -123,6 +123,31 @@ async function getAllPosts() {
   }
 }
 
+async function getPostById(postId) {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('id', postId)
+      .eq('status', 'published')
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      throw error;
+    }
+
+    return data || null;
+  } catch (error) {
+    console.error('[Database] Error fetching post by ID:', error);
+    // Backward-compatible fallback path
+    const posts = await getAllPosts();
+    return posts.find((post) => String(post.id) === String(postId)) || null;
+  }
+}
+
 async function addNewPost(postData) {
   try {
     console.log('[Database] Creating new post with data:', postData);
@@ -362,8 +387,26 @@ export default async function handler(req, res) {
     if (!requireSupabase(res)) return;
 
     if (req.method === 'GET') {
+      const requestedId = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id;
+
+      if (requestedId !== undefined) {
+        const postId = parseInt(requestedId, 10);
+        if (Number.isNaN(postId)) {
+          return res.status(400).json({ error: 'Invalid post ID' });
+        }
+
+        const post = await getPostById(postId);
+        if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+        }
+
+        res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
+        return res.status(200).json(post);
+      }
+
       const posts = await getAllPosts();
       console.log(`[API] Returning ${posts.length} posts from permanent database`);
+      res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {

@@ -1,20 +1,21 @@
 // src/App.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import NewsDashboard from './pages/NewsDashboard';
-import Contact from './pages/Contact';
-import AdminFeedback from './pages/AdminFeedback';
-import AdminPosts from './pages/AdminPosts';
-import AdminLogin from './pages/AdminLogin';
-import DeviceManagement from './pages/DeviceManagement';
-import PostView from './pages/PostView';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
-import AboutPage from './pages/AboutPage';
 import Footer from './components/Footer';
+
+const HomePage = lazy(() => import('./pages/HomePage'));
+const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
+const Contact = lazy(() => import('./pages/Contact'));
+const AdminFeedback = lazy(() => import('./pages/AdminFeedback'));
+const AdminPosts = lazy(() => import('./pages/AdminPosts'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const DeviceManagement = lazy(() => import('./pages/DeviceManagement'));
+const PostView = lazy(() => import('./pages/PostView'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 function App() {
   useEffect(() => {
@@ -41,40 +42,42 @@ function App() {
       </div>
       <Navbar />
       <main className="relative flex-grow w-full z-10">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/news-dashboard" element={<NewsDashboard />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/post/:id" element={<PostView />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin/feedback"
-            element={
-              <RequireAdmin>
-                <AdminFeedback />
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/posts"
-            element={
-              <RequireAdmin>
-                <AdminPosts />
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/devices"
-            element={
-              <RequireAdmin>
-                <DeviceManagement />
-              </RequireAdmin>
-            }
-          />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/news-dashboard" element={<NewsDashboard />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/post/:id" element={<PostView />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/feedback"
+              element={
+                <RequireAdmin>
+                  <AdminFeedback />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/posts"
+              element={
+                <RequireAdmin>
+                  <AdminPosts />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/devices"
+              element={
+                <RequireAdmin>
+                  <DeviceManagement />
+                </RequireAdmin>
+              }
+            />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
     </div>
