@@ -944,8 +944,65 @@ const AdminPosts = () => {
                           whiteSpace: 'nowrap'
                         }}
                       >
-                        + Add Image
+                        + Add URL
                       </button>
+                      
+                      <label style={{
+                        padding: '0.75rem 1.5rem',
+                        background: 'linear-gradient(to right, rgb(234, 179, 8), rgb(202, 138, 4))',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = async () => {
+                              try {
+                                const payload = {
+                                  imageBase64: reader.result,
+                                  fileName: file.name,
+                                  contentType: file.type
+                                };
+                                
+                                const res = await axios.post('/api/upload', payload, {
+                                  headers: { 
+                                    'Content-Type': 'application/json',
+                                    ...getAdminHeaders()
+                                  }
+                                });
+                                
+                                setFormData(prev => ({
+                                  ...prev,
+                                  media: {
+                                    ...prev.media,
+                                    images: [...prev.media.images, res.data.imageUrl]
+                                  }
+                                }));
+                              } catch (error) {
+                                console.error('Upload failed', error);
+                                alert('Failed to upload image. Please try again.');
+                              } finally {
+                                e.target.value = ''; // Reset input to allow selecting same file again
+                              }
+                            };
+                          }}
+                        />
+                        Upload from Device
+                      </label>
                     </div>
 
                     {/* Image List */}

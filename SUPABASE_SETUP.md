@@ -54,14 +54,22 @@ CREATE INDEX idx_posts_status ON posts(status);
 
 4. Click **"Run"** to execute
 
-## Step 3: Get API Credentials
+## Step 3: Create Storage Bucket for Images
+
+1. In Supabase dashboard, go to **Storage**
+2. Click **"New bucket"**
+3. Name it: `post-images`
+4. **Important**: Check the box for **"Public bucket"**
+5. Click **Save**
+
+## Step 4: Get API Credentials
 
 1. In Supabase dashboard, go to **Settings** → **API**
 2. Copy these values:
    - **Project URL** (looks like: `https://abcdefghijk.supabase.co`)
    - **Anon public** key (starts with `eyJ...`)
 
-## Step 4: Add Environment Variables to Vercel
+## Step 5: Add Environment Variables to Vercel
 
 1. Go to your Vercel dashboard
 2. Select your `fact-check-master` project
@@ -78,7 +86,7 @@ Use `SUPABASE_SERVICE_ROLE_KEY` for the serverless APIs in this project. The bro
 
 Approved admin devices should be created or updated in `approved_devices` through the admin flow or by a one-time manual SQL update in Supabase. The login endpoint only validates against existing approved rows.
 
-## Step 5: Deploy
+## Step 6: Deploy
 
 Once you've completed the setup:
 

@@ -14,6 +14,12 @@ import { Server } from 'socket.io';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Ensure uploads directory exists for local testing
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -31,7 +37,9 @@ app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 let db;
 let mailer = null;
@@ -166,6 +174,33 @@ async function initDb() {
     if (!hasEmailError) await db.exec('ALTER TABLE feedback_replies ADD COLUMN email_error TEXT');
   } catch {}
 }
+
+app.post('/api/upload', (req, res) => {
+  try {
+    const { imageBase64, fileName } = req.body;
+    
+    if (!imageBase64 || !fileName) {
+      return res.status(400).json({ error: 'Missing image data or filename' });
+    }
+
+    // Extract base64 data portion
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+    
+    // Generate unique name
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const safeFileName = uniqueSuffix + '-' + fileName.replace(/[^a-zA-Z0-9.\-_]/g, '');
+
+    // Save locally
+    fs.writeFileSync(path.join(uploadsDir, safeFileName), buffer);
+    
+    const imageUrl = `/uploads/${safeFileName}`;
+    res.status(200).json({ imageUrl });
+  } catch (error) {
+    console.error('File upload error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
 
 app.post('/api/feedback', async (req, res) => {
   try {
