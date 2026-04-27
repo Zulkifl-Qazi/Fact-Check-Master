@@ -220,6 +220,36 @@ const quillStyles = `
   .post-content-display ul li {
     margin: 0.25em 0;
   }
+
+  @media (max-width: 768px) {
+    .media-upload-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .media-upload-row > * {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .media-upload-input {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    .media-upload-action,
+    .media-upload-device {
+      width: 100%;
+      justify-content: center;
+      white-space: normal;
+    }
+
+    .media-upload-device {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 `;
 
 const AdminPosts = () => {
@@ -888,7 +918,7 @@ const AdminPosts = () => {
                 {/* Images Tab */}
                 {mediaTab === 'images' && (
                   <div>
-                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <div className="media-upload-row" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', alignItems: 'center' }}>
                       <input
                         type="url"
                         value={tempImageUrl}
@@ -917,6 +947,7 @@ const AdminPosts = () => {
                           color: 'white',
                           outline: 'none'
                         }}
+                        className="media-upload-input"
                         placeholder="Paste image URL and press Enter..."
                       />
                       <button
@@ -943,6 +974,7 @@ const AdminPosts = () => {
                           fontWeight: '600',
                           whiteSpace: 'nowrap'
                         }}
+                        className="media-upload-action"
                       >
                         + Add URL
                       </button>
@@ -955,7 +987,6 @@ const AdminPosts = () => {
                         borderRadius: '8px',
                         cursor: 'pointer',
                         fontWeight: '600',
-                        whiteSpace: 'nowrap',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -1001,7 +1032,7 @@ const AdminPosts = () => {
                             };
                           }}
                         />
-                        Upload from Device
+                        <span className="media-upload-device">Upload from Device</span>
                       </label>
                     </div>
 
