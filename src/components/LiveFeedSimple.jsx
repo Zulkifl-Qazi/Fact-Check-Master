@@ -41,22 +41,22 @@ const LiveFeed = () => {
 
     if (loading) {
         return (
-            <section className="py-20 bg-gradient-to-br from-purple-950 via-slate-950 to-purple-950">
+            <section className="py-20 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="text-center">
-                        <div className="inline-flex items-center gap-2 bg-purple-900/50 rounded-full px-4 py-2 mb-4 border border-purple-500/40">
-                            <FaRss className="text-purple-400" />
-                            <span className="text-white/90 font-semibold text-sm">Live Updates</span>
+                        <div className="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-2 mb-4 border border-blue-200">
+                            <FaRss className="text-blue-600" />
+                            <span className="text-gray-800 font-semibold text-sm">Live Updates</span>
                         </div>
                         
-                        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg">
-                            Live <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Checks</span>
+                        <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 drop-shadow-sm">
+                            Live <span className="text-blue-600">Fact Checks</span>
                         </h2>
-                        <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-8">
+                        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
                             Stay informed with real-time fact-checking updates and verified information from our expert team.
                         </p>
                         
-                        <div className="text-white/70">Loading latest fact checks...</div>
+                        <div className="text-gray-500">Loading latest fact checks...</div>
                     </div>
                 </div>
             </section>
@@ -65,15 +65,15 @@ const LiveFeed = () => {
 
     if (error) {
         return (
-            <section className="py-20 bg-gradient-to-br from-purple-950 via-slate-950 to-purple-950">
+            <section className="py-20 bg-white">
                 <div className="container mx-auto px-4 max-w-6xl">
                     <div className="text-center">
-                        <FaExclamationTriangle className="text-yellow-400 text-4xl mb-4 mx-auto" />
-                        <h3 className="text-xl text-white mb-4">Unable to load fact checks</h3>
-                        <p className="text-white/70 mb-6">{error}</p>
+                        <FaExclamationTriangle className="text-red-500 text-4xl mb-4 mx-auto" />
+                        <h3 className="text-xl text-gray-900 mb-4">Unable to load fact checks</h3>
+                        <p className="text-gray-600 mb-6">{error}</p>
                         <button 
                             onClick={loadPosts}
-                            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                         >
                             Try Again
                         </button>
@@ -84,7 +84,7 @@ const LiveFeed = () => {
     }
 
     return (
-        <section className="py-20 bg-gradient-to-br from-purple-950 via-slate-950 to-purple-950">
+        <section className="py-20 bg-white">
             <div className="container mx-auto px-4 max-w-6xl">
                 {/* Header */}
                 <motion.div
@@ -93,15 +93,15 @@ const LiveFeed = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 bg-purple-900/50 rounded-full px-4 py-2 mb-4 border border-purple-500/40">
-                        <FaRss className="text-purple-400" />
-                        <span className="text-white/90 font-semibold text-sm">Live Updates</span>
+                    <div className="inline-flex items-center gap-2 bg-blue-50 rounded-full px-4 py-2 mb-4 border border-blue-200">
+                        <FaRss className="text-blue-600" />
+                        <span className="text-gray-800 font-semibold text-sm">Live Updates</span>
                     </div>
                     
-                    <h2 className="text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-lg">
-                        Live <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Checks</span>
+                    <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 drop-shadow-sm">
+                        Live <span className="text-blue-600">Fact Checks</span>
                     </h2>
-                    <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto">
+                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
                         Stay informed with real-time fact-checking updates and verified information from our expert team.
                     </p>
                 </motion.div>
@@ -109,15 +109,15 @@ const LiveFeed = () => {
                 {/* Posts Display */}
                 {posts.length === 0 ? (
                     <div className="text-center py-12">
-                        <FaExclamationTriangle className="text-yellow-400 text-4xl mb-4 mx-auto" />
-                        <p className="text-white/70 text-lg font-semibold mb-6">No fact-checks available at the moment</p>
-                        <p className="text-white/50 text-sm max-w-md mx-auto mb-6">
+                        <FaExclamationTriangle className="text-gray-400 text-4xl mb-4 mx-auto" />
+                        <p className="text-gray-600 text-lg font-semibold mb-6">No fact-checks available at the moment</p>
+                        <p className="text-gray-500 text-sm max-w-md mx-auto mb-6">
                             Our team is working around the clock to bring you the latest verified information.
                             Check back soon for updates!
                         </p>
                         <button 
                             onClick={loadPosts}
-                            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
                         >
                             Refresh
                         </button>
@@ -130,26 +130,26 @@ const LiveFeed = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                className="bg-slate-800/50 border border-purple-500/30 rounded-xl p-6 hover:border-purple-400/50 transition-all duration-300 backdrop-blur-sm"
+                                className="bg-white border border-gray-100 shadow-sm rounded-xl p-6 hover:shadow-md transition-all duration-300"
                             >
                                 {/* Author Info */}
                                 <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                                         {(post.author || 'F')[0]}
                                     </div>
                                     <div className="ml-3">
-                                        <div className="text-white font-semibold">{post.author || 'Fact Check Master'}</div>
-                                        <div className="text-purple-300 text-sm">@fcheckmaster</div>
+                                        <div className="text-gray-900 font-semibold">{post.author || 'Fact Check Master'}</div>
+                                        <div className="text-gray-500 text-sm">@fcheckmaster</div>
                                     </div>
                                     <div className="ml-auto">
-                                        <FaCheckCircle className="text-green-400" title="Verified" />
+                                        <FaCheckCircle className="text-green-500" title="Verified" />
                                     </div>
                                 </div>
 
                                 {/* Content */}
-                                <h3 className="text-white font-bold text-lg mb-3">{post.title}</h3>
+                                <h3 className="text-gray-900 font-bold text-lg mb-3">{post.title}</h3>
                                 <div 
-                                    className="text-white/80 mb-4 leading-relaxed"
+                                    className="text-gray-700 mb-4 leading-relaxed"
                                     dangerouslySetInnerHTML={{ __html: post.content }}
                                 />
 
@@ -174,7 +174,7 @@ const LiveFeed = () => {
                                             href={post.source_url} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="text-purple-300 hover:text-purple-200 text-sm font-medium underline"
+                                            className="text-blue-600 hover:text-blue-700 text-sm font-medium underline"
                                         >
                                             View Source →
                                         </a>
@@ -182,11 +182,11 @@ const LiveFeed = () => {
                                 )}
 
                                 {/* Meta */}
-                                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                                    <div className="text-xs text-white/50">
+                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                    <div className="text-xs text-gray-500">
                                         {new Date(post.created_at).toLocaleDateString()}
                                     </div>
-                                    <div className="text-xs text-green-400 font-semibold">
+                                    <div className="text-xs text-green-600 font-semibold">
                                         {post.fact_check_status || 'Verified'}
                                     </div>
                                 </div>

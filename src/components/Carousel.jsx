@@ -20,10 +20,10 @@ const Carousel = () => {
       title: "Collaborative Verification",
       description: "Expert community of journalists, researchers, and fact-checkers working together to identify and debunk false narratives with precision and accountability.",
       fullDetails: "Our global network of certified fact-checkers collaborates in real-time using our platform to cross-verify information and reach consensus on complex claims.",
-      gradient: "from-purple-600 via-purple-500 to-pink-500",
+      gradient: "from-blue-600 via-blue-500 to-cyan-500",
       icon: "👥",
       stat: "5,000+ Active Fact Checkers",
-      color: "purple"
+      color: "blue"
     },
     {
       id: 3,
@@ -129,7 +129,7 @@ const Carousel = () => {
                 textDecoration: 'none',
               }}
             >
-              Why Choose <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Fact Check Master</span>
+              Why Choose <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">Fact Check Master</span>
             </h2>
             <motion.p 
               initial={{ opacity: 0 }}
@@ -156,11 +156,11 @@ const Carousel = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="relative w-full rounded-3xl overflow-hidden shadow-2xl border-2 border-purple-500/50" 
+            className="relative w-full rounded-3xl overflow-hidden shadow-2xl border-2 border-blue-500/50" 
             style={{ 
               minHeight: '480px',
               background: 'linear-gradient(135deg, rgba(20,30,60,0.9), rgba(40,20,60,0.9))',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 60px rgba(168, 85, 247, 0.2)'
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 60px rgba(37, 99, 235, 0.2)'
             }}
           >
             <AnimatePresence mode="wait">
@@ -254,7 +254,7 @@ const Carousel = () => {
             <motion.button
               whileHover={{ 
                 scale: 1.2,
-                boxShadow: '0 0 30px rgba(168, 85, 247, 0.9)',
+                boxShadow: '0 0 30px rgba(37, 99, 235, 0.9)',
                 background: 'linear-gradient(135deg, #d946ef 0%, #ff1493 100%)',
               }}
               whileTap={{ scale: 0.95 }}
@@ -275,7 +275,7 @@ const Carousel = () => {
                 lineHeight: '1',
                 borderRadius: '12px',
                 display: 'none',
-                boxShadow: '0 8px 20px rgba(168, 85, 247, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 20px rgba(37, 99, 235, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 backdropFilter: 'blur(10px)',
               }}
@@ -289,7 +289,7 @@ const Carousel = () => {
             <motion.button
               whileHover={{ 
                 scale: 1.2,
-                boxShadow: '0 0 30px rgba(168, 85, 247, 0.9)',
+                boxShadow: '0 0 30px rgba(37, 99, 235, 0.9)',
                 background: 'linear-gradient(135deg, rgb(88, 28, 135) 0%, #a855f7 100%)',
               }}
               whileTap={{ scale: 0.95 }}
@@ -337,8 +337,8 @@ const Carousel = () => {
               whileTap={{ scale: 0.8 }}
               className={`transition-all duration-400 rounded-full ${
                 index === current
-                  ? 'bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 w-12 h-3 shadow-lg shadow-purple-500/60 ring-2 ring-white/30'
-                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-500 w-3 h-3 shadow-md hover:shadow-lg hover:shadow-purple-500/40'
+                  ? 'bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 w-12 h-3 shadow-lg shadow-blue-500/60 ring-2 ring-white/30'
+                  : 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-500 w-3 h-3 shadow-md hover:shadow-lg hover:shadow-blue-500/40'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

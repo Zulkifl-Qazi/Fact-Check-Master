@@ -69,6 +69,11 @@ const PostView = () => {
                 
                 setPost(foundPost);
                 
+                // Increment view count
+                fetch(`/api/posts?id=${encodeURIComponent(foundPost.id)}&action=view`, {
+                    method: 'PATCH'
+                }).catch(err => console.error('Failed to increment view count:', err));
+                
                 // Update document title
                 document.title = `${foundPost.title} - Fact Check Master`;
                 
@@ -105,13 +110,13 @@ const PostView = () => {
 
     const getStatusBadge = (status) => {
         const badges = {
-            'verified': 'bg-green-100 text-green-800 border-green-200',
-            'false': 'bg-red-100 text-red-800 border-red-200',
-            'misleading': 'bg-orange-100 text-orange-800 border-orange-200',
-            'pending': 'bg-yellow-100 text-yellow-800 border-yellow-200'
+            'verified': 'bg-green-100/10 text-green-700 dark:text-green-400 border-green-200/50 dark:border-green-900/30',
+            'false': 'bg-red-100/10 text-red-700 dark:text-red-400 border-red-200/50 dark:border-red-900/30',
+            'misleading': 'bg-orange-100/10 text-orange-700 dark:text-orange-400 border-orange-200/50 dark:border-orange-900/30',
+            'pending': 'bg-yellow-100/10 text-yellow-700 dark:text-yellow-400 border-yellow-200/50 dark:border-yellow-900/30'
         };
         
-        return badges[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+        return badges[status] || 'bg-gray-100/10 text-gray-700 dark:text-gray-400 border-gray-200/50 dark:border-gray-800/30';
     };
 
     const handleGoBack = () => {
@@ -121,24 +126,10 @@ const PostView = () => {
 
     if (loading) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                backgroundColor: '#0f172a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{
-                        width: '40px',
-                        height: '40px',
-                        border: '4px solid #334155',
-                        borderTop: '4px solid #8b5cf6',
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite',
-                        margin: '0 auto 16px'
-                    }} />
-                    <p style={{ color: '#9ca3af' }}>Loading post...</p>
+            <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center transition-colors duration-300">
+                <div className="text-center">
+                    <div className="w-10 h-10 border-4 border-slate-200 dark:border-slate-800 border-t-blue-600 dark:border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-slate-600 dark:text-slate-400 font-semibold">Loading post...</p>
                 </div>
             </div>
         );
@@ -146,44 +137,18 @@ const PostView = () => {
 
     if (error || !post) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                backgroundColor: '#0f172a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '20px'
-            }}>
-                <div style={{
-                    textAlign: 'center',
-                    backgroundColor: '#1e293b',
-                    padding: '40px',
-                    borderRadius: '12px',
-                    border: '1px solid #334155'
-                }}>
-                    <FaExclamationTriangle style={{ fontSize: '48px', color: '#ef4444', marginBottom: '16px' }} />
-                    <h2 style={{ color: 'white', marginBottom: '8px' }}>Post Not Found</h2>
-                    <p style={{ color: '#9ca3af', marginBottom: '24px' }}>
-                        {error || 'The post you\'re looking for doesn\'t exist.'}
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-5 transition-colors duration-300">
+                <div className="text-center bg-white dark:bg-slate-900 p-10 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg max-w-md w-full">
+                    <FaExclamationTriangle className="text-5xl text-red-500 mx-auto mb-4 animate-pulse" />
+                    <h2 className="text-slate-900 dark:text-slate-100 mb-2 font-bold text-2xl">Post Not Found</h2>
+                    <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm">
+                        {error || "The post you're looking for doesn't exist."}
                     </p>
                     <button
                         onClick={handleGoBack}
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            padding: '10px 20px',
-                            backgroundColor: '#8b5cf6',
-                            color: 'white',
-                            borderRadius: '8px',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontWeight: '500',
-                            transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = '#7c3aed'}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = '#8b5cf6'}
+                        className="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg border-none cursor-pointer font-semibold transition duration-200 shadow-md shadow-blue-500/20"
                     >
-                        <FaArrowLeft style={{ marginRight: '8px' }} />
+                        <FaArrowLeft className="mr-2" />
                         Back to Latest News
                     </button>
                 </div>
@@ -192,112 +157,51 @@ const PostView = () => {
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            backgroundColor: '#0f172a',
-            paddingTop: '80px'
-        }}>
-            <div style={{
-                maxWidth: '900px',
-                margin: '0 auto',
-                padding: window.innerWidth < 768 ? '10px' : '20px'
-            }}>
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-28 md:pt-32 pb-16 transition-colors duration-300">
+            <div className="max-w-[900px] mx-auto px-4 md:px-6">
                 {/* Back button */}
                 <button
                     onClick={handleGoBack}
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        padding: window.innerWidth < 768 ? '6px 12px' : '8px 16px',
-                        backgroundColor: 'transparent',
-                        color: '#9ca3af',
-                        border: '1px solid #334155',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        marginBottom: window.innerWidth < 768 ? '16px' : '32px',
-                        transition: 'all 0.2s',
-                        fontSize: window.innerWidth < 768 ? '0.875rem' : '1rem'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = '#1e293b';
-                        e.target.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                        e.target.style.color = '#9ca3af';
-                    }}
+                    className="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 bg-transparent text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg cursor-pointer mb-4 md:mb-8 transition duration-200 text-sm md:text-base font-semibold"
                 >
-                    <FaArrowLeft style={{ marginRight: '8px' }} />
+                    <FaArrowLeft className="mr-2" />
                     Back to Latest News
                 </button>
 
                 {/* Post content */}
-                <article style={{
-                    backgroundColor: '#1e293b',
-                    borderRadius: '16px',
-                    border: '1px solid #334155',
-                    overflow: 'hidden'
-                }}>
+                <article className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 overflow-hidden shadow-sm transition-colors duration-300">
                     {/* Status badge */}
-                    <div style={{ padding: window.innerWidth < 768 ? '16px 16px 0' : '24px 32px 0' }}>
+                    <div className="p-4 md:p-6 pb-0 md:pb-0">
                         <span 
-                            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border ${getStatusBadge(post.fact_check_status)}`}
-                            style={{
-                                fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
-                                padding: window.innerWidth < 768 ? '6px 12px' : '8px 16px'
-                            }}
+                            className={`inline-flex items-center px-4 py-2 rounded-full text-xs md:text-sm font-semibold border ${getStatusBadge(post.fact_check_status)}`}
                         >
                             {getStatusIcon(post.fact_check_status)}
-                            <span style={{ marginLeft: '8px', textTransform: 'capitalize' }}>{post.fact_check_status}</span>
+                            <span className="ml-2 capitalize">{post.fact_check_status}</span>
                         </span>
                     </div>
 
                     {/* Media Gallery */}
                     {((post.media?.images?.length > 0 || post.media?.videos?.length > 0) || post.image_url) && (
-                        <div style={{ padding: window.innerWidth < 768 ? '16px 16px 0' : '24px 32px 0' }}>
+                        <div className="p-4 md:p-6 pb-0 md:pb-0">
                             <MediaCarousel media={post.media || { images: post.image_url ? [post.image_url] : [], videos: [] }} />
                         </div>
                     )}
 
-                    <div style={{ padding: window.innerWidth < 768 ? '16px' : '32px' }}>
+                    <div className="p-4 md:p-8">
                         {/* Title */}
-                        <h1 style={{
-                            fontSize: window.innerWidth < 768 ? '24px' : '36px',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            marginBottom: '24px',
-                            lineHeight: '1.2'
-                        }}>
+                        <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mb-6 leading-tight">
                             {post.title}
                         </h1>
 
                         {/* Meta info */}
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            gap: window.innerWidth < 768 ? '12px' : '16px',
-                            marginBottom: window.innerWidth < 768 ? '20px' : '32px',
-                            paddingBottom: window.innerWidth < 768 ? '16px' : '24px',
-                            borderBottom: '1px solid #334155'
-                        }}>
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                color: '#9ca3af',
-                                fontSize: window.innerWidth < 768 ? '12px' : '14px'
-                            }}>
-                                <FaUser style={{ marginRight: '8px', color: '#8b5cf6' }} />
-                                <span style={{ fontWeight: '500' }}>{post.author || 'Admin'}</span>
+                        <div className="flex items-center flex-wrap gap-3 md:gap-6 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200/60 dark:border-slate-800/60">
+                            <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
+                                <FaUser className="mr-2 text-blue-600 dark:text-blue-500" />
+                                <span className="font-semibold">{post.author || 'Admin'}</span>
                             </div>
                             
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                color: '#9ca3af',
-                                fontSize: window.innerWidth < 768 ? '12px' : '14px'
-                            }}>
-                                <FaClock style={{ marginRight: '8px', color: '#8b5cf6' }} />
+                            <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
+                                <FaClock className="mr-2 text-blue-600 dark:text-blue-500" />
                                 <span>{new Date(post.created_at).toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
@@ -310,54 +214,22 @@ const PostView = () => {
 
                         {/* Content */}
                         <div 
-                            style={{
-                                color: '#e2e8f0',
-                                lineHeight: '1.7',
-                                fontSize: '18px',
-                                marginBottom: '40px'
-                            }}
+                            className="text-slate-800 dark:text-slate-200 leading-relaxed text-base md:text-lg mb-10 editorial-rich-text"
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />
 
                         {/* Source link */}
                         {post.source_url && (
-                            <div style={{
-                                paddingTop: '32px',
-                                borderTop: '1px solid #334155'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '20px',
-                                    fontWeight: '600',
-                                    color: 'white',
-                                    marginBottom: '16px'
-                                }}>Original Source</h3>
+                            <div className="pt-8 border-t border-slate-200/60 dark:border-slate-800/60">
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">Original Source</h3>
                                 <a
                                     href={post.source_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        padding: '12px 24px',
-                                        backgroundColor: '#2563eb',
-                                        color: 'white',
-                                        fontWeight: '500',
-                                        borderRadius: '10px',
-                                        textDecoration: 'none',
-                                        transition: 'all 0.2s',
-                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.backgroundColor = '#1d4ed8';
-                                        e.target.style.transform = 'translateY(-2px)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.backgroundColor = '#2563eb';
-                                        e.target.style.transform = 'translateY(0px)';
-                                    }}
+                                    className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-decoration-none shadow-md shadow-blue-500/20 hover:-translate-y-0.5 transition duration-200"
                                 >
                                     Visit Original Source
-                                    <svg style={{ marginLeft: '8px', width: '16px', height: '16px' }} fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                         <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
                                     </svg>

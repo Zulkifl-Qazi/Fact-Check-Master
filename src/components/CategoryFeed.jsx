@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye } from 'react-icons/fa';
 
-const CategoryFeed = ({ category, title, icon }) => {
+const CategoryFeed = ({ category, title, icon = '📰' }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,19 +14,17 @@ const CategoryFeed = ({ category, title, icon }) => {
             setLoading(true);
             setError(null);
             
-            const response = await fetch('/api/posts');
+            const q = new URLSearchParams();
+            q.set('category', category);
+            q.set('limit', '200');
+            const response = await fetch(`/api/posts?${q.toString()}`);
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
             const data = await response.json();
-            
-            // Filter posts by category
-            const categoryPosts = Array.isArray(data) 
-                ? data.filter(post => post.category === category)
-                : [];
-            
+            const categoryPosts = Array.isArray(data) ? data : [];
             setPosts(categoryPosts);
         } catch (err) {
             console.error('Failed to load posts:', err);
@@ -59,13 +57,14 @@ const CategoryFeed = ({ category, title, icon }) => {
 
     const getStatusBadge = (status) => {
         const badges = {
-            'verified': 'bg-green-100 text-green-800 border-green-200',
-            'false': 'bg-red-100 text-red-800 border-red-200',
-            'misleading': 'bg-orange-100 text-orange-800 border-orange-200',
-            'disputed': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-            'investigating': 'bg-blue-100 text-blue-800 border-blue-200'
+            'verified': 'bg-green-100/10 text-green-700 dark:text-green-400 border-green-200/50 dark:border-green-900/30',
+            'false': 'bg-red-100/10 text-red-700 dark:text-red-400 border-red-200/50 dark:border-red-900/30',
+            'misleading': 'bg-orange-100/10 text-orange-700 dark:text-orange-400 border-orange-200/50 dark:border-orange-900/30',
+            'disputed': 'bg-yellow-100/10 text-yellow-700 dark:text-yellow-400 border-yellow-200/50 dark:border-yellow-900/30',
+            'investigating': 'bg-blue-100/10 text-blue-700 dark:text-blue-400 border-blue-200/50 dark:border-blue-900/30',
+            'pending': 'bg-yellow-100/10 text-yellow-700 dark:text-yellow-400 border-yellow-200/50 dark:border-yellow-900/30'
         };
-        return badges[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+        return badges[status] || 'bg-gray-100/10 text-gray-700 dark:text-gray-400 border-gray-200/50 dark:border-slate-800/30';
     };
 
     const handleViewMore = (postId) => {
@@ -75,8 +74,8 @@ const CategoryFeed = ({ category, title, icon }) => {
     if (loading && posts.length === 0) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-                <p className="text-gray-300 ml-4">Loading {title.toLowerCase()}...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                <p className="text-slate-600 dark:text-slate-400 ml-4">Loading {(title || 'posts').toLowerCase()}...</p>
             </div>
         );
     }
@@ -84,10 +83,10 @@ const CategoryFeed = ({ category, title, icon }) => {
     if (error) {
         return (
             <div className="text-center py-8">
-                <p className="text-red-400">Error loading {title.toLowerCase()}: {error}</p>
+                <p className="text-red-400">Error loading {(title || 'posts').toLowerCase()}: {error}</p>
                 <button 
                     onClick={loadPosts}
-                    className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition"
+                    className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
                 >
                     Try Again
                 </button>
@@ -97,23 +96,21 @@ const CategoryFeed = ({ category, title, icon }) => {
 
     if (posts.length === 0) {
         return (
-            <section className="py-16 bg-slate-900" id={category}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-3 mb-10">
-                        <span className="text-3xl">{icon}</span>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-white">
-                            {title}
-                        </h2>
-                    </div>
-                    <p className="text-gray-400 text-center py-8">No posts available in this category yet.</p>
+            <div id={category} className="w-full">
+                <div className="flex items-center gap-3 mb-10">
+                    <span className="text-3xl">{icon}</span>
+                    <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100">
+                        {title || category}
+                    </h2>
                 </div>
-            </section>
+                <p className="text-slate-500 dark:text-slate-400 text-center py-8">No posts available in this category yet.</p>
+            </div>
         );
     }
 
     return (
-        <section className="py-16 bg-slate-900" id={category}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id={category} className="w-full">
+            <div className="w-full">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -122,11 +119,11 @@ const CategoryFeed = ({ category, title, icon }) => {
                 >
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <span className="text-4xl">{icon}</span>
-                        <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                            {title}
+                        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">
+                            {title || category}
                         </h2>
                     </div>
-                    <p className="mt-2 text-lg text-gray-300">
+                    <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
                         Verified fact-checks and updates
                     </p>
                 </motion.div>
@@ -139,7 +136,7 @@ const CategoryFeed = ({ category, title, icon }) => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                            className="bg-slate-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 max-w-sm mx-auto border border-slate-700"
+                            className="bg-white dark:bg-slate-900 rounded-lg shadow-sm overflow-hidden hover:shadow-lg border border-slate-100 dark:border-slate-800/60 transition-all duration-300 max-w-sm mx-auto"
                         >
                             {/* Post Image */}
                             {post.image_url && (
@@ -150,8 +147,8 @@ const CategoryFeed = ({ category, title, icon }) => {
                                         className="w-full h-32 object-cover"
                                         loading="lazy"
                                     />
-                                    <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
-                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(post.fact_check_status)}`}>
+                                    <div className="absolute top-2 right-2">
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(post.fact_check_status)}`}>
                                             {getStatusIcon(post.fact_check_status)}
                                             <span className="ml-1 capitalize">{post.fact_check_status}</span>
                                         </span>
@@ -161,16 +158,16 @@ const CategoryFeed = ({ category, title, icon }) => {
 
                             {/* Post Content */}
                             <div className="p-4">
-                                <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2">
                                     {post.title}
                                 </h3>
 
                                 <div 
-                                    className="text-gray-300 text-sm mb-3 line-clamp-3"
+                                    className="text-slate-600 dark:text-slate-300 text-sm mb-3 line-clamp-3"
                                     dangerouslySetInnerHTML={{ __html: post.content }}
                                 />
 
-                                <div className="flex items-center justify-between text-xs text-gray-400 mb-3">
+                                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
                                     <span>By {post.author || 'Admin'}</span>
                                     <span>{new Date(post.created_at).toLocaleDateString()}</span>
                                 </div>
@@ -189,20 +186,10 @@ const CategoryFeed = ({ category, title, icon }) => {
                                             href={post.source_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                color: '#60a5fa',
-                                                fontSize: '14px',
-                                                fontWeight: '500',
-                                                textDecoration: 'none',
-                                                transition: 'color 0.2s'
-                                            }}
-                                            onMouseEnter={(e) => e.target.style.color = '#93c5fd'}
-                                            onMouseLeave={(e) => e.target.style.color = '#60a5fa'}
+                                            className="inline-flex items-center text-blue-500 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300 font-semibold text-sm transition-colors duration-200"
                                         >
                                             Source
-                                            <svg style={{ marginLeft: '4px', width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 20 20">
+                                            <svg className="ml-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                                 <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z" />
                                             </svg>
@@ -214,7 +201,7 @@ const CategoryFeed = ({ category, title, icon }) => {
                     ))}
                 </div>
             </div>
-        </section>
+        </div>
     );
 };
 

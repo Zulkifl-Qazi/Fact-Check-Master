@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo, FaStar, FaFire } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { parseVideoUrl, getVideoPlatformIcon, getVideoPlatformName } from '../utils/videoParser';
@@ -12,7 +12,7 @@ import MediaCarousel from '../components/MediaCarousel';
 const quillStyles = `
   .ql-container {
     background: rgba(30, 41, 59, 0.8);
-    border: 2px solid rgba(147, 51, 234, 0.3) !important;
+    border: 2px solid rgba(29, 78, 216, 0.3) !important;
     border-top: none !important;
     border-radius: 0 0 12px 12px;
     font-size: 16px;
@@ -21,8 +21,8 @@ const quillStyles = `
   
   .ql-toolbar {
     background: rgba(51, 65, 85, 0.8);
-    border: 2px solid rgba(147, 51, 234, 0.3) !important;
-    border-bottom: 1px solid rgba(147, 51, 234, 0.2) !important;
+    border: 2px solid rgba(29, 78, 216, 0.3) !important;
+    border-bottom: 1px solid rgba(29, 78, 216, 0.2) !important;
     border-radius: 12px 12px 0 0;
     padding: 12px;
   }
@@ -42,7 +42,7 @@ const quillStyles = `
   .ql-toolbar button:hover,
   .ql-toolbar button:focus,
   .ql-toolbar button.ql-active {
-    background: rgba(147, 51, 234, 0.2);
+    background: rgba(29, 78, 216, 0.2);
     border-radius: 6px;
   }
   
@@ -118,7 +118,7 @@ const quillStyles = `
   
   .ql-snow .ql-tooltip {
     background-color: rgba(30, 41, 59, 0.98);
-    border: 1px solid rgba(147, 51, 234, 0.3);
+    border: 1px solid rgba(29, 78, 216, 0.3);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     color: white;
     border-radius: 8px;
@@ -126,7 +126,7 @@ const quillStyles = `
   
   .ql-snow .ql-tooltip input[type=text] {
     background: rgba(51, 65, 85, 0.8);
-    border: 1px solid rgba(147, 51, 234, 0.3);
+    border: 1px solid rgba(29, 78, 216, 0.3);
     color: white;
     padding: 8px;
     border-radius: 6px;
@@ -143,7 +143,7 @@ const quillStyles = `
   
   .ql-snow .ql-picker-options {
     background-color: rgba(30, 41, 59, 0.98);
-    border: 1px solid rgba(147, 51, 234, 0.3);
+    border: 1px solid rgba(29, 78, 216, 0.3);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
   }
@@ -153,7 +153,7 @@ const quillStyles = `
   }
   
   .ql-snow .ql-picker-options .ql-picker-item:hover {
-    background-color: rgba(147, 51, 234, 0.2);
+    background-color: rgba(29, 78, 216, 0.2);
     color: #a855f7;
   }
   
@@ -275,6 +275,7 @@ const AdminPosts = () => {
   const [mediaTab, setMediaTab] = useState('images');
   const [tempImageUrl, setTempImageUrl] = useState('');
   const [tempVideoUrl, setTempVideoUrl] = useState('');
+  const [pinningId, setPinningId] = useState(null);
 
   const getAdminHeaders = () => ({
     'X-Device-ID': localStorage.getItem('device_id') || ''
@@ -352,6 +353,36 @@ const AdminPosts = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePinToggle = async (postId) => {
+    setPinningId(postId);
+    try {
+      await axios.patch(`/api/posts/${postId}/pin`, {}, {
+        headers: getAdminHeaders()
+      });
+      await loadPosts();
+    } catch (error) {
+      console.error('Pin toggle failed:', error);
+      alert('Failed to pin/unpin post');
+    } finally {
+      setPinningId(null);
+    }
+  };
+
+  const handlePopularPinToggle = async (postId) => {
+    setPinningId(postId);
+    try {
+      await axios.patch(`/api/posts?id=${postId}&action=pin-popular`, {}, {
+        headers: getAdminHeaders()
+      });
+      await loadPosts();
+    } catch (error) {
+      console.error('Popular pin toggle failed:', error);
+      alert('Failed to pin/unpin popular post');
+    } finally {
+      setPinningId(null);
+    }
   };
 
   const fetchPostData = async () => {
@@ -625,7 +656,7 @@ const AdminPosts = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              background: 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))',
+              background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
               color: 'white',
               padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
               borderRadius: '12px',
@@ -633,7 +664,7 @@ const AdminPosts = () => {
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'all 0.3s',
-              boxShadow: '0 8px 25px rgba(147, 51, 234, 0.4)',
+              boxShadow: '0 8px 25px rgba(29, 78, 216, 0.4)',
               fontSize: 'clamp(0.875rem, 2vw, 1rem)',
               whiteSpace: 'nowrap',
               flexShrink: '0'
@@ -654,7 +685,7 @@ const AdminPosts = () => {
               borderRadius: '16px',
               padding: '2rem',
               marginBottom: '2rem',
-              border: '2px solid rgba(168, 85, 247, 0.3)'
+              border: '2px solid rgba(37, 99, 235, 0.3)'
             }}
           >
             <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '700', marginBottom: '1.5rem' }}>
@@ -790,9 +821,16 @@ const AdminPosts = () => {
                 }}>
                   {[
                     { value: 'latest-news', label: 'Latest News', icon: '📰' },
+                    { value: 'breaking-news', label: 'Featured / Breaking (hero)', icon: '⚡' },
+                    { value: 'trending-news', label: 'Trending', icon: '📈' },
                     { value: 'world-news', label: 'World News', icon: '🌍' },
                     { value: 'viral-claims', label: 'Viral Claims', icon: '🔥' },
                     { value: 'military-claims', label: 'Military Claims', icon: '⚔️' },
+                    { value: 'political', label: 'Politics', icon: '🏛️' },
+                    { value: 'technology', label: 'Technology', icon: '💻' },
+                    { value: 'health', label: 'Health', icon: '🏥' },
+                    { value: 'sports', label: 'Sports', icon: '⚽' },
+                    { value: 'international', label: 'International', icon: '🌐' },
                     { value: 'indian-claims', label: 'Indian Claims', icon: '' },
                     { value: 'afghan-claims', label: 'Afghan Claims', icon: '' }
                   ].map(category => (
@@ -804,10 +842,10 @@ const AdminPosts = () => {
                         gap: '0.75rem',
                         padding: '0.75rem 1rem',
                         background: formData.categories.includes(category.value) 
-                          ? 'rgba(147, 51, 234, 0.3)' 
+                          ? 'rgba(29, 78, 216, 0.3)' 
                           : 'rgba(71, 85, 105, 0.5)',
                         border: formData.categories.includes(category.value)
-                          ? '2px solid rgb(168, 85, 247)'
+                          ? '2px solid #2563eb'
                           : '2px solid transparent',
                         borderRadius: '8px',
                         cursor: 'pointer',
@@ -838,7 +876,7 @@ const AdminPosts = () => {
                           width: '20px',
                           height: '20px',
                           cursor: 'pointer',
-                          accentColor: 'rgb(168, 85, 247)'
+                          accentColor: '#2563eb'
                         }}
                       />
                       <span style={{ fontSize: '1.25rem' }}>{category.icon}</span>
@@ -867,7 +905,7 @@ const AdminPosts = () => {
                 padding: '1.5rem', 
                 background: 'rgba(51, 65, 85, 0.3)', 
                 borderRadius: '12px', 
-                border: '2px solid rgba(147, 51, 234, 0.3)' 
+                border: '2px solid rgba(29, 78, 216, 0.3)' 
               }}>
                 <label style={{ display: 'block', color: 'rgba(255,255,255,0.9)', fontWeight: '700', marginBottom: '1rem', fontSize: '1.1rem' }}>
                   📷 Media (Images & Videos)
@@ -880,7 +918,7 @@ const AdminPosts = () => {
                     onClick={() => setMediaTab('images')}
                     style={{
                       padding: '0.75rem 1.5rem',
-                      background: mediaTab === 'images' ? 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))' : 'rgba(71, 85, 105, 0.5)',
+                      background: mediaTab === 'images' ? 'linear-gradient(to right, #1d4ed8, #2563eb)' : 'rgba(71, 85, 105, 0.5)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '8px',
@@ -899,7 +937,7 @@ const AdminPosts = () => {
                     onClick={() => setMediaTab('videos')}
                     style={{
                       padding: '0.75rem 1.5rem',
-                      background: mediaTab === 'videos' ? 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))' : 'rgba(71, 85, 105, 0.5)',
+                      background: mediaTab === 'videos' ? 'linear-gradient(to right, #1d4ed8, #2563eb)' : 'rgba(71, 85, 105, 0.5)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '8px',
@@ -1342,7 +1380,7 @@ const AdminPosts = () => {
                   disabled={submitting || !formData.title.trim() || !formData.content.trim()}
                   style={{
                     padding: '0.75rem 1.5rem',
-                    background: submitting ? 'rgba(107, 114, 128, 0.5)' : 'linear-gradient(to right, rgb(147, 51, 234), rgb(168, 85, 247))',
+                    background: submitting ? 'rgba(107, 114, 128, 0.5)' : 'linear-gradient(to right, #1d4ed8, #2563eb)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
@@ -1358,7 +1396,7 @@ const AdminPosts = () => {
         )}
 
         {/* Posts List */}
-        <div style={{ background: 'rgba(30, 41, 59, 0.95)', borderRadius: '16px', border: '2px solid rgba(168, 85, 247, 0.3)' }}>
+        <div style={{ background: 'rgba(30, 41, 59, 0.95)', borderRadius: '16px', border: '2px solid rgba(37, 99, 235, 0.3)' }}>
           <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
             <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '700' }}>All Posts ({posts.length})</h2>
           </div>
@@ -1388,8 +1426,24 @@ const AdminPosts = () => {
                   }}
                 >
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
                       <h3 style={{ color: 'white', fontWeight: '700', fontSize: '1.1rem', margin: 0 }}>{post.title}</h3>
+                      {post.pinned_hero ? (
+                        <span style={{
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '4px',
+                          fontSize: '0.65rem',
+                          fontWeight: '800',
+                          letterSpacing: '1px',
+                          textTransform: 'uppercase',
+                          color: '#000',
+                          background: 'linear-gradient(135deg, #F59E0B, #EAB308)',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
+                        }}>
+                          HERO LEAD
+                        </span>
+                      ) : null}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         {getStatusIcon(post.fact_check_status)}
                         <span style={{
@@ -1430,14 +1484,58 @@ const AdminPosts = () => {
                       }}
                       dangerouslySetInnerHTML={{ __html: post.content }}
                     />
-                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', alignItems: 'center' }}>
                       <span>By {post.author}</span>
                       <span>•</span>
                       <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                      <span>•</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <FaEye /> {post.views || 0} views
+                      </span>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handlePinToggle(post.id)}
+                      disabled={pinningId === post.id}
+                      style={{
+                        padding: '0.5rem',
+                        background: post.pinned_hero ? 'rgba(245, 158, 11, 0.3)' : 'rgba(100, 116, 139, 0.2)',
+                        color: post.pinned_hero ? 'rgb(251, 191, 36)' : 'rgb(148, 163, 184)',
+                        border: post.pinned_hero ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid transparent',
+                        borderRadius: '8px',
+                        cursor: pinningId === post.id ? 'wait' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.3s',
+                        opacity: pinningId === post.id ? 0.5 : 1
+                      }}
+                      title={post.pinned_hero ? 'Unpin from Hero (currently the lead story)' : 'Pin to Hero (make lead story)'}
+                    >
+                      <FaStar />
+                    </button>
+                    <button
+                      onClick={() => handlePopularPinToggle(post.id)}
+                      disabled={pinningId === post.id}
+                      style={{
+                        padding: '0.5rem',
+                        background: post.pinned_popular ? 'rgba(239, 68, 68, 0.3)' : 'rgba(100, 116, 139, 0.2)',
+                        color: post.pinned_popular ? 'rgb(248, 113, 113)' : 'rgb(148, 163, 184)',
+                        border: post.pinned_popular ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid transparent',
+                        borderRadius: '8px',
+                        cursor: pinningId === post.id ? 'wait' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.3s',
+                        opacity: pinningId === post.id ? 0.5 : 1
+                      }}
+                      title={post.pinned_popular ? 'Remove from Most Popular section' : 'Pin to Most Popular section'}
+                    >
+                      <FaFire />
+                    </button>
                     <button
                       onClick={() => handleEdit(post)}
                       style={{

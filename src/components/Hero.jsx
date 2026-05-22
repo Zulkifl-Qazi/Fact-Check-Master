@@ -14,22 +14,22 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex items-center justify-center overflow-hidden"
+      className="relative w-full bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center overflow-hidden"
       style={{ minHeight: 'auto', height: 'auto', paddingBottom: '3rem' }}
     >
-      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 z-0"></div>
+      <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 z-0"></div>
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-600/12 rounded-full blur-[100px] animate-pulse"
+          className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-600/12 rounded-full blur-[100px] animate-pulse"
           style={{ animationDuration: '8s' }}
         ></div>
         <div 
-          className="absolute top-1/3 -right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] animate-pulse"
+          className="absolute top-1/3 -right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] animate-pulse"
           style={{ animationDuration: '10s', animationDelay: '1s' }}
         ></div>
         <div 
-          className="absolute -bottom-1/4 left-1/3 w-[700px] h-[700px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse"
+          className="absolute -bottom-1/4 left-1/3 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-[120px] animate-pulse"
           style={{ animationDuration: '12s', animationDelay: '2s' }}
         ></div>
       </div>
@@ -41,8 +41,8 @@ const Hero = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <div className="inline-flex items-center gap-2.5 bg-purple-900/50 rounded-full px-5 py-2.5 border border-purple-500/40 shadow-lg">
-            <FaShieldAlt className="text-purple-300 text-sm" />
+          <div className="inline-flex items-center gap-2.5 bg-blue-900/50 rounded-full px-5 py-2.5 border border-blue-500/40 shadow-lg">
+            <FaShieldAlt className="text-blue-300 text-sm" />
             <span className="gradient-text text-sm font-semibold tracking-wide">Trusted Fact-Checking Platform</span>
           </div>
         </motion.div>
@@ -54,7 +54,7 @@ const Hero = () => {
           className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 drop-shadow-xl"
         >
           <span className="block text-white/98">Fact Check</span>
-          <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-500 bg-clip-text text-transparent drop-shadow-lg">
+          <span className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent drop-shadow-lg">
             Master
           </span>
         </motion.h1>
@@ -66,7 +66,7 @@ const Hero = () => {
           className="max-w-3xl mx-auto text-lg sm:text-xl text-white/85 leading-relaxed mb-12 drop-shadow-lg"
         >
           <span className="block mb-3 font-semibold">Countering Fake News, Propaganda, Post-Truth and Beyond The Truth Rhetoric.</span>
-          <span className="block text-purple-300/95 font-medium">Your trusted source for verified information in the digital age.</span>
+          <span className="block text-blue-300/95 font-medium">Your trusted source for verified information in the digital age.</span>
         </motion.p>
 
         <motion.div
@@ -81,9 +81,9 @@ const Hero = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-              className="group bg-purple-900/40 border border-purple-500/30 rounded-xl p-5 text-center hover:bg-purple-900/60 transition-all duration-300 hover:border-purple-500/60 shadow-lg"
+              className="group bg-blue-900/40 border border-blue-500/30 rounded-xl p-5 text-center hover:bg-blue-900/60 transition-all duration-300 hover:border-blue-500/60 shadow-lg"
             >
-              <feature.icon className="text-purple-300 text-2xl mx-auto mb-3 transition-transform duration-300 group-hover:scale-110 drop-shadow" />
+              <feature.icon className="text-blue-300 text-2xl mx-auto mb-3 transition-transform duration-300 group-hover:scale-110 drop-shadow" />
               <h3 className="text-white/95 font-bold text-sm mb-2">{feature.title}</h3>
               <p className="text-white/70 text-xs">{feature.desc}</p>
             </motion.div>
@@ -97,7 +97,7 @@ const Hero = () => {
           className="grid grid-cols-3 gap-8 max-w-2xl mx-auto"
         >
           <div className="text-center group">
-            <div className="text-4xl font-black text-purple-400 mb-2 transition-all duration-300 group-hover:text-purple-300 drop-shadow-lg">10K+</div>
+            <div className="text-4xl font-black text-blue-400 mb-2 transition-all duration-300 group-hover:text-blue-300 drop-shadow-lg">10K+</div>
             <div className="text-white/70 text-sm font-semibold tracking-wider">Facts Checked</div>
           </div>
           <div className="text-center group">
@@ -105,7 +105,7 @@ const Hero = () => {
             <div className="text-white/70 text-sm font-semibold tracking-wider">Monitoring</div>
           </div>
           <div className="text-center group">
-            <div className="text-4xl font-black text-purple-300 mb-2 transition-all duration-300 group-hover:text-purple-200 drop-shadow-lg">99.9%</div>
+            <div className="text-4xl font-black text-blue-300 mb-2 transition-all duration-300 group-hover:text-blue-200 drop-shadow-lg">99.9%</div>
             <div className="text-white/70 text-sm font-semibold tracking-wider">Accuracy</div>
           </div>
         </motion.div>

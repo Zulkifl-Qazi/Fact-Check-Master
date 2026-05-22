@@ -22,3 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
+
+# Environment files (secrets)
+.env
+.env.local
+
+# Local SQLite databases
+*.db
+server/data.db
+database.sqlite
+
+# Temp / generated files
+inspect_db.js
+*.timestamp-*.mjs
+
+# Nested repo (old backup copy)
+Fact Check Master/

@@ -53,22 +53,30 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
   const renderMedia = (item, isFullscreen = false) => {
     if (item.type === 'image') {
       return (
-        <img
-          src={item.url}
-          alt="Post media"
-          style={{
-            width: '100%',
-            height: isFullscreen ? '80vh' : 'auto',
-            maxHeight: isFullscreen ? '80vh' : '400px',
-            objectFit: 'contain',
-            borderRadius: isFullscreen ? '0' : '12px',
-            display: 'block',
-            margin: 0,
-            padding: 0
-          }}
-          onClick={() => !isFullscreen && setIsFullscreen(true)}
-          onError={(e) => e.target.style.display = 'none'}
-        />
+        <div style={{
+          width: '100%',
+          height: isFullscreen ? '80vh' : '400px',
+          background: isFullscreen ? 'transparent' : '#f8fafc',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: isFullscreen ? '0' : '12px',
+          overflow: 'hidden'
+        }}>
+          <img
+            src={item.url}
+            alt="Post media"
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+              display: 'block',
+              cursor: isFullscreen ? 'default' : 'pointer'
+            }}
+            onClick={() => !isFullscreen && setIsFullscreen(true)}
+            onError={(e) => e.target.style.display = 'none'}
+          />
+        </div>
       );
     }
 

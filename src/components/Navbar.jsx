@@ -1,14 +1,17 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaShieldAlt, FaSearch } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from 'react-router-dom';
+import useDarkMode from '../hooks/useDarkMode';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [searchQuery, setSearchQuery] = useState('');
+  const [colorTheme, setTheme] = useDarkMode();
   const navigate = useNavigate();
 
   // Handle window resize
@@ -39,15 +42,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ 
-      position: 'sticky',
-      top: '0',
-      zIndex: '50',
-      background: 'rgb(88, 28, 135)',
-      borderBottom: '2px solid rgba(168, 85, 247, 0.4)',
-      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.3)',
-      overflow: 'visible'
-    }}>
+    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-300 overflow-visible">
       <style>{`
         @media (max-width: 767px) {
           .navbar-desktop-menu {
@@ -73,66 +68,97 @@ const Navbar = () => {
         }
       `}</style>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem', position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
+      <div className="max-w-7xl mx-auto px-4 relative">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgb(168, 85, 247)', fontWeight: 'bold', fontSize: '1.125rem', transition: 'all 300ms', textDecoration: 'none' }}>
-              <div style={{ position: 'relative' }}>
-                <img src={logo} alt="Logo" style={{ height: '32px', width: '32px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' }} />
-                <div style={{ position: 'absolute', top: '-4px', right: '-4px' }}>
-                  <FaShieldAlt style={{ color: 'rgb(168, 85, 247)', fontSize: '12px' }} />
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-slate-100 transition-colors duration-200" style={{ textDecoration: 'none' }}>
+              <div className="relative">
+                <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg shadow-md" />
+                <div className="absolute -top-1 -right-1">
+                  <FaShieldAlt className="text-blue-600 dark:text-blue-500 text-[10px]" />
                 </div>
               </div>
-              <span style={{ background: 'linear-gradient(to right, rgb(168, 85, 247), rgb(244, 114, 182))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Fact Check Master</span>
+              <span>Fact Check Master</span>
             </Link>
           </div>
           
-          {/* Desktop Menu */}
-          <div className="navbar-desktop-menu" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <Link to="/#top" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Home</Link>
-            <Link to="/#live-feed" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Latest News</Link>
-            <Link to="/news-dashboard" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>News Dashboard</Link>
-            <Link to="/about" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>About</Link>
-            <Link to="/contact" style={{ fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', transition: 'all 200ms' }} onMouseEnter={(e) => e.target.style.color = 'rgb(168, 85, 247)'} onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}>Contact</Link>
+          {/* Desktop Menu - Modern Glassmorphism Navigation */}
+          <div className="navbar-desktop-menu items-center gap-6">
+            <Link to="/#top" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Home</Link>
+            <Link to="/#live-feed" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Latest News</Link>
+            
+            {/* Categories Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsCategoriesOpen(true)}
+              onMouseLeave={() => setIsCategoriesOpen(false)}
+            >
+              <Link to="/news-dashboard" className="flex items-center gap-1 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none', padding: '0.5rem 0' }}>
+                News Dashboard
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 200ms', transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </Link>
+              
+              {/* Dropdown Menu */}
+              <div 
+                className="absolute top-full left-1/2 -translate-x-1/2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50 rounded-xl shadow-xl p-3 min-w-[220px] z-50 flex flex-col gap-1 transition-all duration-200"
+                style={{
+                  transform: `translateX(-50%) ${isCategoriesOpen ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)'}`,
+                  opacity: isCategoriesOpen ? 1 : 0,
+                  pointerEvents: isCategoriesOpen ? 'auto' : 'none',
+                }}
+              >
+                {[
+                  { path: '/news-dashboard?category=breaking-news', label: 'Featured / Breaking' },
+                  { path: '/news-dashboard?category=trending-news', label: 'Trending' },
+                  { path: '/news-dashboard?category=latest-news', label: 'Latest News' },
+                  { path: '/news-dashboard?category=world-news', label: 'World News' },
+                  { path: '/news-dashboard?category=military-claims', label: 'Military Claims' },
+                  { path: '/news-dashboard?category=indian-claims', label: 'Indian Claims' },
+                  { path: '/news-dashboard?category=afghan-claims', label: 'Afghan Claims' }
+                ].map((cat, i) => (
+                  <Link 
+                    key={i} 
+                    to={cat.path} 
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                    style={{ textDecoration: 'none' }}
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <Link to="/about" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>About</Link>
+            <Link to="/contact" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Contact</Link>
             
             {/* Search Button */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              style={{
-                padding: '0.5rem 0.65rem',
-                borderRadius: '6px',
-                border: 'none',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: 'rgba(255, 255, 255, 0.7)',
-                cursor: 'pointer',
-                transition: 'all 200ms',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = 'white'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'; }}
+              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
               aria-label="Search"
             >
-              <FaSearch style={{ fontSize: '1rem' }} />
+              <FaSearch className="text-sm" />
+            </button>
+
+            {/* Theme Toggle Button */}
+            <button
+              onClick={() => setTheme(colorTheme)}
+              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+              title={colorTheme === 'dark' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            >
+              {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
             </button>
 
             {/* Animated Search Bar */}
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: '1rem',
-              marginTop: '0.5rem',
-              width: '250px',
-              maxWidth: 'calc(100% - 2rem)',
-              transform: isSearchOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-10px)',
-              opacity: isSearchOpen ? 1 : 0,
-              pointerEvents: isSearchOpen ? 'auto' : 'none',
-              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-              transformOrigin: 'top right',
-              zIndex: 40
-            }}>
+            <div 
+              className="absolute top-full right-4 mt-2 w-64 max-w-[calc(100%-2rem)] z-50 origin-top-right transition-all duration-300"
+              style={{
+                transform: isSearchOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-10px)',
+                opacity: isSearchOpen ? 1 : 0,
+                pointerEvents: isSearchOpen ? 'auto' : 'none',
+              }}
+            >
               <input
                 type="text"
                 placeholder="Search facts..."
@@ -140,116 +166,131 @@ const Navbar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
-                style={{
-                  width: '100%',
-                  fontSize: '0.875rem',
-                  padding: '0.65rem 0.9rem',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(168, 85, 247, 0.6)',
-                  background: 'rgb(30, 30, 50)',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)',
-                  transition: 'all 200ms'
-                }}
-                onFocus={(e) => {
-                  e.target.style.background = 'rgb(40, 40, 60)';
-                  e.target.style.borderColor = 'rgb(168, 85, 247)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(168, 85, 247, 0.4)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.background = 'rgb(30, 30, 50)';
-                  e.target.style.borderColor = 'rgba(168, 85, 247, 0.6)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), 0 0 12px rgba(168, 85, 247, 0.2)';
-                }}
+                className="w-full text-sm px-3 py-2 rounded-lg border border-blue-200/50 dark:border-blue-800/50 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-lg transition-all duration-200 focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
               />
             </div>
           </div>
           
           {/* Mobile Menu Button (3 lines hamburger) */}
           <div className="navbar-mobile-button" style={{ display: 'none' }}>
-            <button 
-              onClick={() => setIsOpen(!isOpen)} 
-              style={{ 
-                padding: '0.5rem 0.65rem', 
-                borderRadius: '6px', 
-                background: 'none', 
-                border: 'none', 
-                color: 'rgba(255, 255, 255, 0.6)', 
-                cursor: 'pointer', 
-                transition: 'all 200ms',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.background = 'none'; }}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <FaTimes style={{ fontSize: '1.5rem' }} /> : <FaBars style={{ fontSize: '1.5rem' }} />}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setTheme(colorTheme)}
+                className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+                title={colorTheme === 'dark' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+              >
+                {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
+              </button>
+              <button 
+                onClick={() => setIsOpen(!isOpen)} 
+                className="p-2 rounded-lg bg-transparent border-none text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+                aria-label="Toggle menu"
+              >
+                {isOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sub-Navbar */}
+      <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-start md:justify-center gap-5 overflow-x-auto scrollbar-none subnav-container">
+          <style>{`
+            .subnav-container::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          
+          {/* Bold Label */}
+          <div className="flex items-center gap-1 font-bold text-xs text-red-500 uppercase tracking-wider flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+              <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+            <span>Trending</span>
+          </div>
+
+          {/* Links */}
+          <div className="flex items-center gap-5">
+            {[
+              { path: '/news-dashboard?category=political', label: 'Politics' },
+              { path: '/news-dashboard?category=technology', label: 'Technology' },
+              { path: '/news-dashboard?category=health', label: 'Health' },
+              { path: '/news-dashboard?category=sports', label: 'Sports' },
+              { path: '/news-dashboard?category=international', label: 'International' },
+              { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' }
+            ].map((cat, i) => (
+              <Link
+                key={i}
+                to={cat.path}
+                className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                style={{
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {cat.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Mobile Menu - Slides down from top */}
-      <div className="navbar-mobile-menu" style={{ 
-        display: 'none',
-        maxHeight: isOpen ? '400px' : '0',
-        opacity: isOpen ? '1' : '0',
-        overflow: 'hidden',
-        transition: 'all 300ms ease-in-out'
-      }}>
-        <div style={{ 
-          padding: '1rem', 
-          paddingBottom: '1rem', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '0.5rem', 
-          background: 'rgb(76, 22, 120)', 
-          borderTop: '2px solid rgba(168, 85, 247, 0.4)', 
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)' 
-        }}>
+      <div 
+        className="navbar-mobile-menu transition-all duration-300 ease-in-out"
+        style={{ 
+          maxHeight: isOpen ? '400px' : '0',
+          opacity: isOpen ? '1' : '0',
+          overflow: 'hidden',
+        }}
+      >
+        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-lg flex flex-col gap-1 transition-colors duration-300">
           <Link 
             to="/#top" 
-            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
             🏠 Home
           </Link>
           <Link 
             to="/#live-feed" 
-            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
             📱 Latest News
           </Link>
           <Link 
+            to="/news-dashboard?category=trending-news" 
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
+            onClick={handleLinkClick}
+          >
+            🔥 Trending
+          </Link>
+          <Link 
             to="/news-dashboard" 
-            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
             📊 News Dashboard
           </Link>
           <Link 
             to="/about" 
-            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
             ℹ️ About
           </Link>
           <Link 
             to="/contact" 
-            style={{ display: 'block', padding: '0.75rem 1rem', fontSize: '0.875rem', fontWeight: '500', color: 'rgba(255, 255, 255, 0.8)', textDecoration: 'none', borderRadius: '6px', transition: 'all 200ms', cursor: 'pointer' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'; }}
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
             ✉️ Contact

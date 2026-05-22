@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const box = {
   backgroundColor: '#0f172a',
-  border: '1px solid rgba(168,85,247,0.35)',
+  border: '1px solid rgba(37, 99, 235,0.35)',
   borderRadius: 16,
   boxShadow: '0 22px 44px rgba(0,0,0,0.5)'
 };
@@ -270,7 +270,7 @@ export default function AdminFeedback() {
                       onClick={() => setSelected(f)}
                       style={{
                         display: 'block', width: '100%', textAlign: 'left', padding: 14,
-                        border: 'none', background: selected?.id === f.id ? 'rgba(168,85,247,0.12)' : 'transparent',
+                        border: 'none', background: selected?.id === f.id ? 'rgba(37, 99, 235,0.12)' : 'transparent',
                         color: 'white', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.06)'
                       }}
                     >

@@ -222,8 +222,8 @@ export default function DeviceManagement() {
 
         <div style={{
           marginTop: '2rem',
-          background: 'rgba(168, 85, 247, 0.1)',
-          border: '1px solid rgba(168, 85, 247, 0.3)',
+          background: 'rgba(37, 99, 235, 0.1)',
+          border: '1px solid rgba(37, 99, 235, 0.3)',
           borderRadius: '12px',
           padding: '1.5rem'
         }}>

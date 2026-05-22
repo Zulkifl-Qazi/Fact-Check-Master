@@ -25,7 +25,7 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
   }
 });
 const PORT = process.env.PORT || 3001;
@@ -35,7 +35,7 @@ const X_API_BEARER_TOKEN = process.env.X_API_BEARER_TOKEN || null;  // X API tok
 
 app.use(cors({
   origin: ["http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"]
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -159,6 +159,36 @@ async function initDb() {
     // Column already exists
   }
 
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN category TEXT DEFAULT "latest-news"');
+  } catch (e) {
+    // Column already exists
+  }
+
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN pinned_hero INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
+
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN media TEXT');
+  } catch (e) {
+    // Column already exists
+  }
+
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN pinned_popular INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
+
+  try {
+    await db.exec('ALTER TABLE posts ADD COLUMN views INTEGER DEFAULT 0');
+  } catch (e) {
+    // Column already exists
+  }
+
   // Migrate columns for older databases
   const rcols = await db.all("PRAGMA table_info(feedback_replies)");
   const hasEmailed = rcols.some(c => c.name === 'emailed');
@@ -174,6 +204,141 @@ async function initDb() {
     if (!hasEmailError) await db.exec('ALTER TABLE feedback_replies ADD COLUMN email_error TEXT');
   } catch {}
 }
+
+// Mock device auth for local testing (mimics Vercel serverless function)
+app.post('/api/device-auth', (req, res) => {
+  res.json({ approved: true });
+});
+
+// Toggle pinned_hero for a post (only one post can be pinned at a time)
+app.patch('/api/posts/:id/pin', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id, 10);
+    if (Number.isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+
+    const post = await db.get('SELECT id, pinned_hero FROM posts WHERE id = ?', [postId]);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const newVal = post.pinned_hero ? 0 : 1;
+
+    // Unpin all others first, then pin this one
+    if (newVal === 1) {
+      await db.run('UPDATE posts SET pinned_hero = 0 WHERE pinned_hero = 1');
+    }
+    await db.run('UPDATE posts SET pinned_hero = ? WHERE id = ?', [newVal, postId]);
+
+    const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+    if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+
+    res.json({ success: true, pinned_hero: newVal, post: updated });
+  } catch (err) {
+    console.error('Pin toggle error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Toggle pinned_popular for a post
+app.patch('/api/posts/:id/pin-popular', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id, 10);
+    if (Number.isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+
+    const post = await db.get('SELECT id, pinned_popular FROM posts WHERE id = ?', [postId]);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const newVal = post.pinned_popular ? 0 : 1;
+    await db.run('UPDATE posts SET pinned_popular = ? WHERE id = ?', [newVal, postId]);
+
+    const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+    if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+
+    res.json({ success: true, pinned_popular: newVal, post: updated });
+  } catch (err) {
+    console.error('Popular pin toggle error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Unified PATCH endpoint using query params (matching Vercel API)
+app.patch('/api/posts', async (req, res) => {
+  try {
+    const action = req.query.action;
+    const postId = parseInt(req.query.id, 10);
+    if (Number.isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+
+    if (action === 'view') {
+      await db.run('UPDATE posts SET views = IFNULL(views, 0) + 1 WHERE id = ?', [postId]);
+      const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+      if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+      return res.json({ success: true, views: updated ? updated.views : 0, post: updated });
+    }
+
+    if (action === 'pin-popular') {
+      const post = await db.get('SELECT id, pinned_popular FROM posts WHERE id = ?', [postId]);
+      if (!post) return res.status(404).json({ error: 'Post not found' });
+
+      const newVal = post.pinned_popular ? 0 : 1;
+      await db.run('UPDATE posts SET pinned_popular = ? WHERE id = ?', [newVal, postId]);
+
+      const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+      if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+      return res.json({ success: true, pinned_popular: newVal, post: updated });
+    }
+
+    // Default: pin to hero
+    const post = await db.get('SELECT id, pinned_hero FROM posts WHERE id = ?', [postId]);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const newVal = post.pinned_hero ? 0 : 1;
+    if (newVal === 1) {
+      await db.run('UPDATE posts SET pinned_hero = 0 WHERE pinned_hero = 1');
+    }
+    await db.run('UPDATE posts SET pinned_hero = ? WHERE id = ?', [newVal, postId]);
+
+    const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+    if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+    return res.json({ success: true, pinned_hero: newVal, post: updated });
+  } catch (err) {
+    console.error('PATCH /api/posts error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Increment view count for a post (POST)
+app.post('/api/posts/:id/view', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id, 10);
+    if (Number.isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+
+    await db.run('UPDATE posts SET views = IFNULL(views, 0) + 1 WHERE id = ?', [postId]);
+
+    const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+    if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+
+    res.json({ success: true, views: updated ? updated.views : 0, post: updated });
+  } catch (err) {
+    console.error('Increment views error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Also support PATCH for views
+app.patch('/api/posts/:id/view', async (req, res) => {
+  try {
+    const postId = parseInt(req.params.id, 10);
+    if (Number.isNaN(postId)) return res.status(400).json({ error: 'Invalid post ID' });
+
+    await db.run('UPDATE posts SET views = IFNULL(views, 0) + 1 WHERE id = ?', [postId]);
+
+    const updated = await db.get('SELECT * FROM posts WHERE id = ?', [postId]);
+    if (global.broadcastPostsUpdate) global.broadcastPostsUpdate('updated', updated);
+
+    res.json({ success: true, views: updated ? updated.views : 0, post: updated });
+  } catch (err) {
+    console.error('Increment views error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.post('/api/upload', (req, res) => {
   try {
@@ -586,11 +751,83 @@ app.post('/api/replies', async (req, res) => {
 app.get('/api/posts', async (req, res) => {
   console.log('[API] GET /api/posts called');
   try {
-    const posts = await db.all(
-      'SELECT * FROM posts WHERE status = "published" ORDER BY created_at DESC'
-    );
-    console.log('[API] Found', posts.length, 'posts');
-    res.status(200).json(posts);
+    const { id, category: rawCategory, limit: rawLimit, offset: rawOffset, popular } = req.query;
+
+    if (id !== undefined && id !== '') {
+      const postId = parseInt(id, 10);
+      if (Number.isNaN(postId)) {
+        return res.status(400).json({ error: 'Invalid post ID' });
+      }
+      const post = await db.get(
+        'SELECT * FROM posts WHERE id = ? AND status = "published"',
+        [postId]
+      );
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+      return res.status(200).json(post);
+    }
+
+    const categoryTrimmed =
+      rawCategory !== undefined && rawCategory !== null && String(rawCategory).trim() !== ''
+         ? String(rawCategory).trim()
+         : undefined;
+    const hasListFilters =
+      categoryTrimmed !== undefined ||
+      (rawLimit !== undefined && rawLimit !== '' && rawLimit !== null) ||
+      (rawOffset !== undefined && rawOffset !== '' && rawOffset !== null);
+
+    if (!hasListFilters) {
+      const orderBy = popular === 'true'
+        ? 'ORDER BY IFNULL(pinned_popular,0) DESC, IFNULL(views,0) DESC, datetime(created_at) DESC'
+        : 'ORDER BY IFNULL(pinned_hero,0) DESC, datetime(created_at) DESC';
+      const posts = await db.all(
+        `SELECT * FROM posts WHERE status = "published" ${orderBy}`
+      );
+      console.log('[API] Found', posts.length, 'posts');
+      return res.status(200).json(posts);
+    }
+
+    let sql = 'SELECT * FROM posts WHERE status = "published"';
+    const params = [];
+
+    if (categoryTrimmed) {
+      if (categoryTrimmed === 'breaking-news' || categoryTrimmed === 'featured-news') {
+        sql += ' AND category IN ("breaking-news", "featured-news")';
+      } else {
+        sql += ' AND IFNULL(category, "latest-news") = ?';
+        params.push(categoryTrimmed);
+      }
+    }
+
+    if (popular === 'true') {
+      sql += ' ORDER BY IFNULL(pinned_popular,0) DESC, IFNULL(views,0) DESC, datetime(created_at) DESC';
+    } else {
+      sql += ' ORDER BY IFNULL(pinned_hero,0) DESC, datetime(created_at) DESC';
+    }
+
+    const limitNum =
+      rawLimit !== undefined && rawLimit !== '' && rawLimit !== null
+        ? parseInt(rawLimit, 10)
+        : NaN;
+    const offsetNum =
+      rawOffset !== undefined && rawOffset !== '' && rawOffset !== null
+        ? parseInt(rawOffset, 10)
+        : 0;
+    const off = Number.isFinite(offsetNum) && offsetNum >= 0 ? offsetNum : 0;
+
+    if (Number.isFinite(limitNum) && limitNum > 0) {
+      const capped = Math.min(limitNum, 200);
+      sql += ' LIMIT ? OFFSET ?';
+      params.push(capped, off);
+    } else if (categoryTrimmed) {
+      sql += ' LIMIT 500 OFFSET ?';
+      params.push(off);
+    }
+
+    const posts = await db.all(sql, params);
+    console.log('[API] Found', posts.length, 'posts (filtered)');
+    return res.status(200).json(posts);
   } catch (error) {
     console.error('[API] Database error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -599,15 +836,27 @@ app.get('/api/posts', async (req, res) => {
 
 app.post('/api/posts', async (req, res) => {
   try {
-    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl } = req.body;
+    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl, media, categories } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
+    // Resolve image_url: prefer media.images[0], fall back to imageUrl
+    let resolvedImageUrl = imageUrl || null;
+    let mediaJson = null;
+    if (media && typeof media === 'object') {
+      mediaJson = JSON.stringify(media);
+      if (media.images && media.images.length > 0) {
+        resolvedImageUrl = media.images[0];
+      }
+    }
+
+    const category = (categories && categories.length > 0) ? categories[0] : 'latest-news';
+
     const result = await db.run(
-      'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url) VALUES (?, ?, ?, ?, ?, ?)',
-      [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null]
+      'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url, media, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, category]
     );
 
     const newPost = await db.get('SELECT * FROM posts WHERE id = ?', [result.lastID]);
@@ -631,7 +880,7 @@ app.post('/api/posts', async (req, res) => {
 app.put('/api/posts', async (req, res) => {
   try {
     const { id } = req.query;
-    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl, categories } = req.body;
+    const { title, content, author = 'Admin', fact_check_status = 'verified', imageUrl, postUrl, categories, media } = req.body;
     
     if (!id) {
       return res.status(400).json({ error: 'Post ID is required' });
@@ -641,11 +890,31 @@ app.put('/api/posts', async (req, res) => {
       return res.status(400).json({ error: 'Title and content are required' });
     }
 
-    // Update the post
-    const result = await db.run(
-      'UPDATE posts SET title = ?, content = ?, author = ?, fact_check_status = ?, image_url = ?, source_url = ? WHERE id = ?',
-      [title.trim(), content.trim(), author.trim(), fact_check_status, imageUrl || null, postUrl || null, id]
-    );
+    // Resolve image_url: prefer media.images[0], fall back to imageUrl
+    let resolvedImageUrl = imageUrl || null;
+    let mediaJson = null;
+    if (media && typeof media === 'object') {
+      mediaJson = JSON.stringify(media);
+      if (media.images && media.images.length > 0) {
+        resolvedImageUrl = media.images[0];
+      }
+    }
+
+    const category = (categories && categories.length > 0) ? categories[0] : undefined;
+
+    // Build dynamic SET clause
+    let sql = 'UPDATE posts SET title = ?, content = ?, author = ?, fact_check_status = ?, image_url = ?, source_url = ?, media = ?';
+    const params = [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson];
+
+    if (category) {
+      sql += ', category = ?';
+      params.push(category);
+    }
+
+    sql += ', updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    params.push(id);
+
+    const result = await db.run(sql, params);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Post not found' });

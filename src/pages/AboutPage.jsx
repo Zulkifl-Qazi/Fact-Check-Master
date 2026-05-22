@@ -74,24 +74,24 @@ const AboutPage = () => {
   ];
 
   return (
-    <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', paddingTop: '6rem', paddingBottom: '4rem' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 1.5rem' }}>
+    <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 md:pt-32 pb-20 px-4 transition-colors duration-300">
+      <div className="max-w-5xl mx-auto px-2 md:px-6">
 
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          style={{ textAlign: 'center', marginBottom: '4rem' }}
+          className="text-center mb-16"
         >
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(88, 28, 135, 0.4)', borderRadius: '9999px', padding: '0.6rem 1.5rem', marginBottom: '1.5rem', border: '1px solid rgba(168, 85, 247, 0.4)' }}>
-            <FaShieldAlt style={{ color: '#c4b5fd' }} />
-            <span style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '600', fontSize: '0.9rem' }}>About Us</span>
+          <div className="inline-flex items-center gap-2.5 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 rounded-full px-5 py-2.5 mb-6">
+            <FaShieldAlt className="text-blue-600 dark:text-blue-400" />
+            <span className="text-slate-800 dark:text-slate-200 font-semibold text-sm">About Us</span>
           </div>
-          <h1 style={{ fontSize: '2.8rem', fontWeight: '800', color: 'white', marginBottom: '1rem' }}>
-            Fighting <span style={{ background: 'linear-gradient(to right, rgb(168, 85, 247), rgb(236, 72, 153))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Misinformation</span>
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4">
+            Fighting <span className="inline-block bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent" style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Misinformation</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '1.15rem', maxWidth: '700px', margin: '0 auto', lineHeight: '1.7' }}>
+          <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
             Countering fake news, propaganda, post-truth rhetoric, and beyond — your trusted source for verified information in the digital age.
           </p>
         </motion.div>
@@ -102,10 +102,10 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
           viewport={{ once: true }}
-          style={{ background: 'rgba(30, 41, 59, 0.7)', borderRadius: '1.25rem', padding: '2.5rem', border: '1px solid rgba(168, 85, 247, 0.25)', marginBottom: '3rem', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+          className="bg-white dark:bg-slate-900/50 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800/80 mb-8 shadow-xl"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', textAlign: 'center', marginBottom: '1.25rem' }}>Our Mission</h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: '1.8', textAlign: 'center', maxWidth: '780px', margin: '0 auto' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-4">Our Mission</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed text-center max-w-3xl mx-auto">
             To create a more informed society by providing accurate, timely fact-checking services and promoting 
             media literacy. We believe that access to verified information is fundamental to democracy and 
             human progress. Through rigorous research, transparent methodology, and community engagement, 
@@ -119,10 +119,10 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
           viewport={{ once: true }}
-          style={{ background: 'rgba(30, 41, 59, 0.7)', borderRadius: '1.25rem', padding: '2.5rem', border: '1px solid rgba(168, 85, 247, 0.2)', marginBottom: '3rem' }}
+          className="bg-white dark:bg-slate-900/50 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800/80 mb-8 shadow-xl"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', textAlign: 'center', marginBottom: '1.25rem' }}>Our Story</h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: '1.8', textAlign: 'center', maxWidth: '780px', margin: '0 auto' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-4">Our Story</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed text-center max-w-3xl mx-auto">
             Founded in 2024, Fact Check Master was born out of a growing concern about the rapid spread of 
             misinformation in the digital age. What started as a small initiative to verify viral claims has 
             grown into a comprehensive fact-checking platform covering world news, viral claims, military 
@@ -137,10 +137,10 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
           viewport={{ once: true }}
-          style={{ marginBottom: '3rem' }}
+          className="mb-8"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', textAlign: 'center', marginBottom: '2rem' }}>Our Core Values</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-8">Our Core Values</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={index}
@@ -148,24 +148,15 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25 + index * 0.08 }}
                 viewport={{ once: true }}
-                style={{
-                  background: 'rgba(88, 28, 135, 0.25)',
-                  borderRadius: '1rem',
-                  padding: '1.75rem',
-                  border: '1px solid rgba(168, 85, 247, 0.25)',
-                  transition: 'transform 0.25s, border-color 0.25s',
-                  cursor: 'default'
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.5)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.25)'; }}
+                className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md cursor-default"
               >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                  <div style={{ flexShrink: 0, background: 'rgba(139, 92, 246, 0.2)', padding: '0.75rem', borderRadius: '0.625rem' }}>
-                    <value.icon style={{ color: '#c4b5fd', fontSize: '1.25rem' }} />
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 bg-blue-50 dark:bg-blue-950/40 p-3.5 rounded-xl">
+                    <value.icon className="text-blue-600 dark:text-blue-400 text-xl" />
                   </div>
                   <div>
-                    <h3 style={{ color: 'white', fontWeight: '600', fontSize: '1.1rem', marginBottom: '0.5rem' }}>{value.title}</h3>
-                    <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.6', fontSize: '0.95rem' }}>{value.description}</p>
+                    <h3 className="text-slate-950 dark:text-white font-bold text-base mb-1.5">{value.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{value.description}</p>
                   </div>
                 </div>
               </motion.div>
@@ -179,16 +170,10 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.25 }}
           viewport={{ once: true }}
-          style={{
-            background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.6), rgba(124, 58, 237, 0.4))',
-            borderRadius: '1.25rem',
-            padding: '2.5rem',
-            marginBottom: '3rem',
-            border: '1px solid rgba(168, 85, 247, 0.35)'
-          }}
+          className="bg-gradient-to-br from-blue-600 to-indigo-800 dark:from-slate-900/50 dark:to-slate-900/50 backdrop-blur-md rounded-3xl p-8 md:p-12 mb-8 border border-blue-500/20 dark:border-slate-800/80 shadow-lg text-white"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', textAlign: 'center', marginBottom: '2rem' }}>Our Impact</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1.5rem' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white text-center mb-8">Our Impact</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -196,11 +181,11 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 + index * 0.08 }}
                 viewport={{ once: true }}
-                style={{ textAlign: 'center' }}
+                className="text-center"
               >
-                <stat.icon style={{ fontSize: '2rem', color: '#c4b5fd', marginBottom: '0.75rem' }} />
-                <div style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.25rem' }}>{stat.number}</div>
-                <div style={{ color: 'rgba(255,255,255,0.8)', fontWeight: '600', fontSize: '0.85rem' }}>{stat.label}</div>
+                <stat.icon className="text-3xl text-blue-200 dark:text-blue-400 mb-3 mx-auto" />
+                <div className="text-3xl md:text-4xl font-extrabold text-white mb-1">{stat.number}</div>
+                <div className="text-blue-100 dark:text-blue-300 font-semibold text-[11px] uppercase tracking-wider">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -212,16 +197,16 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
           viewport={{ once: true }}
-          style={{ marginBottom: '3rem' }}
+          className="mb-8"
         >
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', marginBottom: '0.75rem' }}>Our Fact-Checking Methodology</h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-2">Our Fact-Checking Methodology</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base max-w-xl mx-auto">
               Every fact-check follows a rigorous, transparent process to ensure the highest standards of accuracy.
             </p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div className="flex flex-col gap-5">
             {methodology.map((item, index) => (
               <motion.div
                 key={index}
@@ -229,38 +214,17 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.15 + index * 0.08 }}
                 viewport={{ once: true }}
-                style={{
-                  display: 'flex',
-                  gap: '1.25rem',
-                  background: 'rgba(30, 41, 59, 0.7)',
-                  borderRadius: '1rem',
-                  padding: '1.75rem',
-                  border: '1px solid rgba(168, 85, 247, 0.2)',
-                  alignItems: 'flex-start'
-                }}
+                className="flex gap-5 bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-800/80 items-start shadow-sm"
               >
-                <div style={{
-                  flexShrink: 0,
-                  width: '3rem',
-                  height: '3rem',
-                  borderRadius: '0.75rem',
-                  background: 'linear-gradient(135deg, #9333ea, #7c3aed)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontWeight: '800',
-                  fontSize: '1.1rem',
-                  boxShadow: '0 4px 12px rgba(124, 58, 237, 0.4)'
-                }}>
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-purple-500/20 dark:shadow-none">
                   {item.step}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <item.icon style={{ color: '#a78bfa', fontSize: '0.95rem' }} />
-                    <h3 style={{ color: 'white', fontWeight: '600', fontSize: '1.1rem' }}>{item.title}</h3>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <item.icon className="text-purple-600 dark:text-purple-400 text-sm" />
+                    <h3 className="text-slate-950 dark:text-white font-bold text-base md:text-lg">{item.title}</h3>
                   </div>
-                  <p style={{ color: 'rgba(255,255,255,0.65)', lineHeight: '1.7', fontSize: '0.95rem' }}>{item.description}</p>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed">{item.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -273,10 +237,10 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
           viewport={{ once: true }}
-          style={{ marginBottom: '3rem' }}
+          className="mb-8"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', textAlign: 'center', marginBottom: '2rem' }}>Our Verdicts</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-8">Our Verdicts</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {verdicts.map((verdict, index) => (
               <motion.div
                 key={index}
@@ -284,21 +248,14 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 + index * 0.06 }}
                 viewport={{ once: true }}
-                style={{
-                  background: 'rgba(30, 41, 59, 0.7)',
-                  borderRadius: '1rem',
-                  padding: '1.5rem',
-                  borderLeft: `4px solid ${verdict.color}`,
-                  border: `1px solid rgba(168, 85, 247, 0.15)`,
-                  borderLeftColor: verdict.color,
-                  borderLeftWidth: '4px'
-                }}
+                className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-2xl border border-slate-200 dark:border-slate-800/50 shadow-sm border-l-4"
+                style={{ borderLeftColor: verdict.color }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: verdict.color }}></div>
-                  <h3 style={{ color: verdict.color, fontWeight: '700', fontSize: '1.05rem' }}>{verdict.label}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: verdict.color }} />
+                  <h3 className="font-bold text-base" style={{ color: verdict.color }}>{verdict.label}</h3>
                 </div>
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', lineHeight: '1.6' }}>{verdict.description}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{verdict.description}</p>
               </motion.div>
             ))}
           </div>
@@ -310,22 +267,16 @@ const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
           viewport={{ once: true }}
-          style={{
-            background: 'rgba(30, 41, 59, 0.7)',
-            borderRadius: '1.25rem',
-            padding: '2.5rem',
-            border: '1px solid rgba(168, 85, 247, 0.2)',
-            textAlign: 'center'
-          }}
+          className="bg-white dark:bg-slate-900/50 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800/80 text-center shadow-xl"
         >
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white', marginBottom: '1.25rem' }}>Our Team</h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: '1.8', maxWidth: '700px', margin: '0 auto', marginBottom: '1rem' }}>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-4">Our Team</h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed max-w-3xl mx-auto mb-4">
             Our team consists of experienced journalists, researchers, data analysts, and technology experts 
             who are passionate about truth and committed to the highest standards of fact-checking. With 
             expertise spanning multiple languages, regions, and subject areas, we bring a comprehensive 
             perspective to every claim we investigate.
           </p>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.95rem', lineHeight: '1.7', maxWidth: '600px', margin: '0 auto' }}>
+          <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm max-w-2xl mx-auto leading-relaxed"> 
             Our coverage spans World News, Viral Claims, Military Claims, and regional reporting, ensuring 
             thorough verification across the topics that matter most to our global community.
           </p>

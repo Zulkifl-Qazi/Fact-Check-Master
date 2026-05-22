@@ -68,7 +68,7 @@ export default function AdminLogin() {
 
   return (
     <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      <form onSubmit={handleSubmit} style={{ width: 420, background: '#0f172a', border: '1px solid rgba(168,85,247,0.35)', borderRadius: 16, boxShadow: '0 22px 44px rgba(0,0,0,0.5)', padding: 20 }}>
+      <form onSubmit={handleSubmit} style={{ width: 420, background: '#0f172a', border: '1px solid rgba(37, 99, 235,0.35)', borderRadius: 16, boxShadow: '0 22px 44px rgba(0,0,0,0.5)', padding: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: 'white' }}>Admin Login</h1>
         
         {deviceInfo && (

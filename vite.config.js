@@ -25,6 +25,11 @@ export default defineConfig({
         },
         timeout: 0,
         proxyTimeout: 0
+      },
+      '/uploads': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
       }
     }
   }

@@ -22,12 +22,12 @@ const HeroBanner = () => {
       />
 
       {/* Multiple Layer Overlays for Depth */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-purple-900/40 to-black/60" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-950/30 to-black/80" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-blue-900/40 to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/30 to-black/80" />
 
       {/* Animated Orbs Background Effects */}
       <motion.div
-        className="absolute top-10 left-20 w-96 h-96 rounded-full bg-purple-600/20 blur-3xl"
+        className="absolute top-10 left-20 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl"
         animate={{
           x: [0, 50, 0],
           y: [0, 30, 0],
@@ -47,7 +47,7 @@ const HeroBanner = () => {
       />
 
       <motion.div
-        className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl"
+        className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-blue-500/10 blur-3xl"
         animate={{
           x: [0, 30, -30, 0],
           y: [0, 40, -20, 0],
@@ -68,7 +68,7 @@ const HeroBanner = () => {
           <motion.h1
             className="text-5xl sm:text-6xl md:text-7xl font-black text-white mb-4 drop-shadow-xl"
             style={{
-              textShadow: '0 10px 30px rgba(0,0,0,0.5), 0 0 40px rgba(168,85,247,0.3)',
+              textShadow: '0 10px 30px rgba(0,0,0,0.5), 0 0 40px rgba(37, 99, 235,0.3)',
             }}
           >
             <motion.span
@@ -81,7 +81,7 @@ const HeroBanner = () => {
               Fact Check
             </motion.span>
             <motion.span
-              className="block bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent"
+              className="block bg-gradient-to-r from-blue-400 via-cyan-400 to-cyan-400 bg-clip-text text-transparent"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -135,7 +135,7 @@ const HeroBanner = () => {
             className="btn btn-primary btn-lg"
             style={{
               background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #8b5cf6 100%)',
-              boxShadow: '0 10px 30px rgba(168, 85, 247, 0.5)',
+              boxShadow: '0 10px 30px rgba(37, 99, 235, 0.5)',
             }}
           >
             <FaPlay className="text-sm" />
@@ -150,7 +150,7 @@ const HeroBanner = () => {
             style={{
               background: 'rgb(88, 28, 135)',
               boxShadow: '0 10px 30px rgba(88, 28, 135, 0.5)',
-              border: '2px solid rgba(168, 85, 247, 0.25)',
+              border: '2px solid rgba(37, 99, 235, 0.25)',
             }}
           >
             Learn More
@@ -172,7 +172,7 @@ const HeroBanner = () => {
           >
             <span className="text-white/60 text-sm font-semibold">Scroll to explore</span>
             <svg
-              className="w-6 h-6 text-purple-400"
+              className="w-6 h-6 text-blue-400"
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
