@@ -656,33 +656,37 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, pinned_popular: newVal, post: updated });
       }
 
-      // Default (legacy) action: Pin to Hero
-      const { data: current, error: fetchErr } = await supabase
-        .from('posts')
-        .select('id, pinned_hero')
-        .eq('id', postId)
-        .single();
-      if (fetchErr || !current) {
-        return res.status(404).json({ error: 'Post not found' });
+      // Pin to Hero (explicit action OR legacy default)
+      if (!action || action === 'pin-hero') {
+        const { data: current, error: fetchErr } = await supabase
+          .from('posts')
+          .select('id, pinned_hero')
+          .eq('id', postId)
+          .single();
+        if (fetchErr || !current) {
+          return res.status(404).json({ error: 'Post not found' });
+        }
+
+        const newVal = current.pinned_hero ? false : true;
+
+        // Unpin all others first
+        if (newVal) {
+          await supabase.from('posts').update({ pinned_hero: false }).eq('pinned_hero', true);
+        }
+
+        const { data: updated, error: updateErr } = await supabase
+          .from('posts')
+          .update({ pinned_hero: newVal })
+          .eq('id', postId)
+          .select()
+          .single();
+
+        if (updateErr) throw updateErr;
+
+        return res.status(200).json({ success: true, pinned_hero: newVal, post: updated });
       }
 
-      const newVal = current.pinned_hero ? false : true;
-
-      // Unpin all others first
-      if (newVal) {
-        await supabase.from('posts').update({ pinned_hero: false }).eq('pinned_hero', true);
-      }
-
-      const { data: updated, error: updateErr } = await supabase
-        .from('posts')
-        .update({ pinned_hero: newVal })
-        .eq('id', postId)
-        .select()
-        .single();
-
-      if (updateErr) throw updateErr;
-
-      res.status(200).json({ success: true, pinned_hero: newVal, post: updated });
+      return res.status(400).json({ error: `Unknown action: ${action}` });
 
     } else {
       res.status(405).json({ error: 'Method not allowed' });

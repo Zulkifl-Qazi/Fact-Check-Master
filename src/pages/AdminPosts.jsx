@@ -358,7 +358,7 @@ const AdminPosts = () => {
   const handlePinToggle = async (postId) => {
     setPinningId(postId);
     try {
-      await axios.patch(`/api/posts/${postId}/pin`, {}, {
+      await axios.patch(`/api/posts?id=${postId}&action=pin-hero`, {}, {
         headers: getAdminHeaders()
       });
       await loadPosts();
