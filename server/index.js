@@ -782,7 +782,7 @@ app.get('/api/posts', async (req, res) => {
         ? 'ORDER BY IFNULL(pinned_popular,0) DESC, IFNULL(views,0) DESC, datetime(created_at) DESC'
         : 'ORDER BY IFNULL(pinned_hero,0) DESC, datetime(created_at) DESC';
       const posts = await db.all(
-        `SELECT * FROM posts WHERE status = "published" ${orderBy}`
+        `SELECT * FROM posts WHERE status = "published" ${orderBy} LIMIT 100`
       );
       console.log('[API] Found', posts.length, 'posts');
       return res.status(200).json(posts);

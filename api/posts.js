@@ -25,6 +25,36 @@ const supabase = supabaseConfigured
     })
   : null;
 
+// Simple in-memory cache map for GET responses (persists while container is warm)
+const apiCache = new Map();
+const CACHE_TTL_MS = 10000; // 10 seconds
+
+function getCachedData(key) {
+  const cached = apiCache.get(key);
+  if (cached && (Date.now() - cached.timestamp < CACHE_TTL_MS)) {
+    console.log(`[Cache] Hit for key: ${key}`);
+    return cached.data;
+  }
+  if (cached) {
+    console.log(`[Cache] Expired for key: ${key}`);
+    apiCache.delete(key);
+  }
+  return null;
+}
+
+function setCachedData(key, data) {
+  console.log(`[Cache] Set key: ${key}`);
+  apiCache.set(key, {
+    data,
+    timestamp: Date.now()
+  });
+}
+
+function clearCache() {
+  console.log('[Cache] Clearing all cached entries');
+  apiCache.clear();
+}
+
 function requireSupabase(res) {
   if (!supabase) {
     res.status(500).json({ error: 'Supabase is not configured on the server' });
@@ -118,6 +148,9 @@ async function getAllPosts(popular) {
         .order('pinned_hero', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });
     }
+
+    // Default limit to prevent massive payload transfers
+    query = query.limit(100);
 
     const { data, error } = await query;
 
@@ -463,6 +496,8 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
       const requestedId = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id;
+      const isAdmin = !!req.headers['x-device-id'];
+      const cacheKey = JSON.stringify(req.query);
 
       if (requestedId !== undefined) {
         const postId = parseInt(requestedId, 10);
@@ -470,13 +505,35 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'Invalid post ID' });
         }
 
+        const singleCacheKey = `post_${postId}`;
+        if (!isAdmin) {
+          const cachedPost = getCachedData(singleCacheKey);
+          if (cachedPost) {
+            res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
+            return res.status(200).json(cachedPost);
+          }
+        }
+
         const post = await getPostById(postId);
         if (!post) {
           return res.status(404).json({ error: 'Post not found' });
         }
 
+        if (!isAdmin) {
+          setCachedData(singleCacheKey, post);
+        }
+
         res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
         return res.status(200).json(post);
+      }
+
+      // Serve from in-memory cache if available (public requests only)
+      if (!isAdmin) {
+        const cachedData = getCachedData(cacheKey);
+        if (cachedData) {
+          res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+          return res.status(200).json(cachedData);
+        }
       }
 
       const rawCategory = parseQueryParam(req.query, 'category');
@@ -504,12 +561,22 @@ export default async function handler(req, res) {
           popular: popular
         });
         console.log(`[API] Returning ${posts.length} posts (filtered list)`);
+        
+        if (!isAdmin) {
+          setCachedData(cacheKey, posts);
+        }
+        
         res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
         return res.status(200).json(posts);
       }
 
       const posts = await getAllPosts(popular);
       console.log(`[API] Returning ${posts.length} posts from permanent database`);
+      
+      if (!isAdmin) {
+        setCachedData(cacheKey, posts);
+      }
+
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
       res.status(200).json(posts);
 
@@ -537,6 +604,9 @@ export default async function handler(req, res) {
         categories: categories || (category ? [category] : ['latest-news'])
       });
       
+      // Invalidate frontend caches
+      clearCache();
+
       res.status(201).json({ 
         id: newPost.id,
         success: true,
@@ -573,6 +643,9 @@ export default async function handler(req, res) {
         categories: categories || (category ? [category] : null)
       });
       
+      // Invalidate frontend caches
+      clearCache();
+
       res.status(200).json({ 
         success: true,
         message: 'Post updated successfully in permanent database',
@@ -591,6 +664,9 @@ export default async function handler(req, res) {
 
       await removePost(postId);
       
+      // Invalidate frontend caches
+      clearCache();
+
       res.status(200).json({ 
         success: true,
         message: 'Post deleted successfully from permanent database'
@@ -653,6 +729,9 @@ export default async function handler(req, res) {
 
         if (updateErr) throw updateErr;
 
+        // Invalidate frontend caches on layout changes
+        clearCache();
+
         return res.status(200).json({ success: true, pinned_popular: newVal, post: updated });
       }
 
@@ -682,6 +761,9 @@ export default async function handler(req, res) {
           .single();
 
         if (updateErr) throw updateErr;
+
+        // Invalidate frontend caches on layout changes
+        clearCache();
 
         return res.status(200).json({ success: true, pinned_hero: newVal, post: updated });
       }
