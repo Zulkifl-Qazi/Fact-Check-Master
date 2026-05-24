@@ -250,6 +250,54 @@ const quillStyles = `
       padding-right: 1rem !important;
     }
   }
+
+  /* Responsive styles for posts list and header */
+  .admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .admin-header {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+  }
+
+  .post-item-container {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .post-actions-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .post-item-container {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+    
+    .post-actions-container {
+      width: 100% !important;
+      justify-content: flex-start !important;
+      margin-top: 1rem !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 1rem !important;
+    }
+  }
 `;
 
 const AdminPosts = () => {
@@ -587,18 +635,7 @@ const AdminPosts = () => {
         width: '100%'
       }}>
         {/* Mobile-First Header */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'flex-start', 
-          justifyContent: 'space-between', 
-          marginBottom: '2rem',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          '@media (maxWidth: 768px)': {
-            flexDirection: 'column',
-            alignItems: 'center'
-          }
-        }}>
+        <div className="admin-header">
           {/* Back Navigation */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1', minWidth: '200px', flexWrap: 'wrap' }}>
             <button
@@ -1416,14 +1453,7 @@ const AdminPosts = () => {
                   key={post.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  style={{
-                    padding: '1.5rem',
-                    borderBottom: '1px solid rgba(255,255,255,0.1)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '1rem'
-                  }}
+                  className="post-item-container"
                 >
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
@@ -1495,7 +1525,7 @@ const AdminPosts = () => {
                     </div>
                   </div>
                   
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div className="post-actions-container">
                     <button
                       onClick={() => handlePinToggle(post.id)}
                       disabled={pinningId === post.id}
