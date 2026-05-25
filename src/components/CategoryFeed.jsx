@@ -206,7 +206,7 @@ const CategoryFeed = ({ category, title, icon = '📰' }) => {
         return (
             <div id={category} className="w-full">
                 <div className="flex items-center gap-3 mb-10">
-                    <span className="text-3xl">{icon}</span>
+                    {icon && <span className="text-3xl">{icon}</span>}
                     <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100">
                         {title || category}
                     </h2>
@@ -231,7 +231,7 @@ const CategoryFeed = ({ category, title, icon = '📰' }) => {
                     className="text-center mb-12"
                 >
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-4xl">{icon}</span>
+                        {icon && <span className="text-4xl">{icon}</span>}
                         <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-4xl">
                             {title || category}
                         </h2>

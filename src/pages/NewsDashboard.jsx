@@ -28,56 +28,56 @@ const NEWS_DASHBOARD_CATEGORIES = [
     label: 'Latest News',
     description: 'Recent fact-checks and verified updates across the desk',
     image: worldNewsImg,
-    icon: '📰'
+    icon: ''
   },
   {
     id: 'world-news',
     label: 'World News',
     description: 'Global events and international breaking news',
     image: worldNewsImg,
-    icon: '🌍'
+    icon: ''
   },
   {
     id: 'viral-claims',
     label: 'Viral Claims',
     description: 'Fact-checking trending stories and social media claims',
     image: viralNewsImg,
-    icon: '📱'
+    icon: ''
   },
   {
     id: 'military-claims',
     label: 'Military Claims',
     description: 'Defense updates and military operations verification',
     image: militaryNewsImg,
-    icon: '⚔️'
+    icon: ''
   },
   {
     id: 'political',
     label: 'Politics',
     description: 'Political speeches, policy claims, and election-related fact-checks',
     image: indianClaimsImg,
-    icon: '🏛️'
+    icon: ''
   },
   {
     id: 'technology',
     label: 'Technology',
     description: 'Latest updates from the world of science and technology',
     image: worldNewsImg,
-    icon: '💻'
+    icon: ''
   },
   {
     id: 'health',
     label: 'Health',
     description: 'Medical news, healthcare analysis, and verified wellness claims',
     image: worldNewsImg,
-    icon: '🏥'
+    icon: ''
   },
   {
     id: 'sports',
     label: 'Sports',
     description: 'Sports updates, athletic events, and claim verifications',
     image: worldNewsImg,
-    icon: '⚽'
+    icon: ''
   },
 
   {
@@ -85,14 +85,14 @@ const NEWS_DASHBOARD_CATEGORIES = [
     label: 'Indian Claims',
     description: 'News and fact-checks from India region',
     image: indianClaimsImg,
-    icon: '🇮🇳'
+    icon: ''
   },
   {
     id: 'afghan-claims',
     label: 'Afghan Claims',
     description: 'Afghanistan news and claim verification updates',
     image: afghanClaimsImg,
-    icon: '🇦🇫'
+    icon: ''
   }
 ];
 

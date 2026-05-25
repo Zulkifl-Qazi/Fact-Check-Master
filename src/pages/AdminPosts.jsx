@@ -855,16 +855,16 @@ const AdminPosts = () => {
                   gap: '0.75rem'
                 }}>
                   {[
-                    { value: 'latest-news', label: 'Latest News', icon: '📰' },
-                    { value: 'breaking-news', label: 'Featured / Breaking (hero)', icon: '⚡' },
-                    { value: 'trending-news', label: 'Trending', icon: '📈' },
-                    { value: 'world-news', label: 'World News', icon: '🌍' },
-                    { value: 'viral-claims', label: 'Viral Claims', icon: '🔥' },
-                    { value: 'military-claims', label: 'Military Claims', icon: '⚔️' },
-                    { value: 'political', label: 'Politics', icon: '🏛️' },
-                    { value: 'technology', label: 'Technology', icon: '💻' },
-                    { value: 'health', label: 'Health', icon: '🏥' },
-                    { value: 'sports', label: 'Sports', icon: '⚽' },
+                    { value: 'latest-news', label: 'Latest News', icon: '' },
+                    { value: 'breaking-news', label: 'Featured / Breaking (hero)', icon: '' },
+                    { value: 'trending-news', label: 'Trending', icon: '' },
+                    { value: 'world-news', label: 'World News', icon: '' },
+                    { value: 'viral-claims', label: 'Viral Claims', icon: '' },
+                    { value: 'military-claims', label: 'Military Claims', icon: '' },
+                    { value: 'political', label: 'Politics', icon: '' },
+                    { value: 'technology', label: 'Technology', icon: '' },
+                    { value: 'health', label: 'Health', icon: '' },
+                    { value: 'sports', label: 'Sports', icon: '' },
                     { value: 'indian-claims', label: 'Indian Claims', icon: '' },
                     { value: 'afghan-claims', label: 'Afghan Claims', icon: '' }
                   ].map(category => (
