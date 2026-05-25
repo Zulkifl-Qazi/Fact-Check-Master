@@ -27,7 +27,7 @@ const supabase = supabaseConfigured
 
 // Simple in-memory cache map for GET responses (persists while container is warm)
 const apiCache = new Map();
-const CACHE_TTL_MS = 10000; // 10 seconds
+const CACHE_TTL_MS = 300000; // 5 minutes (invalidated on writes)
 
 function getCachedData(key) {
   const cached = apiCache.get(key);

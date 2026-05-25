@@ -138,44 +138,23 @@ const NewsDashboard = () => {
       {/* Spacer for navbar */}
       <div className="h-28 md:h-32"></div>
 
-      {/* Professional Header Section */}
-      <div className="w-full relative overflow-hidden mb-12 md:mb-16 lg:mb-20">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-600/5 to-cyan-500/5 dark:from-blue-900/10 dark:via-slate-950/20 dark:to-cyan-950/10"></div>
-        <div className="absolute inset-0 opacity-40 dark:opacity-20" style={{
-          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(29, 78, 216, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)'
-        }}></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16 relative">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 dark:text-slate-100 mb-3 md:mb-4 drop-shadow-sm px-2">
-              News Dashboard
-            </h1>
-            
-            {/* Subtitle - Show category name when selected */}
-            {activeCategory ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 md:mt-8"
-              >
-                <motion.button
-                  onClick={handleClearCategory}
-                  whileHover={{ scale: 1.08, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 md:px-8 md:py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg shadow-blue-500/20 transition-all duration-300 flex items-center gap-2.5 font-bold text-base md:text-lg border-none cursor-pointer"
-                >
-                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back
-                </motion.button>
-              </motion.div>
-            ) : (
+      {/* Professional Header Section - Only show when no category is selected */}
+      {!activeCategory && (
+        <div className="w-full relative overflow-hidden mb-12 md:mb-16 lg:mb-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-blue-600/5 to-cyan-500/5 dark:from-blue-900/10 dark:via-slate-950/20 dark:to-cyan-950/10"></div>
+          <div className="absolute inset-0 opacity-40 dark:opacity-20" style={{
+            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(29, 78, 216, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)'
+          }}></div>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16 relative">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 dark:text-slate-100 mb-3 md:mb-4 drop-shadow-sm px-2">
+                News Dashboard
+              </h1>
               <motion.p 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -184,10 +163,10 @@ const NewsDashboard = () => {
               >
                 Explore curated news categories and fact-checked information
               </motion.p>
-            )}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Category Blocks Grid - Only show when no category is selected */}
       {!activeCategory && (
@@ -292,6 +271,22 @@ const NewsDashboard = () => {
       {activeCategory && (
         <div className="w-full">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Compact navigation breadcrumb bar with Back button */}
+            <div className="max-w-7xl mx-auto flex items-center justify-between py-4 mb-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-5 transition-colors duration-300">
+              <button
+                onClick={handleClearCategory}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg shadow-sm transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+              </button>
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+                News Dashboard / {NEWS_DASHBOARD_CATEGORIES.find((c) => c.id === activeCategory)?.label}
+              </div>
+            </div>
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
