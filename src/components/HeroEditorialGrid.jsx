@@ -61,13 +61,19 @@ const HeroEditorialGrid = () => {
   const loadHero = useCallback(async () => {
     setLoading(true);
     try {
-      // Parallelize fetches to avoid waterfall queries
-      const [breakingRes, fallbackRes, latestPoolRes, generalRes] = await Promise.all([
-        fetchPostsList({ category: BREAKING_CATEGORY, limit: 8 }),
-        fetchPostsList({ category: LATEST_FALLBACK, limit: 8 }),
-        fetchPostsList({ category: LATEST_FALLBACK, limit: 16 }),
-        fetchPostsList({ limit: 24 })
-      ]);
+      // Single fetch to get the latest posts (utilizes the cached endpoint)
+      const allPosts = await fetchPostsList({});
+
+      const breakingRes = allPosts
+        .filter((p) => p.category === BREAKING_CATEGORY || p.category === 'featured-news')
+        .slice(0, 8);
+      const fallbackRes = allPosts
+        .filter((p) => p.category === LATEST_FALLBACK)
+        .slice(0, 8);
+      const latestPoolRes = allPosts
+        .filter((p) => p.category === LATEST_FALLBACK)
+        .slice(0, 16);
+      const generalRes = allPosts.slice(0, 24);
 
       let breaking = dedupeByTitle(breakingRes);
       let usedFallback = false;

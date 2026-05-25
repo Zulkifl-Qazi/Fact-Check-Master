@@ -22,7 +22,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
             
             // Parallel fetch latest news and popular posts
             const [postsRes, popularRes] = await Promise.all([
-                fetch('/api/posts?limit=24'),
+                fetch('/api/posts'),
                 fetch('/api/posts?popular=true&limit=7')
             ]);
             
