@@ -67,7 +67,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <section style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+    <section className="bg-slate-50 dark:bg-slate-950 transition-colors duration-300" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <form onSubmit={handleSubmit} style={{ width: 420, background: '#0f172a', border: '1px solid rgba(37, 99, 235,0.35)', borderRadius: 16, boxShadow: '0 22px 44px rgba(0,0,0,0.5)', padding: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: 'white' }}>Admin Login</h1>
         
@@ -101,9 +101,9 @@ export default function AdminLogin() {
             borderRadius: 10, 
             border: 'none', 
             fontWeight: 800, 
-            background: loading ? '#6b7280' : 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
+            background: loading ? '#6b7280' : 'linear-gradient(135deg, #1d4ed8, #06b6d4)', 
             color: 'white', 
-            boxShadow: '0 10px 20px rgba(139,92,246,0.35)',
+            boxShadow: '0 10px 20px rgba(29,78,216,0.25)',
             cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >

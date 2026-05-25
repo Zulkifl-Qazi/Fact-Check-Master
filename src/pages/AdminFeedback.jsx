@@ -94,9 +94,8 @@ export default function AdminFeedback() {
   };
 
   return (
-    <section style={{ 
+    <section className="bg-slate-50 dark:bg-slate-950 transition-colors duration-300" style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', 
       paddingTop: '5rem', 
       paddingBottom: '5rem', 
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
@@ -112,13 +111,15 @@ export default function AdminFeedback() {
           alignItems: window.innerWidth <= 768 ? 'center' : 'flex-start'
         }}>
           {/* Title */}
-          <h1 style={{ 
-            fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
-            fontWeight: 800,
-            color: 'white',
-            margin: '0',
-            textAlign: 'center'
-          }}>Feedback Admin</h1>
+          <h1 
+            className="text-slate-900 dark:text-white"
+            style={{ 
+              fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
+              fontWeight: 800,
+              margin: '0',
+              textAlign: 'center'
+            }}
+          >Feedback Admin</h1>
           
           {/* Mobile Controls */}
           <div style={{
@@ -158,7 +159,7 @@ export default function AdminFeedback() {
                   borderRadius: 10, 
                   border: 'none', 
                   fontWeight: 700, 
-                  background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
+                  background: 'linear-gradient(90deg, #dc2626, #ef4444)', 
                   color: 'white',
                   cursor: 'pointer',
                   fontSize: '0.85rem',
@@ -171,12 +172,10 @@ export default function AdminFeedback() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search feedback..."
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors duration-300"
               style={{ 
                 padding: '12px 16px', 
                 borderRadius: 10, 
-                border: '1px solid rgba(255,255,255,0.2)', 
-                background: '#111827', 
-                color: 'white', 
                 fontSize: '0.9rem',
                 width: '100%',
                 boxSizing: 'border-box'
@@ -224,7 +223,7 @@ export default function AdminFeedback() {
             <button
               onClick={() => localStorage.setItem('af_admin_key', adminKey)}
               style={{
-                background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)', 
+                background: 'linear-gradient(90deg, #1d4ed8, #2563eb)', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: 8,
@@ -351,7 +350,7 @@ export default function AdminFeedback() {
                       onClick={submitReply}
                       disabled={submitting || !replyText.trim()}
                       style={{
-                        background: 'linear-gradient(90deg, #6d28d9, #8b5cf6)',
+                        background: 'linear-gradient(90deg, #1d4ed8, #2563eb)',
                         color: '#ffffff',
                         padding: '10px 16px',
                         border: 'none',
@@ -359,7 +358,7 @@ export default function AdminFeedback() {
                         fontWeight: 700,
                         opacity: submitting || !replyText.trim() ? 0.6 : 1,
                         cursor: submitting || !replyText.trim() ? 'not-allowed' : 'pointer',
-                        boxShadow: '0 10px 20px rgba(139,92,246,0.35)'
+                        boxShadow: '0 10px 20px rgba(29,78,216,0.25)'
                       }}
                     >
                       {submitting ? 'Sending…' : 'Send Reply'}

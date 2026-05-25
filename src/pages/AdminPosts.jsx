@@ -49,13 +49,13 @@ const quillStyles = `
   .ql-toolbar button:hover .ql-stroke,
   .ql-toolbar button:focus .ql-stroke,
   .ql-toolbar button.ql-active .ql-stroke {
-    stroke: #a855f7;
+    stroke: #3b82f6;
   }
   
   .ql-toolbar button:hover .ql-fill,
   .ql-toolbar button:focus .ql-fill,
   .ql-toolbar button.ql-active .ql-fill {
-    fill: #a855f7;
+    fill: #3b82f6;
   }
   
   .ql-editor {
@@ -106,7 +106,7 @@ const quillStyles = `
   }
   
   .ql-editor a {
-    color: #a855f7 !important;
+    color: #3b82f6 !important;
     text-decoration: underline;
   }
   
@@ -138,7 +138,7 @@ const quillStyles = `
   
   .ql-snow .ql-tooltip a.ql-action::after,
   .ql-snow .ql-tooltip a.ql-remove::before {
-    color: #a855f7;
+    color: #3b82f6;
   }
   
   .ql-snow .ql-picker-options {
@@ -154,7 +154,7 @@ const quillStyles = `
   
   .ql-snow .ql-picker-options .ql-picker-item:hover {
     background-color: rgba(29, 78, 216, 0.2);
-    color: #a855f7;
+    color: #3b82f6;
   }
   
   /* Post content display styling */
@@ -181,12 +181,12 @@ const quillStyles = `
   }
   
   .post-content-display a {
-    color: #a855f7;
+    color: #3b82f6;
     text-decoration: underline;
   }
   
   .post-content-display a:hover {
-    color: #c084fc;
+    color: #60a5fa;
   }
   
   .post-content-display h1,
@@ -619,9 +619,8 @@ const AdminPosts = () => {
   };
 
   return (
-    <section style={{ 
+    <section className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300" style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))', 
       paddingTop: '5rem', 
       paddingBottom: '5rem', 
       paddingLeft: 'clamp(0.5rem, 2vw, 1rem)', 
@@ -672,18 +671,17 @@ const AdminPosts = () => {
           
           {/* Title Section */}
           <div style={{ minWidth: '0' }}>
-            <h1 style={{ 
-              fontSize: 'clamp(1.5rem, 4vw, 2rem)', 
-              fontWeight: '800', 
-              color: 'white', 
-              marginBottom: '0.5rem',
+            <h1 className="text-slate-900 dark:text-white" style={{ 
+              fontSize: 'clamp(1.5rem, 5vw, 2rem)', 
+              fontWeight: 900, 
+              margin: '0 0 0.25rem 0',
               lineHeight: '1.2'
-            }}>Posts Management</h1>
-            <p style={{ 
-              color: 'rgba(255,255,255,0.7)', 
-              fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-              margin: '0'
-            }}>Create and manage posts for the Latest News</p>
+            }}>Admin Console</h1>
+            <p className="text-slate-600 dark:text-slate-400" style={{ 
+              fontSize: '0.875rem', 
+              margin: '0',
+              fontWeight: '500'
+            }}>Countering Fake News Desk</p>
           </div>
           
           {/* Add Button */}

@@ -65,9 +65,8 @@ export default function DeviceManagement() {
   };
 
   return (
-    <section style={{
+    <section className="bg-slate-50 dark:bg-slate-950 transition-colors duration-300" style={{
       minHeight: '100vh',
-      background: 'linear-gradient(to bottom right, rgb(15, 23, 42), rgb(2, 6, 23), rgb(0, 0, 0))',
       paddingTop: '5rem',
       paddingBottom: '5rem',
       paddingLeft: '1rem',
@@ -76,10 +75,10 @@ export default function DeviceManagement() {
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div>
-            <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>
+            <h1 className="text-slate-900 dark:text-white" style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.5rem' }}>
               Device Management
             </h1>
-            <p style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <p className="text-slate-600 dark:text-slate-400">
               Authorize devices for admin access
             </p>
           </div>
