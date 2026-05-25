@@ -1,6 +1,6 @@
 # Fact Check Master - Full Project Documentation
 
-Date: April 16, 2026
+Date: May 25, 2026
 Project: Fact-Check-Master
 
 ## 1. Executive Summary
@@ -181,8 +181,16 @@ The core product value is fast misinformation response, transparent publishing, 
 - supabase-migration.sql
 - vercel.json
 
-## 11. What Was Done Today (April 16, 2026)
-### Security and connectivity fixes completed
+## 11. Recent Updates and Historical Work
+
+### May 25, 2026 (Performance & Loading Optimizations)
+1. **Eliminated route chunk waterfalls**: Removed lazy loading of `HomePage` in [App.jsx](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/src/App.jsx) to make the landing page render immediately on startup.
+2. **Batched and cached API requests**: Batched multiple individual post category fetches into a single `/api/posts` query shared between the Hero editorial grid and the Live feed. This reduces initial load network calls from 6 down to 2.
+3. **In-memory backend caching**: Configured a 10-second TTL in-memory cache in [posts.js](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/api/posts.js) that automatically clears on write/update/delete operations, preventing Supabase performance degradation under traffic.
+4. **Mobile responsiveness improvements**: Cleaned up the phone/mobile view layouts for the Admin panel so that delete/edit buttons are fully visible and readable.
+5. **Compilation verification**: Successfully verified production build with `npm run build` and deployed updates.
+
+### April 16, 2026 (Security and Connectivity Fixes)
 1. Investigated Supabase failures and identified root cause:
 - RLS enabled while APIs were previously using wrong or inconsistent key assumptions.
 
@@ -247,4 +255,4 @@ The platform is now aligned with a secure model:
 - Admin actions enforced server-side via approved device checks.
 - Deployment dependencies explicit and fail-fast.
 
-This document reflects repository state and operational work completed on April 16, 2026.
+This document reflects repository state and operational work completed on May 25, 2026.
