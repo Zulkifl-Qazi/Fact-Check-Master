@@ -794,6 +794,8 @@ app.get('/api/posts', async (req, res) => {
     if (categoryTrimmed) {
       if (categoryTrimmed === 'breaking-news' || categoryTrimmed === 'featured-news') {
         sql += ' AND category IN ("breaking-news", "featured-news")';
+      } else if (categoryTrimmed === 'world-news') {
+        sql += ' AND category IN ("world-news", "international")';
       } else {
         sql += ' AND IFNULL(category, "latest-news") = ?';
         params.push(categoryTrimmed);

@@ -218,7 +218,7 @@ const Navbar = () => {
               { path: '/news-dashboard?category=technology', label: 'Technology' },
               { path: '/news-dashboard?category=health', label: 'Health' },
               { path: '/news-dashboard?category=sports', label: 'Sports' },
-              { path: '/news-dashboard?category=international', label: 'International' },
+              { path: '/news-dashboard?category=world-news', label: 'World News' },
               { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' }
             ].map((cat, i) => (
               <Link

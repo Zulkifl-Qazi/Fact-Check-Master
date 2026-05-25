@@ -190,6 +190,8 @@ async function getPostsList({ category, limit, offset, ascending, popular }) {
       const cat = String(category).trim();
       if (HERO_BREAKING_CATEGORIES.includes(cat)) {
         query = query.in('category', HERO_BREAKING_CATEGORIES);
+      } else if (cat === 'world-news') {
+        query = query.in('category', ['world-news', 'international']);
       } else {
         query = query.eq('category', cat);
       }

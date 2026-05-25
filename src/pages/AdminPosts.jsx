@@ -865,7 +865,6 @@ const AdminPosts = () => {
                     { value: 'technology', label: 'Technology', icon: '💻' },
                     { value: 'health', label: 'Health', icon: '🏥' },
                     { value: 'sports', label: 'Sports', icon: '⚽' },
-                    { value: 'international', label: 'International', icon: '🌐' },
                     { value: 'indian-claims', label: 'Indian Claims', icon: '' },
                     { value: 'afghan-claims', label: 'Afghan Claims', icon: '' }
                   ].map(category => (

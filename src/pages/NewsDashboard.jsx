@@ -79,13 +79,7 @@ const NEWS_DASHBOARD_CATEGORIES = [
     image: worldNewsImg,
     icon: '⚽'
   },
-  {
-    id: 'international',
-    label: 'International',
-    description: 'Global news analysis and international claim verifications',
-    image: worldNewsImg,
-    icon: '🌐'
-  },
+
   {
     id: 'indian-claims',
     label: 'Indian Claims',
