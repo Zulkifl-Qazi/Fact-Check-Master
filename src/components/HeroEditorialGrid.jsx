@@ -54,6 +54,7 @@ const HeroEditorialGrid = () => {
   const [loading, setLoading] = useState(true);
   const [mainStory, setMainStory] = useState(null);
   const [secondaryStories, setSecondaryStories] = useState([]);
+  const [bottomRowPosts, setBottomRowPosts] = useState([]);
   const [mustReadPosts, setMustReadPosts] = useState([]);
   const [moreHeadlines, setMoreHeadlines] = useState([]);
   const [heroUsedFallback, setHeroUsedFallback] = useState(false);
@@ -95,19 +96,42 @@ const HeroEditorialGrid = () => {
         secondary = breaking.slice(1, 4); // max 3 secondary
       }
 
-      // Debug: log image data so we can see what's coming from DB
-      console.log('[Hero] lead post image_url:', lead?.image_url, '| media:', lead?.media);
-      secondary.forEach((p, i) => console.log(`[Hero] secondary[${i}] image_url:`, p.image_url, '| media:', p.media));
+      // Collect already used posts to avoid duplicates
+      const usedIds = new Set();
+      const usedTitles = new Set();
+      if (lead) {
+        usedIds.add(lead.id);
+        if (lead.title) usedTitles.add(lead.title.trim().toLowerCase());
+      }
+      secondary.forEach((p) => {
+        usedIds.add(p.id);
+        if (p.title) usedTitles.add(p.title.trim().toLowerCase());
+      });
 
-      const usedIds = new Set([...breaking.slice(0, 5).map((p) => p.id)].filter(Boolean));
-      const usedTitles = new Set([...breaking.slice(0, 5).map((p) => p.title?.trim().toLowerCase())].filter(Boolean));
+      // Find breaking posts for the bottom row
+      let bottomRow = breaking.filter(
+        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
+      ).slice(0, 2);
+
+      bottomRow.forEach((p) => {
+        usedIds.add(p.id);
+        if (p.title) usedTitles.add(p.title.trim().toLowerCase());
+      });
 
       let latestPool = dedupeByTitle(latestPoolRes).filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
       );
-      const mustRead = latestPool.slice(0, 3);
 
-      latestPool.slice(0, 8).forEach((p) => {
+      // If bottomRow still needs posts, fill from latestPool
+      while (bottomRow.length < 2 && latestPool.length > 0) {
+        const fillPost = latestPool.shift();
+        bottomRow.push(fillPost);
+        usedIds.add(fillPost.id);
+        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
+      }
+
+      const mustRead = latestPool.slice(0, 3);
+      mustRead.forEach((p) => {
         usedIds.add(p.id);
         if (p.title) usedTitles.add(p.title.trim().toLowerCase());
       });
@@ -119,6 +143,7 @@ const HeroEditorialGrid = () => {
 
       setMainStory(lead);
       setSecondaryStories(secondary);
+      setBottomRowPosts(bottomRow);
       setMustReadPosts(mustRead);
       setMoreHeadlines(more);
       setHeroUsedFallback(usedFallback);
@@ -164,6 +189,7 @@ const HeroEditorialGrid = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
+            className="flex flex-col gap-6"
           >
             <div
               className="hero-lead hero-link cursor-pointer relative overflow-hidden rounded-lg group"
@@ -209,6 +235,46 @@ const HeroEditorialGrid = () => {
                 </div>
               </div>
             </div>
+
+            {/* Sub-grid for 2 more posts under the big lead image */}
+            {bottomRowPosts && bottomRowPosts.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {bottomRowPosts.map((post) => {
+                  const img = getPostImage(post);
+                  return (
+                    <div
+                      key={post.id}
+                      className="hero-mid-card hero-link cursor-pointer group"
+                      onClick={() => navigate(`/post/${post.id}`)}
+                    >
+                      <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
+                        {img && (
+                          <>
+                            <div
+                              className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
+                              style={{ backgroundImage: `url(${img})` }}
+                            />
+                            <img
+                              src={img}
+                              alt={post.title}
+                              className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            />
+                          </>
+                        )}
+                        <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      </div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-200 leading-snug m-0 line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 m-0">
+                        {post.created_at && new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </motion.div>
 
           {/* ── COL 2: SECONDARY STORIES — each with image ── */}
