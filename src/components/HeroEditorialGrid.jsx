@@ -61,13 +61,19 @@ const HeroEditorialGrid = () => {
   const loadHero = useCallback(async () => {
     setLoading(true);
     try {
-      let breaking = await fetchPostsList({ category: BREAKING_CATEGORY, limit: 8 });
-      breaking = dedupeByTitle(breaking);
+      // Parallelize fetches to avoid waterfall queries
+      const [breakingRes, fallbackRes, latestPoolRes, generalRes] = await Promise.all([
+        fetchPostsList({ category: BREAKING_CATEGORY, limit: 8 }),
+        fetchPostsList({ category: LATEST_FALLBACK, limit: 8 }),
+        fetchPostsList({ category: LATEST_FALLBACK, limit: 16 }),
+        fetchPostsList({ limit: 24 })
+      ]);
+
+      let breaking = dedupeByTitle(breakingRes);
       let usedFallback = false;
 
       if (breaking.length === 0) {
-        breaking = await fetchPostsList({ category: LATEST_FALLBACK, limit: 8 });
-        breaking = dedupeByTitle(breaking);
+        breaking = dedupeByTitle(fallbackRes);
         usedFallback = true;
       }
 
@@ -90,8 +96,7 @@ const HeroEditorialGrid = () => {
       const usedIds = new Set([...breaking.slice(0, 5).map((p) => p.id)].filter(Boolean));
       const usedTitles = new Set([...breaking.slice(0, 5).map((p) => p.title?.trim().toLowerCase())].filter(Boolean));
 
-      let latestPool = await fetchPostsList({ category: LATEST_FALLBACK, limit: 16 });
-      latestPool = dedupeByTitle(latestPool).filter(
+      let latestPool = dedupeByTitle(latestPoolRes).filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
       );
       const mustRead = latestPool.slice(0, 3);
@@ -101,8 +106,7 @@ const HeroEditorialGrid = () => {
         if (p.title) usedTitles.add(p.title.trim().toLowerCase());
       });
 
-      let general = await fetchPostsList({ limit: 24 });
-      general = dedupeByTitle(general).filter(
+      let general = dedupeByTitle(generalRes).filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
       );
       const more = general.slice(0, 4);

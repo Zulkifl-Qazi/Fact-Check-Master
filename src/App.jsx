@@ -1,11 +1,10 @@
-// src/App.jsx
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
 const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminFeedback = lazy(() => import('./pages/AdminFeedback'));
