@@ -150,15 +150,30 @@ async function getAllPosts(popular) {
     }
 
     // Default limit to prevent massive payload transfers
-    query = query.limit(100);
+    query = query.limit(200);
 
     const { data, error } = await query;
 
     if (error) throw error;
     
+    // Deduplicate by title
+    const uniquePosts = [];
+    const seenTitles = new Set();
+    if (data) {
+      for (const post of data) {
+        const titleTrimmed = post.title ? post.title.trim().toLowerCase() : '';
+        if (titleTrimmed && !seenTitles.has(titleTrimmed)) {
+          seenTitles.add(titleTrimmed);
+          uniquePosts.push(post);
+        } else if (!titleTrimmed) {
+          uniquePosts.push(post);
+        }
+      }
+    }
+    
     // Return posts from database (even if empty)
-    console.log(`[Database] Retrieved ${data ? data.length : 0} posts from Supabase`);
-    return data || [];
+    console.log(`[Database] Retrieved ${data ? data.length : 0} posts from Supabase, unique: ${uniquePosts.length}`);
+    return uniquePosts;
   } catch (error) {
     console.error('[Database] Error fetching posts:', error);
     // Only use fallback sample data if database connection fails completely
@@ -212,16 +227,35 @@ async function getPostsList({ category, limit, offset, ascending, popular }) {
     const offRaw = offset !== undefined && offset !== '' ? parseInt(offset, 10) : 0;
     const off = Number.isFinite(offRaw) && offRaw >= 0 ? offRaw : 0;
 
-    if (Number.isFinite(limRaw) && limRaw > 0) {
-      const capped = Math.min(limRaw, 200);
-      query = query.range(off, off + capped - 1);
-    } else if (category) {
-      query = query.range(off, off + 499);
-    }
+    // Fetch up to 500 rows to allow deduplication without missing slots
+    query = query.range(0, 499);
 
     const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+
+    // Deduplicate by title
+    const uniquePosts = [];
+    const seenTitles = new Set();
+    if (data) {
+      for (const post of data) {
+        const titleTrimmed = post.title ? post.title.trim().toLowerCase() : '';
+        if (titleTrimmed && !seenTitles.has(titleTrimmed)) {
+          seenTitles.add(titleTrimmed);
+          uniquePosts.push(post);
+        } else if (!titleTrimmed) {
+          uniquePosts.push(post);
+        }
+      }
+    }
+
+    let slicedPosts = uniquePosts;
+    if (Number.isFinite(limRaw) && limRaw > 0) {
+      slicedPosts = uniquePosts.slice(off, off + limRaw);
+    } else {
+      slicedPosts = uniquePosts.slice(off);
+    }
+
+    return slicedPosts;
   } catch (error) {
     console.error('[Database] Error in getPostsList:', error);
     return [];
@@ -368,8 +402,19 @@ async function addNewPost(postData) {
 async function updatePost(postId, postData) {
   try {
     console.log('[Database] Updating post with ID:', postId);
-    console.log('[Database] Incoming postData:', JSON.stringify(postData, null, 2));
     
+    // 1. Fetch original post title
+    const { data: originalPost, error: fetchErr } = await supabase
+      .from('posts')
+      .select('title, category')
+      .eq('id', postId)
+      .single();
+      
+    if (fetchErr || !originalPost) {
+      throw fetchErr || new Error('Original post not found');
+    }
+    const originalTitle = originalPost.title;
+
     const postToUpdate = {
       title: postData.title.trim(),
       content: postData.content.trim(),
@@ -381,65 +426,69 @@ async function updatePost(postId, postData) {
 
     // Handle media (images and videos)
     if (postData.media) {
-      console.log('[Database] Media received:', postData.media);
-      console.log('[Database] Media type:', typeof postData.media);
-      
-      // Ensure media is an object, not a string
       let mediaObj = postData.media;
       if (typeof postData.media === 'string') {
         try {
           mediaObj = JSON.parse(postData.media);
         } catch (e) {
-          console.error('[Database] Failed to parse media string:', e);
           mediaObj = { images: [], videos: [] };
         }
       }
-      
       postToUpdate.media = mediaObj;
-      console.log('[Database] Media to save:', JSON.stringify(mediaObj));
-      
-      // Backward compatibility: set image_url to first image if exists
       if (mediaObj.images && mediaObj.images.length > 0) {
         postToUpdate.image_url = mediaObj.images[0];
       } else {
         postToUpdate.image_url = null;
       }
     } else if (postData.imageUrl) {
-      // Backward compatibility for old imageUrl field
-      console.log('[Database] Using legacy imageUrl:', postData.imageUrl);
       postToUpdate.image_url = postData.imageUrl;
       postToUpdate.media = { images: [postData.imageUrl], videos: [] };
     } else {
-      console.log('[Database] No media provided');
       postToUpdate.image_url = null;
       postToUpdate.media = { images: [], videos: [] };
     }
-    
-    console.log('[Database] Final update object:', JSON.stringify(postToUpdate, null, 2));
 
-    // Handle categories - update the category field with the first category
-    if (postData.categories && Array.isArray(postData.categories) && postData.categories.length > 0) {
-      postToUpdate.category = postData.categories[0];
-    }
+    const categoriesList = postData.categories || [originalPost.category || 'latest-news'];
+    postToUpdate.category = categoriesList[0];
 
-    console.log('[Database] About to update with:', postToUpdate);
-    console.log('[Database] Media value type:', typeof postToUpdate.media);
-
-    const { data, error } = await supabase
+    // 2. Update primary row
+    const { data: updatedPrimary, error: updateErr } = await supabase
       .from('posts')
       .update(postToUpdate)
       .eq('id', postId)
       .select()
       .single();
 
-    if (error) {
-      console.error('[Database] Supabase update error:', error);
-      throw error;
+    if (updateErr) throw updateErr;
+
+    // 3. Delete other rows sharing original title with different IDs
+    const { error: deleteErr } = await supabase
+      .from('posts')
+      .delete()
+      .eq('title', originalTitle)
+      .neq('id', postId);
+
+    if (deleteErr) {
+      console.error('[Database] Failed to delete other category entries:', deleteErr);
     }
 
-    console.log(`[Database] Successfully updated post with ID: ${postId}`);
-    console.log('[Database] Updated post data:', JSON.stringify(data, null, 2));
-    return data;
+    // 4. Insert new rows for extra categories
+    if (categoriesList.length > 1) {
+      for (let i = 1; i < categoriesList.length; i++) {
+        const extraPost = {
+          ...postToUpdate,
+          category: categoriesList[i]
+        };
+        const { error: insertErr } = await supabase
+          .from('posts')
+          .insert(extraPost);
+        if (insertErr) {
+          console.error(`[Database] Failed to insert extra category ${categoriesList[i]}:`, insertErr);
+        }
+      }
+    }
+
+    return updatedPrimary;
   } catch (error) {
     console.error('[Database] Error updating post:', error);
     throw new Error(`Failed to update post in database: ${error.message}`);
@@ -448,14 +497,23 @@ async function updatePost(postId, postData) {
 
 async function removePost(postId) {
   try {
+    // 1. Fetch title to delete all category copies
+    const { data: post, error: fetchErr } = await supabase
+      .from('posts')
+      .select('title')
+      .eq('id', postId)
+      .single();
+
+    if (fetchErr || !post) throw fetchErr || new Error('Post not found');
+
     const { error } = await supabase
       .from('posts')
       .delete()
-      .eq('id', postId);
+      .eq('title', post.title);
 
     if (error) throw error;
 
-    console.log(`[Database] Successfully deleted post with ID: ${postId}`);
+    console.log(`[Database] Successfully deleted all posts with title: ${post.title}`);
     return true;
   } catch (error) {
     console.error('[Database] Error deleting post:', error);

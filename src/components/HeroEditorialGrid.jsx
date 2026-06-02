@@ -87,7 +87,7 @@ const HeroEditorialGrid = () => {
       // Check if any post is pinned_hero — it becomes the lead
       const pinnedIdx = breaking.findIndex((p) => p.pinned_hero);
       let lead;
-      let secondary;
+      let secondary = [];
       if (pinnedIdx >= 0) {
         lead = breaking[pinnedIdx];
         secondary = [...breaking.slice(0, pinnedIdx), ...breaking.slice(pinnedIdx + 1)].slice(0, 3);
@@ -108,6 +108,18 @@ const HeroEditorialGrid = () => {
         if (p.title) usedTitles.add(p.title.trim().toLowerCase());
       });
 
+      let latestPool = dedupeByTitle(latestPoolRes).filter(
+        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
+      );
+
+      // Fill secondary stories if we have fewer than 3 to prevent empty space
+      while (secondary.length < 3 && latestPool.length > 0) {
+        const fillPost = latestPool.shift();
+        secondary.push(fillPost);
+        usedIds.add(fillPost.id);
+        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
+      }
+
       // Find breaking posts for the bottom row
       let bottomRow = breaking.filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
@@ -118,7 +130,8 @@ const HeroEditorialGrid = () => {
         if (p.title) usedTitles.add(p.title.trim().toLowerCase());
       });
 
-      let latestPool = dedupeByTitle(latestPoolRes).filter(
+      // Re-filter latestPool to exclude any bottomRow additions
+      latestPool = latestPool.filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
       );
 

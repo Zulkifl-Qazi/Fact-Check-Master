@@ -772,21 +772,6 @@ app.get('/api/posts', async (req, res) => {
       rawCategory !== undefined && rawCategory !== null && String(rawCategory).trim() !== ''
          ? String(rawCategory).trim()
          : undefined;
-    const hasListFilters =
-      categoryTrimmed !== undefined ||
-      (rawLimit !== undefined && rawLimit !== '' && rawLimit !== null) ||
-      (rawOffset !== undefined && rawOffset !== '' && rawOffset !== null);
-
-    if (!hasListFilters) {
-      const orderBy = popular === 'true'
-        ? 'ORDER BY IFNULL(pinned_popular,0) DESC, IFNULL(views,0) DESC, datetime(created_at) DESC'
-        : 'ORDER BY IFNULL(pinned_hero,0) DESC, datetime(created_at) DESC';
-      const posts = await db.all(
-        `SELECT * FROM posts WHERE status = "published" ${orderBy} LIMIT 100`
-      );
-      console.log('[API] Found', posts.length, 'posts');
-      return res.status(200).json(posts);
-    }
 
     let sql = 'SELECT * FROM posts WHERE status = "published"';
     const params = [];
@@ -808,6 +793,25 @@ app.get('/api/posts', async (req, res) => {
       sql += ' ORDER BY IFNULL(pinned_hero,0) DESC, datetime(created_at) DESC';
     }
 
+    // Always fetch a generous limit (500) to allow deduplication in memory
+    sql += ' LIMIT 500';
+
+    const posts = await db.all(sql, params);
+
+    // Deduplicate by title
+    const uniquePosts = [];
+    const seenTitles = new Set();
+    for (const post of posts) {
+      const titleTrimmed = post.title ? post.title.trim().toLowerCase() : '';
+      if (titleTrimmed && !seenTitles.has(titleTrimmed)) {
+        seenTitles.add(titleTrimmed);
+        uniquePosts.push(post);
+      } else if (!titleTrimmed) {
+        uniquePosts.push(post);
+      }
+    }
+
+    // Apply offset and limit on the deduplicated array
     const limitNum =
       rawLimit !== undefined && rawLimit !== '' && rawLimit !== null
         ? parseInt(rawLimit, 10)
@@ -818,18 +822,15 @@ app.get('/api/posts', async (req, res) => {
         : 0;
     const off = Number.isFinite(offsetNum) && offsetNum >= 0 ? offsetNum : 0;
 
+    let slicedPosts = uniquePosts;
     if (Number.isFinite(limitNum) && limitNum > 0) {
-      const capped = Math.min(limitNum, 200);
-      sql += ' LIMIT ? OFFSET ?';
-      params.push(capped, off);
-    } else if (categoryTrimmed) {
-      sql += ' LIMIT 500 OFFSET ?';
-      params.push(off);
+      slicedPosts = uniquePosts.slice(off, off + limitNum);
+    } else {
+      slicedPosts = uniquePosts.slice(off, off + 100); // Default to max 100 posts
     }
 
-    const posts = await db.all(sql, params);
-    console.log('[API] Found', posts.length, 'posts (filtered)');
-    return res.status(200).json(posts);
+    console.log('[API] Found', slicedPosts.length, 'posts (deduplicated)');
+    return res.status(200).json(slicedPosts);
   } catch (error) {
     console.error('[API] Database error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -854,14 +855,27 @@ app.post('/api/posts', async (req, res) => {
       }
     }
 
-    const category = (categories && categories.length > 0) ? categories[0] : 'latest-news';
+    const allCategories = categories && categories.length > 0 ? categories : ['latest-news'];
+    const primaryCategory = allCategories[0];
 
     const result = await db.run(
       'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url, media, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, category]
+      [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, primaryCategory]
     );
 
-    const newPost = await db.get('SELECT * FROM posts WHERE id = ?', [result.lastID]);
+    const primaryId = result.lastID;
+
+    // Create duplicate entries for remaining categories to match Supabase behavior
+    if (allCategories.length > 1) {
+      for (let i = 1; i < allCategories.length; i++) {
+        await db.run(
+          'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url, media, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, allCategories[i]]
+        );
+      }
+    }
+
+    const newPost = await db.get('SELECT * FROM posts WHERE id = ?', [primaryId]);
     
     // Broadcast to all connected clients
     if (global.broadcastPostsUpdate) {
@@ -869,7 +883,7 @@ app.post('/api/posts', async (req, res) => {
     }
 
     res.status(201).json({ 
-      id: result.lastID,
+      id: primaryId,
       success: true,
       message: 'Post created successfully'
     });
@@ -902,24 +916,33 @@ app.put('/api/posts', async (req, res) => {
       }
     }
 
-    const category = (categories && categories.length > 0) ? categories[0] : undefined;
-
-    // Build dynamic SET clause
-    let sql = 'UPDATE posts SET title = ?, content = ?, author = ?, fact_check_status = ?, image_url = ?, source_url = ?, media = ?';
-    const params = [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson];
-
-    if (category) {
-      sql += ', category = ?';
-      params.push(category);
-    }
-
-    sql += ', updated_at = CURRENT_TIMESTAMP WHERE id = ?';
-    params.push(id);
-
-    const result = await db.run(sql, params);
-
-    if (result.changes === 0) {
+    // Fetch original title
+    const post = await db.get('SELECT title, category FROM posts WHERE id = ?', [id]);
+    if (!post) {
       return res.status(404).json({ error: 'Post not found' });
+    }
+    const originalTitle = post.title;
+
+    const allCategories = categories && categories.length > 0 ? categories : [post.category || 'latest-news'];
+    const primaryCategory = allCategories[0];
+
+    // Update primary row
+    let sql = 'UPDATE posts SET title = ?, content = ?, author = ?, fact_check_status = ?, image_url = ?, source_url = ?, media = ?, category = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    const params = [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, primaryCategory, id];
+
+    await db.run(sql, params);
+
+    // Delete other rows matching original title with different IDs
+    await db.run('DELETE FROM posts WHERE title = ? AND id != ?', [originalTitle, id]);
+
+    // Insert extra category rows
+    if (allCategories.length > 1) {
+      for (let i = 1; i < allCategories.length; i++) {
+        await db.run(
+          'INSERT INTO posts (title, content, author, fact_check_status, image_url, source_url, media, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [title.trim(), content.trim(), author.trim(), fact_check_status, resolvedImageUrl, postUrl || null, mediaJson, allCategories[i]]
+        );
+      }
     }
 
     const updatedPost = await db.get('SELECT * FROM posts WHERE id = ?', [id]);
@@ -944,14 +967,16 @@ app.delete('/api/posts/:id', async (req, res) => {
   try {
     const { id } = req.params;
     
-    const result = await db.run(
-      'DELETE FROM posts WHERE id = ?',
-      [id]
-    );
-
-    if (result.changes === 0) {
+    // Fetch title to delete all category copies
+    const post = await db.get('SELECT title FROM posts WHERE id = ?', [id]);
+    if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
+
+    await db.run(
+      'DELETE FROM posts WHERE title = ?',
+      [post.title]
+    );
 
     // Broadcast to all connected clients
     if (global.broadcastPostsUpdate) {

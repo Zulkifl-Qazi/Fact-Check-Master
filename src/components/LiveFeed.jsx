@@ -31,7 +31,23 @@ const LiveFeed = ({ searchQuery = '' }) => {
             }
             
             const postsData = await postsRes.json();
-            const latestNewsPosts = Array.isArray(postsData) ? postsData.slice(0, 24) : [];
+            
+            // Frontend fallback deduplication by title
+            const uniquePosts = [];
+            const seenTitles = new Set();
+            if (Array.isArray(postsData)) {
+                for (const post of postsData) {
+                    const titleTrimmed = post.title ? post.title.trim().toLowerCase() : '';
+                    if (titleTrimmed && !seenTitles.has(titleTrimmed)) {
+                        seenTitles.add(titleTrimmed);
+                        uniquePosts.push(post);
+                    } else if (!titleTrimmed) {
+                        uniquePosts.push(post);
+                    }
+                }
+            }
+            
+            const latestNewsPosts = uniquePosts.slice(0, 24);
             setPosts(latestNewsPosts);
 
             if (popularRes.ok) {

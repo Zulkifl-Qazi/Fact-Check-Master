@@ -22,7 +22,22 @@ const LiveFeed = () => {
             const data = await response.json();
             console.log('Posts loaded:', data);
             
-            setPosts(Array.isArray(data) ? data : []);
+            // Frontend fallback deduplication by title
+            const uniquePosts = [];
+            const seenTitles = new Set();
+            if (Array.isArray(data)) {
+                for (const post of data) {
+                    const titleTrimmed = post.title ? post.title.trim().toLowerCase() : '';
+                    if (titleTrimmed && !seenTitles.has(titleTrimmed)) {
+                        seenTitles.add(titleTrimmed);
+                        uniquePosts.push(post);
+                    } else if (!titleTrimmed) {
+                        uniquePosts.push(post);
+                    }
+                }
+            }
+            
+            setPosts(uniquePosts);
         } catch (err) {
             console.error('Failed to load posts:', err);
             setError(err.message);
