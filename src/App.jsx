@@ -35,13 +35,14 @@ function App() {
     <BrowserRouter>
     <ScrollToHash />
     <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
       <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
         <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
         <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />
       </div>
       <Navbar />
-      <main className="relative flex-grow w-full z-10">
+      <main id="main-content" className="relative flex-grow w-full z-10">
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<HomePage />} />

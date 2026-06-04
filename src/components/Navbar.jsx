@@ -75,7 +75,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-slate-100 transition-colors duration-200" style={{ textDecoration: 'none' }}>
               <div className="relative">
-                <img src={logo} alt="Logo" className="h-8 w-8 rounded-lg shadow-md" />
+                <img src={logo} alt="Fact Check Master Logo" width="32" height="32" fetchPriority="high" className="h-8 w-8 rounded-lg shadow-md" />
                 <div className="absolute -top-1 -right-1">
                   <FaShieldAlt className="text-blue-600 dark:text-blue-500 text-[10px]" />
                 </div>
@@ -160,7 +160,9 @@ const Navbar = () => {
                 pointerEvents: isSearchOpen ? 'auto' : 'none',
               }}
             >
+              <label htmlFor="search-facts-input" className="sr-only">Search facts</label>
               <input
+                id="search-facts-input"
                 type="text"
                 placeholder="Search facts..."
                 aria-label="Search facts"

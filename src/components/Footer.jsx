@@ -1,7 +1,7 @@
 // src/components/Footer.jsx - Updated Nov 24, 2025 - Footer navigation working with useNavigate
 import React from 'react';
 import { FaTwitter, FaFacebook, FaLinkedin, FaShieldAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -37,15 +37,16 @@ const Footer = () => {
               { path: '/about', label: 'About' },
               { path: '/contact', label: 'Contact' },
               { path: '/privacy-policy', label: 'Privacy Policy' },
-              { path: '/terms-of-service', label: 'Terms' }
+              { path: '/terms-of-service', label: 'Terms of Service' }
             ].map((link, idx) => (
-              <button 
+              <Link 
                 key={idx}
-                onClick={() => handleNavigation(link.path)}
+                to={link.path}
                 className="text-xs md:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 px-2 py-1.5 md:px-3 md:py-2 rounded-md transition-all duration-200 bg-transparent border-none cursor-pointer whitespace-nowrap"
+                style={{ textDecoration: 'none' }}
               >
                 {link.label}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -59,6 +60,7 @@ const Footer = () => {
               className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 flex items-center justify-center"
             >
               <FaTwitter className="text-base" />
+              <span className="sr-only">Follow us on Twitter</span>
             </a>
 
             <a 
@@ -69,6 +71,7 @@ const Footer = () => {
               className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 flex items-center justify-center"
             >
               <FaFacebook className="text-base" />
+              <span className="sr-only">Follow us on Facebook</span>
             </a>
 
             <a 
@@ -79,6 +82,7 @@ const Footer = () => {
               className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 flex items-center justify-center"
             >
               <FaLinkedin className="text-base" />
+              <span className="sr-only">Follow us on LinkedIn</span>
             </a>
           </div>
         </div>

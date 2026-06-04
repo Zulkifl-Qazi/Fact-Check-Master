@@ -119,6 +119,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
     if (loading) {
         return (
             <motion.div 
+                id="live-feed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="w-full py-20 flex flex-col items-center justify-center bg-white dark:bg-slate-950 transition-colors duration-300"
@@ -132,6 +133,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
     if (error) {
         return (
             <motion.div 
+                id="live-feed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="max-w-[1600px] mx-auto px-4 md:px-8 py-16"
