@@ -174,9 +174,62 @@ const HeroEditorialGrid = () => {
 
   if (loading) {
     return (
-      <div className="w-full h-[400px] flex items-center justify-center bg-white dark:bg-slate-950 transition-colors duration-300">
-        <div className="w-9 h-9 border-3 border-slate-200 dark:border-slate-800 border-t-red-600 rounded-full animate-spin" />
-      </div>
+      <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950 transition-colors duration-300">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
+            
+            {/* Column 1 Skeleton */}
+            <div className="flex flex-col justify-between h-full gap-6">
+              <div className="w-full aspect-video rounded-lg skeleton min-h-[250px] sm:min-h-[350px] lg:min-h-[400px]" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <div className="w-full aspect-video rounded-md skeleton" />
+                  <div className="h-4 w-3/4 rounded skeleton" />
+                  <div className="h-3 w-1/4 rounded skeleton" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="w-full aspect-video rounded-md skeleton" />
+                  <div className="h-4 w-3/4 rounded skeleton" />
+                  <div className="h-3 w-1/4 rounded skeleton" />
+                </div>
+              </div>
+            </div>
+
+            {/* Column 2 Skeleton */}
+            <div className="flex flex-col justify-between h-full gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex flex-col gap-2 pb-4 border-b border-slate-200/60 dark:border-slate-800/60 last:border-none last:pb-0">
+                  <div className="w-full aspect-video rounded-md skeleton" />
+                  <div className="h-4 w-5/6 rounded skeleton" />
+                  <div className="h-3 w-1/3 rounded skeleton" />
+                </div>
+              ))}
+            </div>
+
+            {/* Column 3 Skeleton */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <div className="h-5 w-1/3 rounded skeleton mb-4" />
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="py-2.5 border-b border-slate-200/50 dark:border-slate-800/30 flex flex-col gap-2">
+                    <div className="h-4 w-full rounded skeleton" />
+                    <div className="h-3 w-1/4 rounded skeleton" />
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div className="h-5 w-1/3 rounded skeleton mb-4" />
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="py-2 border-b border-slate-200/30 dark:border-slate-800/10 flex flex-col gap-2">
+                    <div className="h-3.5 w-5/6 rounded skeleton" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
     );
   }
 
