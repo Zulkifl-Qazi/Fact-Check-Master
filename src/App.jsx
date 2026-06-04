@@ -19,7 +19,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 function App() {
   useEffect(() => {
     // Set document title and meta description
-    document.title = 'Fact Check Master';
+    document.title = 'Fact Check Master - Real-Time Fact Checking & Verification';
     
     // Set meta description
     let metaDescription = document.querySelector('meta[name="description"]');
@@ -28,13 +28,14 @@ function App() {
       metaDescription.name = 'description';
       document.head.appendChild(metaDescription);
     }
-    metaDescription.content = 'Countering Fake News, Propaganda, Post-Truth and Beyond The Truth Rhetoric.';
+    metaDescription.content = 'Fact Check Master is a real-time fact-checking platform dedicated to verifying viral news, social media claims, and countering misinformation.';
   }, []);
 
   return (
     <BrowserRouter>
     <ScrollToHash />
     <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
       <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
         <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
         <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />

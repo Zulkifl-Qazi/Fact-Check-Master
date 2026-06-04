@@ -300,6 +300,39 @@ const quillStyles = `
   }
 `;
 
+// Client-side image compression utility
+const compressImage = (file, maxWidth = 1200, quality = 0.8) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 const AdminPosts = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
@@ -353,7 +386,9 @@ const AdminPosts = () => {
   const loadPosts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/posts');
+      const response = await axios.get('/api/posts', {
+        headers: getAdminHeaders()
+      });
       const posts = response.data || [];
       console.log('Raw posts from API:', posts.length, 'posts');
       if (posts.length > 0) {
@@ -405,14 +440,46 @@ const AdminPosts = () => {
 
   const handlePinToggle = async (postId) => {
     setPinningId(postId);
+    
+    // Optimistic local update to eliminate UI lag
+    setPosts(prevPosts => {
+      const targetPost = prevPosts.find(p => p.id === postId);
+      if (!targetPost) return prevPosts;
+      
+      const isCurrentlyPinned = targetPost.pinned_hero;
+      
+      return prevPosts.map(p => {
+        if (p.id === postId) {
+          return { ...p, pinned_hero: !isCurrentlyPinned };
+        }
+        // Unpin all other posts from hero if this one is being pinned
+        if (!isCurrentlyPinned && p.pinned_hero) {
+          return { ...p, pinned_hero: false };
+        }
+        return p;
+      });
+    });
+
     try {
-      await axios.patch(`/api/posts?id=${postId}&action=pin-hero`, {}, {
+      const response = await axios.patch(`/api/posts?id=${postId}&action=pin-hero`, {}, {
         headers: getAdminHeaders()
       });
-      await loadPosts();
+      
+      if (response.data && response.data.post) {
+        setPosts(prevPosts => prevPosts.map(p => {
+          if (p.title === response.data.post.title) {
+            return { ...p, pinned_hero: response.data.post.pinned_hero };
+          }
+          if (response.data.post.pinned_hero && p.id !== response.data.post.id) {
+            return { ...p, pinned_hero: false };
+          }
+          return p;
+        }));
+      }
     } catch (error) {
       console.error('Pin toggle failed:', error);
       alert('Failed to pin/unpin post');
+      await loadPosts(); // Revert on error
     } finally {
       setPinningId(null);
     }
@@ -420,14 +487,32 @@ const AdminPosts = () => {
 
   const handlePopularPinToggle = async (postId) => {
     setPinningId(postId);
+    
+    // Optimistic local update to eliminate UI lag
+    setPosts(prevPosts => prevPosts.map(p => {
+      if (p.id === postId) {
+        return { ...p, pinned_popular: p.pinned_popular ? 0 : 1 };
+      }
+      return p;
+    }));
+
     try {
-      await axios.patch(`/api/posts?id=${postId}&action=pin-popular`, {}, {
+      const response = await axios.patch(`/api/posts?id=${postId}&action=pin-popular`, {}, {
         headers: getAdminHeaders()
       });
-      await loadPosts();
+      
+      if (response.data && response.data.post) {
+        setPosts(prevPosts => prevPosts.map(p => {
+          if (p.title === response.data.post.title) {
+            return { ...p, pinned_popular: response.data.post.pinned_popular };
+          }
+          return p;
+        }));
+      }
     } catch (error) {
       console.error('Popular pin toggle failed:', error);
       alert('Failed to pin/unpin popular post');
+      await loadPosts(); // Revert on error
     } finally {
       setPinningId(null);
     }
@@ -1071,37 +1156,36 @@ const AdminPosts = () => {
                             const file = e.target.files[0];
                             if (!file) return;
                             
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = async () => {
-                              try {
-                                const payload = {
-                                  imageBase64: reader.result,
-                                  fileName: file.name,
-                                  contentType: file.type
-                                };
-                                
-                                const res = await axios.post('/api/upload', payload, {
-                                  headers: { 
-                                    'Content-Type': 'application/json',
-                                    ...getAdminHeaders()
-                                  }
-                                });
-                                
-                                setFormData(prev => ({
-                                  ...prev,
-                                  media: {
-                                    ...prev.media,
-                                    images: [...prev.media.images, res.data.imageUrl]
-                                  }
-                                }));
-                              } catch (error) {
-                                console.error('Upload failed', error);
-                                alert('Failed to upload image. Please try again.');
-                              } finally {
-                                e.target.value = ''; // Reset input to allow selecting same file again
-                              }
-                            };
+                            try {
+                              // Compress image before uploading
+                              const compressedBase64 = await compressImage(file, 1200, 0.8);
+                              
+                              const payload = {
+                                imageBase64: compressedBase64,
+                                fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg", // Force .jpg extension
+                                contentType: 'image/jpeg'
+                              };
+                              
+                              const res = await axios.post('/api/upload', payload, {
+                                headers: { 
+                                  'Content-Type': 'application/json',
+                                  ...getAdminHeaders()
+                                }
+                              });
+                              
+                              setFormData(prev => ({
+                                ...prev,
+                                media: {
+                                  ...prev.media,
+                                  images: [...prev.media.images, res.data.imageUrl]
+                                }
+                              }));
+                            } catch (error) {
+                              console.error('Upload failed', error);
+                              alert('Failed to upload image. Please try again.');
+                            } finally {
+                              e.target.value = ''; // Reset input to allow selecting same file again
+                            }
                           }}
                         />
                         <span className="media-upload-device">Upload from Device</span>

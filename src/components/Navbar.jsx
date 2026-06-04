@@ -163,6 +163,7 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Search facts..."
+                aria-label="Search facts"
                 autoFocus={isSearchOpen}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
