@@ -257,6 +257,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                                 <img 
                                                     src={post.image_url} 
                                                     alt={post.title} 
+                                                    loading="lazy"
                                                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                                 />
                                             ) : (
@@ -299,6 +300,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                                 <img 
                                                     src={post.image_url} 
                                                     alt={post.title} 
+                                                    loading="lazy"
                                                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                                 />
                                             ) : (

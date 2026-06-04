@@ -274,6 +274,7 @@ const HeroEditorialGrid = () => {
                     <img
                       src={mainImage}
                       alt={mainStory.title}
+                      fetchPriority="high"
                       className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
@@ -323,6 +324,7 @@ const HeroEditorialGrid = () => {
                             <img
                               src={img}
                               alt={post.title}
+                              loading="lazy"
                               className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
@@ -374,6 +376,7 @@ const HeroEditorialGrid = () => {
                         <img
                           src={img}
                           alt={post.title}
+                          loading="lazy"
                           className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
