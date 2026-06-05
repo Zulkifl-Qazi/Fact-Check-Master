@@ -255,7 +255,7 @@ const HeroEditorialGrid = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="flex flex-col justify-between h-full"
+            className="flex flex-col justify-between h-full gap-6"
           >
             <div
               className="hero-lead hero-link cursor-pointer relative overflow-hidden rounded-lg group"
@@ -347,7 +347,7 @@ const HeroEditorialGrid = () => {
 
           {/* ── COL 2: SECONDARY STORIES — each with image ── */}
           <motion.div
-            className="flex flex-col justify-between h-full"
+            className="flex flex-col justify-between h-full gap-6"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08 }}
