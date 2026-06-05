@@ -20,11 +20,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
             setLoading(true);
             setError(null);
             
-            // Parallel fetch latest news and popular posts
-            const [postsRes, popularRes] = await Promise.all([
-                fetch('/api/posts'),
-                fetch('/api/posts?popular=true&limit=7')
-            ]);
+            const postsRes = await fetch('/api/posts');
             
             if (!postsRes.ok) {
                 throw new Error(`HTTP ${postsRes.status}: ${postsRes.statusText}`);
@@ -50,13 +46,22 @@ const LiveFeed = ({ searchQuery = '' }) => {
             const latestNewsPosts = uniquePosts.slice(0, 24);
             setPosts(latestNewsPosts);
 
-            if (popularRes.ok) {
-                const popularData = await popularRes.json();
-                setPopularPosts(Array.isArray(popularData) ? popularData.slice(0, 7) : []);
-            } else {
-                // fallback if popular endpoint fails
-                setPopularPosts(latestNewsPosts.slice(0, 7));
-            }
+            // Compute popular posts locally by mimicking backend sort logic:
+            // 1. pinned_popular descending
+            // 2. views descending
+            // 3. created_at descending
+            const sortedPopular = [...uniquePosts].sort((a, b) => {
+                const pinA = a.pinned_popular ? 1 : 0;
+                const pinB = b.pinned_popular ? 1 : 0;
+                if (pinB !== pinA) return pinB - pinA;
+                
+                const viewsA = a.views || 0;
+                const viewsB = b.views || 0;
+                if (viewsB !== viewsA) return viewsB - viewsA;
+                
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+            setPopularPosts(sortedPopular.slice(0, 7));
         } catch (err) {
             console.error('Failed to load posts:', err);
             setError(err.message);

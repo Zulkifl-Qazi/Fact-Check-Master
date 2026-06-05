@@ -29,6 +29,34 @@ function App() {
       document.head.appendChild(metaDescription);
     }
     metaDescription.content = 'Fact Check Master is a real-time fact-checking platform dedicated to verifying viral news, social media claims, and countering misinformation.';
+
+    // Lazy load Google AdSense on first user interaction to prevent render blocking
+    let adsenseLoaded = false;
+    const loadAdsense = () => {
+      if (adsenseLoaded) return;
+      adsenseLoaded = true;
+      
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5110446565839848';
+      script.crossOrigin = 'anonymous';
+      document.body.appendChild(script);
+
+      // Clean up event listeners immediately
+      window.removeEventListener('scroll', loadAdsense);
+      window.removeEventListener('mousemove', loadAdsense);
+      window.removeEventListener('touchstart', loadAdsense);
+    };
+
+    window.addEventListener('scroll', loadAdsense, { passive: true });
+    window.addEventListener('mousemove', loadAdsense, { passive: true });
+    window.addEventListener('touchstart', loadAdsense, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', loadAdsense);
+      window.removeEventListener('mousemove', loadAdsense);
+      window.removeEventListener('touchstart', loadAdsense);
+    };
   }, []);
 
   return (

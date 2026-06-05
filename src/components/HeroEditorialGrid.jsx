@@ -10,7 +10,9 @@ async function fetchPostsList(params) {
   if (params.category) q.set('category', params.category);
   if (params.limit != null) q.set('limit', String(params.limit));
   if (params.offset != null) q.set('offset', String(params.offset));
-  const res = await fetch(`/api/posts?${q.toString()}`);
+  const queryString = q.toString();
+  const url = queryString ? `/api/posts?${queryString}` : '/api/posts';
+  const res = await fetch(url);
   if (!res.ok) return [];
   const data = await res.json();
   return Array.isArray(data) ? data : [];
