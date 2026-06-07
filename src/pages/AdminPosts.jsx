@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -356,22 +356,24 @@ const AdminPosts = () => {
   const [mediaTab, setMediaTab] = useState('images');
   const [tempImageUrl, setTempImageUrl] = useState('');
   const [tempVideoUrl, setTempVideoUrl] = useState('');
-  const [pinningId, setPinningId] = useState(null);
-
-  const getAdminHeaders = () => ({
-    'X-Device-ID': localStorage.getItem('device_id') || ''
-  });
+  const lastInteractionRef = useRef(0);
 
   // Auto-refresh posts every 15 seconds for live collaboration
   useEffect(() => {
     const interval = setInterval(() => {
-      loadPosts();
+      loadPosts(true); // Silent background refresh
     }, 15000); // Refresh every 15 seconds
 
     return () => {
       clearInterval(interval);
     };
   }, []);
+
+  const [pinningId, setPinningId] = useState(null);
+
+  const getAdminHeaders = () => ({
+    'X-Device-ID': localStorage.getItem('device_id') || ''
+  });
 
   // Check admin authentication
   useEffect(() => {
@@ -380,11 +382,18 @@ const AdminPosts = () => {
       navigate('/admin-login');
       return;
     }
-    loadPosts();
+    loadPosts(false); // Initial load (non-silent)
   }, [navigate]);
 
-  const loadPosts = async () => {
-    setLoading(true);
+  const loadPosts = async (silent = false) => {
+    // Prevent silent auto-refresh from clashing with recent user actions
+    if (silent && (Date.now() - lastInteractionRef.current < 8000)) {
+      return;
+    }
+    
+    if (!silent) {
+      setLoading(true);
+    }
     try {
       const response = await axios.get('/api/posts', {
         headers: getAdminHeaders()
@@ -429,7 +438,9 @@ const AdminPosts = () => {
       console.error('Failed to load posts:', error);
       setPosts([]);
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   };
 
@@ -439,6 +450,7 @@ const AdminPosts = () => {
   };
 
   const handlePinToggle = async (postId) => {
+    lastInteractionRef.current = Date.now();
     setPinningId(postId);
     
     // Optimistic local update to eliminate UI lag
@@ -467,7 +479,7 @@ const AdminPosts = () => {
       
       if (response.data && response.data.post) {
         setPosts(prevPosts => prevPosts.map(p => {
-          if (p.title === response.data.post.title) {
+          if (p.id === response.data.post.id) {
             return { ...p, pinned_hero: response.data.post.pinned_hero };
           }
           if (response.data.post.pinned_hero && p.id !== response.data.post.id) {
@@ -486,6 +498,7 @@ const AdminPosts = () => {
   };
 
   const handlePopularPinToggle = async (postId) => {
+    lastInteractionRef.current = Date.now();
     setPinningId(postId);
     
     // Optimistic local update to eliminate UI lag
@@ -503,7 +516,7 @@ const AdminPosts = () => {
       
       if (response.data && response.data.post) {
         setPosts(prevPosts => prevPosts.map(p => {
-          if (p.title === response.data.post.title) {
+          if (p.id === response.data.post.id) {
             return { ...p, pinned_popular: response.data.post.pinned_popular };
           }
           return p;
@@ -561,6 +574,7 @@ const AdminPosts = () => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.content.trim()) return;
     
+    lastInteractionRef.current = Date.now();
     setSubmitting(true);
     try {
       console.log('Submitting post data:', formData);
@@ -588,6 +602,7 @@ const AdminPosts = () => {
   const handleDelete = async (postId) => {
     if (!window.confirm('Are you sure you want to delete this post?')) return;
     
+    lastInteractionRef.current = Date.now();
     try {
       const response = await axios.delete(`/api/posts?id=${postId}`, {
         headers: getAdminHeaders()
@@ -653,6 +668,7 @@ const AdminPosts = () => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.content.trim()) return;
     
+    lastInteractionRef.current = Date.now();
     setSubmitting(true);
     try {
       console.log('Updating post:', editingPost.id);
@@ -1609,19 +1625,19 @@ const AdminPosts = () => {
                   <div className="post-actions-container">
                     <button
                       onClick={() => handlePinToggle(post.id)}
-                      disabled={pinningId === post.id}
+                      disabled={pinningId !== null}
                       style={{
                         padding: '0.5rem',
                         background: post.pinned_hero ? 'rgba(245, 158, 11, 0.3)' : 'rgba(100, 116, 139, 0.2)',
                         color: post.pinned_hero ? 'rgb(251, 191, 36)' : 'rgb(148, 163, 184)',
                         border: post.pinned_hero ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid transparent',
                         borderRadius: '8px',
-                        cursor: pinningId === post.id ? 'wait' : 'pointer',
+                        cursor: pinningId !== null ? 'wait' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         transition: 'all 0.3s',
-                        opacity: pinningId === post.id ? 0.5 : 1
+                        opacity: pinningId !== null ? 0.6 : 1
                       }}
                       title={post.pinned_hero ? 'Unpin from Hero (currently the lead story)' : 'Pin to Hero (make lead story)'}
                     >
@@ -1629,19 +1645,19 @@ const AdminPosts = () => {
                     </button>
                     <button
                       onClick={() => handlePopularPinToggle(post.id)}
-                      disabled={pinningId === post.id}
+                      disabled={pinningId !== null}
                       style={{
                         padding: '0.5rem',
                         background: post.pinned_popular ? 'rgba(239, 68, 68, 0.3)' : 'rgba(100, 116, 139, 0.2)',
                         color: post.pinned_popular ? 'rgb(248, 113, 113)' : 'rgb(148, 163, 184)',
                         border: post.pinned_popular ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid transparent',
                         borderRadius: '8px',
-                        cursor: pinningId === post.id ? 'wait' : 'pointer',
+                        cursor: pinningId !== null ? 'wait' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         transition: 'all 0.3s',
-                        opacity: pinningId === post.id ? 0.5 : 1
+                        opacity: pinningId !== null ? 0.6 : 1
                       }}
                       title={post.pinned_popular ? 'Remove from Most Popular section' : 'Pin to Most Popular section'}
                     >
