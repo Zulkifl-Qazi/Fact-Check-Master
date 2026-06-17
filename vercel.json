@@ -1,12 +1,4 @@
 {
-  "images": {
-    "sizes": [320, 640, 800, 1200, 1920],
-    "domains": [
-      "bswvizupdnwrdhtnmgqw.supabase.co"
-    ],
-    "formats": ["image/webp", "image/avif"],
-    "minimumCacheTTL": 86400
-  },
   "functions": {
     "api/posts.js": {
       "maxDuration": 10
@@ -20,19 +12,7 @@
   ],
   "headers": [
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(?:jpg|jpeg|png|webp|avif|gif|svg|ico)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.(?:js|css)",
+      "source": "/assets/:path*",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]

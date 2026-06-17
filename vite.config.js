@@ -23,8 +23,6 @@ export default defineConfig({
           'vendor-icons': ['react-icons'],
           // Rich text editor — admin only, very large
           'vendor-quill': ['react-quill'],
-          // Supabase client
-          'vendor-supabase': ['@supabase/supabase-js'],
         }
       }
     },
