@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye, FaTimes } from 'react-icons/fa';
+import { vercelImg } from '../utils/vercelImage';
 
 const stripHtml = (str) => {
     if (!str) return '';
@@ -123,38 +123,34 @@ const LiveFeed = ({ searchQuery = '' }) => {
 
     if (loading) {
         return (
-            <motion.div 
+            <div 
                 id="live-feed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="w-full py-20 flex flex-col items-center justify-center bg-white dark:bg-slate-950 transition-colors duration-300"
+                className="w-full py-20 flex flex-col items-center justify-center bg-white dark:bg-slate-950 transition-colors duration-300 hero-fade-in"
             >
-                <div className="animate-spin rounded-full h-9 w-9 border-3 border-slate-200 dark:border-slate-800 border-t-blue-600 mb-4"></div>
-                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Loading latest news...</p>
-            </motion.div>
+            <div className="animate-spin rounded-full h-9 w-9 border-3 border-slate-200 dark:border-slate-800 border-t-blue-600 mb-4"></div>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Loading latest news...</p>
+        </div>
         );
     }
 
     if (error) {
         return (
-            <motion.div 
+            <div 
                 id="live-feed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="max-w-[1600px] mx-auto px-4 md:px-8 py-16"
+                className="max-w-[1600px] mx-auto px-4 md:px-8 py-16 hero-fade-in"
             >
-                <div className="text-center p-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-900/30 max-w-md mx-auto">
-                    <FaExclamationTriangle className="text-red-500 dark:text-red-400 text-2xl mx-auto mb-4" />
-                    <h3 className="text-base font-bold text-red-800 dark:text-red-400 mb-2">Failed to load posts</h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mb-4">{error}</p>
-                    <button 
-                        onClick={loadPosts}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors duration-150 shadow-sm"
-                    >
-                        Retry
-                    </button>
-                </div>
-            </motion.div>
+            <div className="text-center p-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-900/30 max-w-md mx-auto">
+                <FaExclamationTriangle className="text-red-500 dark:text-red-400 text-2xl mx-auto mb-4" />
+                <h3 className="text-base font-bold text-red-800 dark:text-red-400 mb-2">Failed to load posts</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mb-4">{error}</p>
+                <button 
+                    onClick={loadPosts}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors duration-150 shadow-sm"
+                >
+                    Retry
+                </button>
+            </div>
+        </div>
         );
     }
 
@@ -188,9 +184,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                 </div>
 
                 {filteredPosts.length === 0 ? (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                    <div 
                         className="text-center py-16 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-8 max-w-md mx-auto"
                     >
                         <FaRss className="text-slate-400 dark:text-slate-600 text-3xl mx-auto mb-4" />
@@ -205,7 +199,7 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                 View All Posts
                             </button>
                         )}
-                    </motion.div>
+                    </div>
                 ) : isSearchActive ? (
                     /* Simple Grid for Search Results */
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -218,10 +212,13 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                 {post.image_url && (
                                     <div className="relative w-full aspect-video overflow-hidden bg-slate-100 dark:bg-slate-950">
                                         <img 
-                                            src={post.image_url} 
+                                            src={vercelImg(post.image_url, 800, 75)} 
                                             alt={post.title} 
                                             className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" 
-                                            loading="lazy" 
+                                            loading="lazy"
+                                            decoding="async"
+                                            width="800"
+                                            height="450"
                                         />
                                         <div className="absolute top-3 right-3 z-10">
                                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border shadow-sm ${getStatusBadge(post.fact_check_status)}`}>
@@ -260,9 +257,12 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                         <div className="relative w-full sm:w-[240px] aspect-[16/10] overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 to-slate-950 flex-shrink-0">
                                             {post.image_url ? (
                                                 <img 
-                                                    src={post.image_url} 
+                                                    src={vercelImg(post.image_url, 480, 75)} 
                                                     alt={post.title} 
                                                     loading="lazy"
+                                                    decoding="async"
+                                                    width="480"
+                                                    height="300"
                                                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                                 />
                                             ) : (
@@ -303,9 +303,12 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                         <div className="w-24 h-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 relative">
                                             {post.image_url ? (
                                                 <img 
-                                                    src={post.image_url} 
+                                                    src={vercelImg(post.image_url, 96, 60)} 
                                                     alt={post.title} 
                                                     loading="lazy"
+                                                    decoding="async"
+                                                    width="96"
+                                                    height="64"
                                                     className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                                 />
                                             ) : (
@@ -367,10 +370,13 @@ const LiveFeed = ({ searchQuery = '' }) => {
                                             {post.image_url && (
                                                 <div className="relative w-full aspect-video overflow-hidden bg-slate-100 dark:bg-slate-950">
                                                     <img 
-                                                        src={post.image_url} 
+                                                        src={vercelImg(post.image_url, 640, 75)} 
                                                         alt={post.title} 
                                                         className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]" 
                                                         loading="lazy" 
+                                                        decoding="async"
+                                                        width="640"
+                                                        height="360"
                                                     />
                                                     <div className="absolute top-3 right-3 z-10">
                                                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border shadow-sm ${getStatusBadge(post.fact_check_status)}`}>

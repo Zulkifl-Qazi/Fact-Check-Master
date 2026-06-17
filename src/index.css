@@ -1064,3 +1064,36 @@ html {
   outline: 2px solid #f97316;
   outline-offset: 2px;
 }
+
+/* ─── Performance: CSS fade-in replacing Framer Motion ───────────────────── */
+@keyframes heroFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-fade-in {
+  animation: heroFadeInUp 0.45s ease-out both;
+}
+
+/* ─── Performance: content-visibility for below-fold sections ────────────── */
+/* Allows browser to skip rendering off-screen sections until needed */
+#live-feed,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px; /* estimated height to avoid layout shift */
+}
+
+/* ─── Reduced Motion: respect user preference ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

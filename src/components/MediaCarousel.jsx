@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { getVideoPlatformIcon } from '../utils/videoParser';
+import { vercelImg } from '../utils/vercelImage';
 
 /**
  * MediaCarousel Component
@@ -64,8 +65,10 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
           overflow: 'hidden'
         }}>
           <img
-            src={item.url}
+            src={vercelImg(item.url, isFullscreen ? 1920 : 1200, 85)}
             alt="Post media"
+            fetchPriority={currentIndex === 0 && !isFullscreen ? 'high' : 'auto'}
+            decoding={currentIndex === 0 && !isFullscreen ? 'sync' : 'async'}
             style={{
               maxWidth: '100%',
               maxHeight: '100%',
@@ -251,7 +254,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
 
         {/* Navigation Arrows */}
         {allMedia.length > 1 && (
-          <>
+            <>
             <button
               onClick={goToPrev}
               style={{
@@ -263,13 +266,13 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
-                width: window.innerWidth < 768 ? '35px' : '40px',
-                height: window.innerWidth < 768 ? '35px' : '40px',
+                width: '40px',
+                height: '40px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+                fontSize: '1.1rem',
                 zIndex: 10,
                 touchAction: 'manipulation'
               }}
@@ -287,13 +290,13 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
-                width: window.innerWidth < 768 ? '35px' : '40px',
-                height: window.innerWidth < 768 ? '35px' : '40px',
+                width: '40px',
+                height: '40px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: window.innerWidth < 768 ? '1rem' : '1.2rem',
+                fontSize: '1.1rem',
                 zIndex: 10,
                 touchAction: 'manipulation'
               }}
@@ -310,9 +313,9 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
           right: '10px',
           background: 'rgba(0, 0, 0, 0.7)',
           color: 'white',
-          padding: window.innerWidth < 768 ? '4px 8px' : '5px 10px',
+          padding: '5px 10px',
           borderRadius: '20px',
-          fontSize: window.innerWidth < 768 ? '0.75rem' : '0.875rem',
+          fontSize: '0.875rem',
           fontWeight: '600'
         }}>
           {currentIndex + 1} / {allMedia.length}
@@ -323,7 +326,7 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
       {allMedia.length > 1 && (
         <div style={{
           display: 'flex',
-          gap: window.innerWidth < 768 ? '6px' : '10px',
+          gap: '8px',
           marginTop: '10px',
           overflowX: 'auto',
           padding: '5px',
@@ -334,8 +337,8 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               style={{
-                width: window.innerWidth < 768 ? '60px' : '80px',
-                height: window.innerWidth < 768 ? '45px' : '60px',
+                width: '70px',
+                height: '52px',
                 borderRadius: '8px',
                 overflow: 'hidden',
                 cursor: 'pointer',
@@ -351,12 +354,16 @@ const MediaCarousel = ({ media, autoPlay = false }) => {
             >
               {item.type === 'image' ? (
                 <img
-                  src={item.url}
+                  src={vercelImg(item.url, 140, 60)}
                   alt={`Thumbnail ${index + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  width="70"
+                  height="52"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
-                <div style={{ color: 'white', fontSize: window.innerWidth < 768 ? '1.2rem' : '1.5rem' }}>
+                <div style={{ color: 'white', fontSize: '1.3rem' }}>
                   {getVideoPlatformIcon(item.platform)}
                 </div>
               )}

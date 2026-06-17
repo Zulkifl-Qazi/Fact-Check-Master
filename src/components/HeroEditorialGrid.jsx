@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { vercelImg } from '../utils/vercelImage';
 
 const BREAKING_CATEGORY = 'breaking-news';
 const LATEST_FALLBACK = 'latest-news';
@@ -253,12 +253,7 @@ const HeroEditorialGrid = () => {
         <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
 
           {/* ── COL 1: MAIN STORY ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="flex flex-col justify-between h-full gap-6"
-          >
+          <div className="flex flex-col justify-between h-full gap-6 hero-fade-in">
             <div
               className="hero-lead hero-link cursor-pointer relative overflow-hidden rounded-lg group"
               onClick={() => navigate(`/post/${mainStory.id}`)}
@@ -270,13 +265,16 @@ const HeroEditorialGrid = () => {
                     {/* Blurred background for letterboxing effect */}
                     <div
                       className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
-                      style={{ backgroundImage: `url(${mainImage})` }}
+                      style={{ backgroundImage: `url(${vercelImg(mainImage, 1200, 80)})` }}
                     />
-                    {/* Contained image so it doesn't zoom/crop */}
+                    {/* LCP image — fetchPriority=high, no lazy loading */}
                     <img
-                      src={mainImage}
+                      src={vercelImg(mainImage, 1200, 80)}
                       alt={mainStory.title}
                       fetchPriority="high"
+                      decoding="sync"
+                      width="1200"
+                      height="675"
                       className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />
@@ -321,12 +319,15 @@ const HeroEditorialGrid = () => {
                           <>
                             <div
                               className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                              style={{ backgroundImage: `url(${img})` }}
+                              style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
                             />
                             <img
-                              src={img}
+                              src={vercelImg(img, 640, 75)}
                               alt={post.title}
                               loading="lazy"
+                              decoding="async"
+                              width="640"
+                              height="360"
                               className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
                               onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
@@ -345,15 +346,10 @@ const HeroEditorialGrid = () => {
                 })}
               </div>
             )}
-          </motion.div>
+          </div>
 
           {/* ── COL 2: SECONDARY STORIES — each with image ── */}
-          <motion.div
-            className="flex flex-col justify-between h-full gap-6"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.08 }}
-          >
+          <div className="flex flex-col justify-between h-full gap-6 hero-fade-in" style={{ animationDelay: '80ms' }}>
             {secondaryStories.length === 0 && (
               <p className="text-slate-400 dark:text-slate-600 text-sm py-4 italic">
                 Add more "Breaking" posts to populate this column.
@@ -373,12 +369,15 @@ const HeroEditorialGrid = () => {
                       <>
                         <div
                           className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                          style={{ backgroundImage: `url(${img})` }}
+                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
                         />
                         <img
-                          src={img}
+                          src={vercelImg(img, 640, 75)}
                           alt={post.title}
                           loading="lazy"
+                          decoding="async"
+                          width="640"
+                          height="360"
                           className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
@@ -402,15 +401,10 @@ const HeroEditorialGrid = () => {
                 </div>
               );
             })}
-          </motion.div>
+          </div>
 
           {/* ── COL 3: MUST READ + MORE HEADLINES (text-only) ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.15 }}
-            className="flex flex-col gap-6"
-          >
+          <div className="flex flex-col gap-6 hero-fade-in" style={{ animationDelay: '150ms' }}>
             {/* Must Read */}
             <div>
               <div className="flex items-center gap-2 mb-3.5 pb-2.5 border-b-2 border-amber-500">
@@ -461,7 +455,7 @@ const HeroEditorialGrid = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>

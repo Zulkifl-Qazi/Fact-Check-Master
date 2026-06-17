@@ -256,3 +256,52 @@ The platform is now aligned with a secure model:
 - Deployment dependencies explicit and fail-fast.
 
 This document reflects repository state and operational work completed on May 25, 2026.
+
+## 16. Chat Development Log (Did, Doing, Will Do)
+
+### Completed Tasks (What We Did)
+
+#### 📅 May 22, 2026
+- **Navbar & Sub-Navbar Layout**:
+  - Moved categories (*Politics, Technology, Health, Sports, International, Viral Claims*) into a centered sub-navigation bar below the main header.
+  - Preserved dashboard dropdown routes.
+- **Admin Dashboard & Most Popular Pinning**:
+  - Added pinning and view-count logic (`pinned_popular`, `pinned_hero`, `views`).
+- **Styling and Theme Refinements**:
+  - Implemented custom warm light background for light mode.
+  - Fixed double scrollbar rendering bug on homepage.
+- **More Latest News Limit**:
+  - Capped bottom grid feed to 12 posts (4 rows of 3).
+- **Security Hardening (RLS & Supabase)**:
+  - Enabled RLS policies, standardizing the use of the Supabase service role key on Vercel endpoints.
+
+#### 📅 May 24, 2026
+- **Mobile Admin Console Visibility**:
+  - Re-styled post list tables on phones to keep Edit and Delete action controls fully visible.
+
+#### 📅 May 25, 2026
+- **Landing Page Performance**:
+  - Static import for landing page in `App.jsx` to prevent route chunk loading waterfall.
+- **Batched API Fetching**:
+  - Replaced 4 parallel requests in `HeroEditorialGrid.jsx` with a single cached request `/api/posts` and updated `LiveFeed` to share it.
+- **Category Consolidation**:
+  - Removed duplicate/redundant 'International' category from news navigation dropdown, sub-navbar links, dashboard view categories list, and admin console post checklist.
+  - Implemented backend routing compatibility in `api/posts.js` and `server/index.js` to automatically fetch posts tagged as *either* `world-news` or `international` when requesting the `world-news` category. This ensures legacy database posts remain fully accessible to the front-end under the consolidated "World News" category feed.
+- **Hero & Category Feed Layout Expansion**:
+  - Expanded Column 1 of the Hero section in `HeroEditorialGrid.jsx` by rendering 2 additional posts side-by-side in a sub-grid directly under the main lead card. Implemented logic to automatically fill these slots from latest news fallback pool if there are not enough breaking stories.
+  - Implemented a premium top featured section in `CategoryFeed.jsx` for all category views when 3 or more posts are available. It displays a large 2/3 width lead card with an image background and overlay on the left, alongside 2 smaller stacked vertical cards on the right. Displays all subsequent posts in the standard 3-column grid below.
+- **Mobile Menu & Emojis Refactoring**:
+  - Removed all emoji characters from navigation labels, News Dashboard lists, and category selection checklists to maintain a professional, clean editorial look.
+  - Implemented a collapsible accordion drop-down for the "News Dashboard" menu inside the mobile navigation drawer to display all news categories, aligning it with the desktop experience.
+
+---
+
+### In Progress (What We Are Doing)
+- Keeping local documentation history in the central Markdown documentation.
+
+---
+
+### Future Steps (What We Will Do)
+- **Automatic Image Optimization**: Implement automatic compression or thumbnail generation for post images to reduce initial image weight.
+- **Structured Error Logging**: Introduce unified request trace IDs for Vercel functions to query Supabase logs efficiently.
+- **Verification Tests**: Add basic end-to-end integration checks for login security constraints.

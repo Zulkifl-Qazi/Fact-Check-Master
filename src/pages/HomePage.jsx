@@ -1,9 +1,11 @@
 // src/pages/HomePage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import HeroEditorialGrid from '../components/HeroEditorialGrid';
-import LiveFeed from '../components/LiveFeed';
-import About from '../components/About';
+
+// Lazy-load below-the-fold sections — they don't need to be in the initial bundle
+const LiveFeed = lazy(() => import('../components/LiveFeed'));
+const About = lazy(() => import('../components/About'));
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -28,13 +30,19 @@ const HomePage = () => {
     <div className="w-full">
       <div id="top" />
       
-      {/* HERO EDITORIAL GRID - Al Jazeera Style 3-Column Layout */}
+      {/* HERO EDITORIAL GRID - loads eagerly (above the fold) */}
       <HeroEditorialGrid />
       
-      {/* ORIGINAL CONTENT - Restored as before */}
+      {/* Below-the-fold sections — lazy loaded */}
       <div className="w-full space-y-0">
         <div className="w-full space-y-20 py-16">
-          <LiveFeed searchQuery={searchQuery} />
+          <Suspense fallback={
+            <div id="live-feed" className="w-full py-20 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+            </div>
+          }>
+            <LiveFeed searchQuery={searchQuery} />
+          </Suspense>
           
           {/* View All News Button */}
           <div className="text-center py-8">
@@ -50,7 +58,9 @@ const HomePage = () => {
             </p>
           </div>
           
-          <About />
+          <Suspense fallback={<div className="w-full py-10" />}>
+            <About />
+          </Suspense>
         </div>
       </div>
     </div>
