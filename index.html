@@ -69,6 +69,25 @@
       /* Minimal above-the-fold critical styles */
       #root { min-height: 100vh; }
     </style>
+
+    <!--
+      LCP Preload: On repeat visits, inject <link rel=preload> for the hero
+      image before any JS runs. The URL is cached in localStorage after first
+      load by HeroEditorialGrid. First-time visitors get no preload (normal).
+    -->
+    <script>
+      try {
+        var h = localStorage.getItem('fcm_hero_img');
+        if (h) {
+          var l = document.createElement('link');
+          l.rel = 'preload';
+          l.as = 'image';
+          l.fetchPriority = 'high';
+          l.href = h;
+          document.head.appendChild(l);
+        }
+      } catch(e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

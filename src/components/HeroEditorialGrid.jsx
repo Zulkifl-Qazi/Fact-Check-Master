@@ -162,6 +162,12 @@ const HeroEditorialGrid = () => {
       setMustReadPosts(mustRead);
       setMoreHeadlines(more);
       setHeroUsedFallback(usedFallback);
+
+      // Cache hero image URL for next-visit LCP preload (see index.html inline script)
+      try {
+        const heroImg = lead ? getPostImage(lead) : null;
+        if (heroImg) localStorage.setItem('fcm_hero_img', heroImg);
+      } catch (e) { /* ignore private browsing / storage full */ }
     } catch (e) {
       console.error('Hero load failed', e);
       setMainStory(null);
