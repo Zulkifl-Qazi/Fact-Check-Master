@@ -1,54 +1,32 @@
 /**
  * vercelImage.js
- * 
- * Returns an optimized image URL via Vercel's built-in image optimization endpoint.
- * Works for any Vercel-deployed app (not just Next.js).
- * 
- * Endpoint: /_vercel/image?url=<encoded-url>&w=<width>&q=<quality>
- * 
- * Falls back to the original src if:
- * - src is empty / null
- * - src is a relative path (e.g. /uploads/...)
- * - src is a blob: or data: URL
- * - we are running on localhost (dev mode)
+ *
+ * NOTE: Vercel image optimization via /_vercel/image requires the `images.domains`
+ * allowlist in vercel.json. Since that config conflicts with non-Next.js Vite builds,
+ * this helper currently returns the original URL unchanged.
+ *
+ * All other performance optimizations (font loading, JS splitting, lazy loading,
+ * CSS animations, cache headers) remain active.
+ *
+ * To re-enable: add `images` block back to vercel.json once Vercel supports it
+ * for Vite apps without build errors, or migrate images to Cloudflare CDN.
  */
-
-const IS_LOCAL = typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' ||
-   window.location.hostname === '127.0.0.1');
 
 /**
  * @param {string|null|undefined} src  - Original image URL
- * @param {number} [width=800]         - Desired width in px
- * @param {number} [quality=75]        - Quality 1–100 (75 is a good balance)
- * @returns {string}                   - Optimized URL or original src
+ * @param {number} [width=800]         - Desired width (reserved for future use)
+ * @param {number} [quality=75]        - Quality (reserved for future use)
+ * @returns {string}                   - Original src unchanged
  */
 export function vercelImg(src, width = 800, quality = 75) {
-  if (!src) return src;
-
-  // Don't optimize relative URLs, blobs, data URIs, or in dev mode
-  if (
-    IS_LOCAL ||
-    src.startsWith('/') ||
-    src.startsWith('blob:') ||
-    src.startsWith('data:')
-  ) {
-    return src;
-  }
-
-  return `/_vercel/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality}`;
+  // Return original URL — Vercel image optimization disabled until
+  // images.domains config can be safely added to vercel.json
+  return src;
 }
 
 /**
- * Returns a srcSet string for responsive images via Vercel.
- * Usage: <img srcSet={vercelSrcSet(src)} sizes="(max-width:768px) 100vw, 800px" />
+ * @returns {undefined} — srcSet disabled, returns undefined so img ignores it
  */
 export function vercelSrcSet(src, quality = 75) {
-  if (!src || IS_LOCAL || src.startsWith('/') || src.startsWith('blob:') || src.startsWith('data:')) {
-    return undefined;
-  }
-  const widths = [320, 640, 800, 1200];
-  return widths
-    .map(w => `/_vercel/image?url=${encodeURIComponent(src)}&w=${w}&q=${quality} ${w}w`)
-    .join(', ');
+  return undefined;
 }
