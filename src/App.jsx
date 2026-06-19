@@ -15,6 +15,9 @@ const PostView = lazy(() => import('./pages/PostView'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ArticleView = lazy(() => import('./pages/ArticleView'));
+const ArticlesList = lazy(() => import('./pages/ArticlesList'));
+const AdminArticles = lazy(() => import('./pages/AdminArticles'));
 
 function App() {
   useEffect(() => {
@@ -80,6 +83,8 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/articles" element={<ArticlesList />} />
+            <Route path="/articles/:slug" element={<ArticleView />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route
               path="/admin/feedback"
@@ -94,6 +99,14 @@ function App() {
               element={
                 <RequireAdmin>
                   <AdminPosts />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/articles"
+              element={
+                <RequireAdmin>
+                  <AdminArticles />
                 </RequireAdmin>
               }
             />

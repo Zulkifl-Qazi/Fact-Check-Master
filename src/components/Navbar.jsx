@@ -88,6 +88,7 @@ const Navbar = () => {
           <div className="navbar-desktop-menu items-center gap-6">
             <Link to="/#top" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Home</Link>
             <Link to="/#live-feed" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Latest News</Link>
+            <Link to="/articles" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Articles</Link>
             
             {/* Categories Dropdown */}
             <div 
@@ -266,6 +267,14 @@ const Navbar = () => {
             onClick={handleLinkClick}
           >
             Latest News
+          </Link>
+          <Link 
+            to="/articles" 
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            style={{ textDecoration: 'none' }}
+            onClick={handleLinkClick}
+          >
+            Articles
           </Link>
           <Link 
             to="/news-dashboard?category=trending-news" 

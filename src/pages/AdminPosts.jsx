@@ -754,6 +754,21 @@ const AdminPosts = () => {
               ← Back to Feedback
             </button>
             <button
+              onClick={() => navigate('/admin/articles')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(99, 102, 241, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              📚 Articles
+            </button>
+            <button
               onClick={() => navigate('/admin/devices')}
               style={{
                 padding: '0.5rem 1rem',

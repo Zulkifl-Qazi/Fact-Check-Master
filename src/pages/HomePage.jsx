@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import HeroEditorialGrid from '../components/HeroEditorialGrid';
 
 // Lazy-load below-the-fold sections — they don't need to be in the initial bundle
+const ArticlesSection = lazy(() => import('../components/ArticlesSection'));
 const LiveFeed = lazy(() => import('../components/LiveFeed'));
 const About = lazy(() => import('../components/About'));
 
@@ -36,6 +37,11 @@ const HomePage = () => {
       {/* Below-the-fold sections — lazy loaded */}
       <div className="w-full space-y-0">
         <div className="w-full space-y-20 py-16">
+          {/* Articles & Guides Section */}
+          <Suspense fallback={<div className="w-full py-10" />}>
+            <ArticlesSection />
+          </Suspense>
+
           <Suspense fallback={
             <div id="live-feed" className="w-full py-20 flex items-center justify-center">
               <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />

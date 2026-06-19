@@ -135,7 +135,8 @@ export default function AdminFeedback() {
             <div style={{
               display: 'flex',
               gap: '0.5rem',
-              width: '100%'
+              width: '100%',
+              flexWrap: 'wrap'
             }}>
               <button
                 onClick={() => navigate('/admin/posts')}
@@ -148,9 +149,24 @@ export default function AdminFeedback() {
                   color: 'white',
                   cursor: 'pointer',
                   fontSize: '0.85rem',
-                  flex: 1
+                  flex: '1 1 120px'
                 }}>
                 Manage Posts
+              </button>
+              <button
+                onClick={() => navigate('/admin/articles')}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontWeight: 700,
+                  background: 'linear-gradient(90deg, #4f46e5, #6366f1)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  flex: '1 1 120px'
+                }}>
+                Manage Articles
               </button>
               <button
                 onClick={() => { try { localStorage.removeItem('af_logged_in'); localStorage.removeItem('af_admin_key'); } catch {} navigate('/admin/login', { replace: true }); }}
@@ -163,7 +179,7 @@ export default function AdminFeedback() {
                   color: 'white',
                   cursor: 'pointer',
                   fontSize: '0.85rem',
-                  flex: 1
+                  flex: '1 1 120px'
                 }}>Sign out</button>
             </div>
             
