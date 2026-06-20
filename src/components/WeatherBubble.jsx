@@ -105,13 +105,13 @@ const WeatherBubble = () => {
     let ipCity = 'Islamabad';
 
     try {
-      const ipRes = await fetch('https://ipapi.co/json/');
+      const ipRes = await fetch('https://ipwho.is/');
       if (ipRes.ok) {
         const ipData = await ipRes.json();
-        if (ipData.latitude && ipData.longitude) {
+        if (ipData.success && ipData.latitude && ipData.longitude) {
           ipLat = ipData.latitude;
           ipLon = ipData.longitude;
-          ipCity = ipData.city || 'Local Area';
+          ipCity = ipData.city || ipData.region || 'Local Area';
           setCoords({ latitude: ipLat, longitude: ipLon });
           setLocationName(ipCity);
         }
