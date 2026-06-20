@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import WeatherBubble from './components/WeatherBubble';
 
 const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -122,6 +123,7 @@ function App() {
         </Suspense>
       </main>
       <Footer />
+      <WeatherBubble />
     </div>
     <Analytics />
     </BrowserRouter>
