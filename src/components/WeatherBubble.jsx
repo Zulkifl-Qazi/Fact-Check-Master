@@ -422,6 +422,15 @@ const WeatherBubble = () => {
               <span className="text-base font-black text-slate-900 dark:text-white leading-none mt-0.5">
                 {Math.round(weather.temperature_2m)}°C
               </span>
+              <a 
+                href="https://www.google.com/search?q=weather"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[8px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-0.5"
+                style={{ textDecoration: 'none' }}
+              >
+                Google Weather
+              </a>
             </div>
           </div>
         </div>
@@ -433,7 +442,7 @@ const WeatherBubble = () => {
           onClick={() => {
             if (weather) setIsOpen(true);
           }}
-          className="flex items-center gap-2 px-2 py-0.5 h-[34px] bg-slate-50 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
+          className="flex items-center gap-2 px-2 py-1 h-[46px] bg-slate-50 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 shadow-sm rounded-xl border border-slate-200/60 dark:border-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
         >
           {/* Left Arrow Chevron */}
           <div className="flex items-center justify-center">
@@ -447,20 +456,30 @@ const WeatherBubble = () => {
             {loading && !weather ? (
               <div className="w-5 h-5 rounded-full border border-blue-500 border-t-transparent animate-spin" />
             ) : (
-              React.cloneElement(weatherDetails.icon, { className: "w-6 h-6" })
+              React.cloneElement(weatherDetails.icon, { className: "w-7 h-7" })
             )}
           </div>
 
           {/* Info Block */}
           {!loading && weather && (
             <div className="flex flex-col justify-center leading-none pr-0.5">
-              <div className="flex items-center gap-0.5 text-[8.5px] font-bold text-slate-400 dark:text-slate-500">
+              <div className="flex items-center gap-0.5 text-[8px] font-bold text-slate-400 dark:text-slate-500">
                 <span className="truncate max-w-[55px]">{locationName}</span>
                 <TargetIcon />
               </div>
               <span className="text-xs font-black text-slate-800 dark:text-white leading-none mt-0.5">
                 {Math.round(weather.temperature_2m)}°C
               </span>
+              <a 
+                href="https://www.google.com/search?q=weather"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[8px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-0.5"
+                style={{ textDecoration: 'none' }}
+              >
+                Google Weather
+              </a>
             </div>
           )}
         </div>
