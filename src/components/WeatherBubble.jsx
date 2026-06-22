@@ -200,47 +200,47 @@ const getWeatherDetails = (code, isDay) => {
   if (code === 0) {
     return {
       text: 'Clear Sky',
-      icon: <WavySun className="w-10 h-10 md:w-12 md:h-12" />
+      icon: <WavySun className="w-8 h-8" />
     };
   }
   if ([1, 2, 3].includes(code)) {
     return {
       text: code === 1 ? 'Mainly Clear' : code === 2 ? 'Partly Cloudy' : 'Overcast',
-      icon: code === 3 ? <OvercastCloud className="w-10 h-10 md:w-12 md:h-12" /> : <CloudySun className="w-10 h-10 md:w-12 md:h-12" isDay={isDay !== 0} />
+      icon: code === 3 ? <OvercastCloud className="w-8 h-8" /> : <CloudySun className="w-8 h-8" isDay={isDay !== 0} />
     };
   }
   if ([45, 48].includes(code)) {
     return {
       text: 'Foggy',
-      icon: <FoggyCloud className="w-10 h-10 md:w-12 md:h-12" />
+      icon: <FoggyCloud className="w-8 h-8" />
     };
   }
   if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 85, 86].includes(code)) {
     return {
       text: 'Rain',
-      icon: <RainCloud className="w-10 h-10 md:w-12 md:h-12" />
+      icon: <RainCloud className="w-8 h-8" />
     };
   }
   if ([71, 73, 75, 77].includes(code)) {
     return {
       text: 'Snowfall',
-      icon: <SnowCloud className="w-10 h-10 md:w-12 md:h-12" />
+      icon: <SnowCloud className="w-8 h-8" />
     };
   }
   if ([95, 96, 99].includes(code)) {
     return {
       text: 'Thunderstorm',
-      icon: <ThunderCloud className="w-10 h-10 md:w-12 md:h-12" />
+      icon: <ThunderCloud className="w-8 h-8" />
     };
   }
   return {
     text: 'Clear Sky',
-    icon: <WavySun className="w-10 h-10 md:w-12 md:h-12" />
+    icon: <WavySun className="w-8 h-8" />
   };
 };
 
 const TargetIcon = () => (
-  <svg className="w-3 h-3 text-slate-400 dark:text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+  <svg className="w-2.5 h-2.5 text-slate-400 dark:text-slate-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
     <circle cx="12" cy="12" r="10" />
     <circle cx="12" cy="12" r="3" />
     <line x1="12" y1="1" x2="12" y2="3" />
@@ -367,26 +367,26 @@ const WeatherBubble = () => {
   return (
     <div 
       ref={containerRef}
-      className="absolute right-0 top-1/2 -translate-y-1/2 z-50 font-sans transition-all duration-300"
+      className="relative z-50 font-sans transition-all duration-300"
     >
-      {/* 1. EXTENDED VIEW (Image 2) */}
+      {/* 1. EXTENDED VIEW (Image 2) - Adapts to Light/Dark mode, compact size */}
       {isOpen && weather && (
         <div 
-          className="flex items-center gap-4 px-4 py-2 h-[76px] bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800 transition-all duration-300 select-none animate-in fade-in zoom-in-95 duration-200"
+          className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-3 px-3 py-1.5 h-[64px] bg-white dark:bg-slate-900 shadow-xl rounded-xl border border-slate-200 dark:border-slate-800 transition-all duration-300 select-none animate-in fade-in zoom-in-95 duration-200 text-slate-800 dark:text-slate-100"
         >
           {/* 4-Day Forecast list */}
-          <div className="flex items-center gap-5 mr-1">
+          <div className="flex items-center gap-4 mr-0.5">
             {forecast.map((f, i) => {
               const dayDetails = getWeatherDetails(f.code, 1);
               return (
-                <div key={i} className="flex flex-col items-center justify-center text-center w-10">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-0.5">
+                <div key={i} className="flex flex-col items-center justify-center text-center w-8">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-0.5">
                     {f.day}
                   </span>
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    {React.cloneElement(dayDetails.icon, { className: "w-7 h-7" })}
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    {React.cloneElement(dayDetails.icon, { className: "w-5.5 h-5.5" })}
                   </div>
-                  <div className="text-[11px] mt-0.5 flex gap-1 justify-center">
+                  <div className="text-[10px] mt-0.5 flex gap-0.5 justify-center">
                     <span className="font-bold text-slate-800 dark:text-white">{f.maxTemp}°</span>
                     <span className="text-slate-400 dark:text-slate-500">{f.minTemp}°</span>
                   </div>
@@ -396,57 +396,48 @@ const WeatherBubble = () => {
           </div>
 
           {/* Vertical Divider */}
-          <div className="h-10 w-[1px] bg-slate-200 dark:bg-slate-700" />
+          <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700" />
 
           {/* Right Collapse Arrow Chevron */}
           <button 
             onClick={() => setIsOpen(false)}
-            className="p-1 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full flex items-center justify-center border-none bg-transparent"
+            className="p-0.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full flex items-center justify-center border-none bg-transparent"
             aria-label="Collapse weather"
           >
-            <svg className="w-4 h-4 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+            <svg className="w-3.5 h-3.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
 
           {/* Current Weather on the right */}
-          <div className="flex items-center gap-3 pr-1">
+          <div className="flex items-center gap-2.5 pr-0.5">
             <div className="flex-shrink-0">
-              {React.cloneElement(weatherDetails.icon, { className: "w-11 h-11" })}
+              {React.cloneElement(weatherDetails.icon, { className: "w-8.5 h-8.5" })}
             </div>
             <div className="flex flex-col justify-center leading-tight">
-              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-0.5 text-[9px] font-bold text-slate-400 dark:text-slate-500">
                 <span>Your local weather</span>
                 <TargetIcon />
               </div>
-              <span className="text-xl font-bold text-slate-900 dark:text-white leading-none mt-0.5">
+              <span className="text-base font-black text-slate-900 dark:text-white leading-none mt-0.5">
                 {Math.round(weather.temperature_2m)}°C
               </span>
-              <a 
-                href="https://www.google.com/search?q=weather"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[9px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-0.5"
-                style={{ textDecoration: 'none' }}
-              >
-                Google Weather
-              </a>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. UNEXTENDED VIEW (Image 1) */}
+      {/* 2. UNEXTENDED VIEW (Image 1) - Adapts to Light/Dark mode, compact size */}
       {!isOpen && (
         <div 
           onClick={() => {
             if (weather) setIsOpen(true);
           }}
-          className="flex items-center gap-3 px-3 py-1.5 h-[58px] bg-slate-900 text-white shadow-xl rounded-2xl border border-slate-800 hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
+          className="flex items-center gap-2 px-2 py-0.5 h-[34px] bg-slate-50 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
         >
           {/* Left Arrow Chevron */}
           <div className="flex items-center justify-center">
-            <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+            <svg className="w-3 h-3 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </div>
@@ -454,32 +445,22 @@ const WeatherBubble = () => {
           {/* Main Weather Icon */}
           <div className="flex-shrink-0">
             {loading && !weather ? (
-              <div className="w-8 h-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
+              <div className="w-5 h-5 rounded-full border border-blue-500 border-t-transparent animate-spin" />
             ) : (
-              weatherDetails.icon
+              React.cloneElement(weatherDetails.icon, { className: "w-6 h-6" })
             )}
           </div>
 
           {/* Info Block */}
           {!loading && weather && (
-            <div className="flex flex-col justify-center leading-tight pr-1">
-              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-300">
-                <span>{locationName}</span>
+            <div className="flex flex-col justify-center leading-none pr-0.5">
+              <div className="flex items-center gap-0.5 text-[8.5px] font-bold text-slate-400 dark:text-slate-500">
+                <span className="truncate max-w-[55px]">{locationName}</span>
                 <TargetIcon />
               </div>
-              <span className="text-xl font-bold text-white leading-none mt-0.5">
+              <span className="text-xs font-black text-slate-800 dark:text-white leading-none mt-0.5">
                 {Math.round(weather.temperature_2m)}°C
               </span>
-              <a 
-                href="https://www.google.com/search?q=weather"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="text-[9px] text-blue-400 font-bold hover:underline mt-0.5"
-                style={{ textDecoration: 'none' }}
-              >
-                Google Weather
-              </a>
             </div>
           )}
         </div>
