@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<url>
+  <loc>https://factcheckmaster.com/</loc>
+  <lastmod>2026-06-22</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>1.0</priority>
+</url>
+
+<url>
+  <loc>https://factcheckmaster.com/latest-news</loc>
+  <changefreq>hourly</changefreq>
+</url>
+
+<url>
+  <loc>https://factcheckmaster.com/articles</loc>
+  <changefreq>daily</changefreq>
+</url>
+
+</urlset>
