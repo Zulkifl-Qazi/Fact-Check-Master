@@ -4,25 +4,6 @@ import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
-import WeatherBubble from './components/WeatherBubble';
-
-// Silently catches crashes inside WeatherBubble so the whole page never goes white
-class WeatherErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  componentDidCatch(error) {
-    console.warn('[WeatherBubble] Runtime error caught by boundary:', error);
-  }
-  render() {
-    if (this.state.hasError) return null; // hide widget silently
-    return this.props.children;
-  }
-}
 
 const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -141,9 +122,6 @@ function App() {
         </Suspense>
       </main>
       <Footer />
-      <WeatherErrorBoundary>
-        <WeatherBubble />
-      </WeatherErrorBoundary>
     </div>
     <Analytics />
     </BrowserRouter>

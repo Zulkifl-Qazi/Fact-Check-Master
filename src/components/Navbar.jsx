@@ -4,6 +4,7 @@ import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon } from 'react-ico
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import useDarkMode from '../hooks/useDarkMode';
+import WeatherBubble from './WeatherBubble';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -199,45 +200,54 @@ const Navbar = () => {
       </div>
 
       {/* Sub-Navbar */}
-      <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-start md:justify-center gap-5 overflow-x-auto scrollbar-none subnav-container">
-          <style>{`
-            .subnav-container::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
+      <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300 relative z-30">
+        <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-between relative overflow-visible">
           
-          {/* Bold Label */}
-          <div className="flex items-center gap-1 font-bold text-xs text-red-500 uppercase tracking-wider flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
-              <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
-              <polyline points="17 6 23 6 23 12"></polyline>
-            </svg>
-            <span>Trending</span>
+          {/* Categories Container */}
+          <div className="flex items-center justify-start md:justify-center gap-5 overflow-x-auto scrollbar-none subnav-container flex-grow pr-16 md:pr-0">
+            <style>{`
+              .subnav-container::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+            
+            {/* Bold Label */}
+            <div className="flex items-center gap-1 font-bold text-xs text-red-500 uppercase tracking-wider flex-shrink-0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+                <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+              <span>Trending</span>
+            </div>
+
+            {/* Links */}
+            <div className="flex items-center gap-5">
+              {[
+                { path: '/news-dashboard?category=political', label: 'Politics' },
+                { path: '/news-dashboard?category=technology', label: 'Technology' },
+                { path: '/news-dashboard?category=health', label: 'Health' },
+                { path: '/news-dashboard?category=sports', label: 'Sports' },
+                { path: '/news-dashboard?category=world-news', label: 'World News' },
+                { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' }
+              ].map((cat, i) => (
+                <Link
+                  key={i}
+                  to={cat.path}
+                  className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                  style={{
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Links */}
-          <div className="flex items-center gap-5">
-            {[
-              { path: '/news-dashboard?category=political', label: 'Politics' },
-              { path: '/news-dashboard?category=technology', label: 'Technology' },
-              { path: '/news-dashboard?category=health', label: 'Health' },
-              { path: '/news-dashboard?category=sports', label: 'Sports' },
-              { path: '/news-dashboard?category=world-news', label: 'World News' },
-              { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' }
-            ].map((cat, i) => (
-              <Link
-                key={i}
-                to={cat.path}
-                className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                style={{
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {cat.label}
-              </Link>
-            ))}
+          {/* Weather Widget */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center z-40">
+            <WeatherBubble />
           </div>
         </div>
       </div>
