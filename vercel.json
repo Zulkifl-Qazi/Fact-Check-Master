@@ -9,7 +9,7 @@
   },
   "rewrites": [
     {
-      "source": "/((?!api/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/((?!api/|google.*\\.html|sitemap\\.xml|ads\\.txt|robots\\.txt).*)",
       "destination": "/index.html"
     }
   ],
