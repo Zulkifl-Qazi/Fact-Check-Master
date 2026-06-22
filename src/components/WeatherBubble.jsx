@@ -367,26 +367,69 @@ const WeatherBubble = () => {
   return (
     <div 
       ref={containerRef}
-      className="relative z-50 font-sans transition-all duration-300"
+      className="relative font-sans"
     >
-      {/* 1. EXTENDED VIEW (Image 2) - Adapts to Light/Dark mode, compact size */}
+      {/* 2. PILL TRIGGER (Always visible, fits perfectly inline in the subnav) */}
+      <div 
+        onClick={() => {
+          if (weather) setIsOpen(!isOpen);
+        }}
+        className="flex items-center gap-1.5 px-2 py-0.5 h-[34px] bg-slate-50 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 shadow-sm rounded-xl border border-slate-200/60 dark:border-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
+      >
+        {/* Animated Chevron indicator */}
+        <div className="flex items-center justify-center">
+          <svg 
+            className={`w-3.5 h-3.5 text-slate-400 dark:text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            strokeWidth="3"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+
+        {/* Main Weather Icon */}
+        <div className="flex-shrink-0">
+          {loading && !weather ? (
+            <div className="w-5 h-5 rounded-full border border-blue-500 border-t-transparent animate-spin" />
+          ) : (
+            React.cloneElement(weatherDetails.icon, { className: "w-6 h-6" })
+          )}
+        </div>
+
+        {/* Info Block */}
+        {!loading && weather && (
+          <div className="flex flex-col justify-center leading-none pr-0.5">
+            <div className="flex items-center gap-0.5 text-[8.5px] font-bold text-slate-400 dark:text-slate-500">
+              <span className="truncate max-w-[55px]">{locationName}</span>
+              <TargetIcon />
+            </div>
+            <span className="text-xs font-black text-slate-800 dark:text-white leading-none mt-0.5">
+              {Math.round(weather.temperature_2m)}°C
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* 1. DROPDOWN PANEL (Extended view, slides down below pill, tall enough to fit everything) */}
       {isOpen && weather && (
         <div 
-          className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-3 px-3 py-1.5 h-[64px] bg-white dark:bg-slate-900 shadow-xl rounded-xl border border-slate-200 dark:border-slate-800 transition-all duration-300 select-none animate-in fade-in zoom-in-95 duration-200 text-slate-800 dark:text-slate-100"
+          className="absolute right-0 top-[calc(100%+8px)] flex items-center gap-4 px-4 py-3 min-h-[92px] w-[390px] md:w-[410px] bg-white dark:bg-slate-900 shadow-2xl rounded-2xl border border-slate-200 dark:border-slate-800 transition-all duration-300 select-none animate-in fade-in slide-in-from-top-2 duration-200 text-slate-800 dark:text-slate-100 z-50"
         >
           {/* 4-Day Forecast list */}
-          <div className="flex items-center gap-4 mr-0.5">
+          <div className="flex items-center gap-3.5 mr-0.5">
             {forecast.map((f, i) => {
               const dayDetails = getWeatherDetails(f.code, 1);
               return (
-                <div key={i} className="flex flex-col items-center justify-center text-center w-8">
+                <div key={i} className="flex flex-col items-center justify-center text-center w-9">
                   <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 mb-0.5">
                     {f.day}
                   </span>
-                  <div className="w-6 h-6 flex items-center justify-center">
-                    {React.cloneElement(dayDetails.icon, { className: "w-5.5 h-5.5" })}
+                  <div className="w-7 h-7 flex items-center justify-center">
+                    {React.cloneElement(dayDetails.icon, { className: "w-6 h-6" })}
                   </div>
-                  <div className="text-[10px] mt-0.5 flex gap-0.5 justify-center">
+                  <div className="text-[10px] mt-1 flex gap-0.5 justify-center">
                     <span className="font-bold text-slate-800 dark:text-white">{f.maxTemp}°</span>
                     <span className="text-slate-400 dark:text-slate-500">{f.minTemp}°</span>
                   </div>
@@ -396,92 +439,32 @@ const WeatherBubble = () => {
           </div>
 
           {/* Vertical Divider */}
-          <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700" />
+          <div className="self-stretch w-[1px] bg-slate-100 dark:bg-slate-800" />
 
-          {/* Right Collapse Arrow Chevron */}
-          <button 
-            onClick={() => setIsOpen(false)}
-            className="p-0.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full flex items-center justify-center border-none bg-transparent"
-            aria-label="Collapse weather"
-          >
-            <svg className="w-3.5 h-3.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Current Weather on the right */}
-          <div className="flex items-center gap-2.5 pr-0.5">
+          {/* Current Weather details block */}
+          <div className="flex items-center gap-3 pr-0.5 flex-grow">
             <div className="flex-shrink-0">
-              {React.cloneElement(weatherDetails.icon, { className: "w-8.5 h-8.5" })}
+              {React.cloneElement(weatherDetails.icon, { className: "w-10 h-10" })}
             </div>
             <div className="flex flex-col justify-center leading-tight">
               <div className="flex items-center gap-0.5 text-[9px] font-bold text-slate-400 dark:text-slate-500">
                 <span>Your local weather</span>
                 <TargetIcon />
               </div>
-              <span className="text-base font-black text-slate-900 dark:text-white leading-none mt-0.5">
+              <span className="text-lg font-black text-slate-900 dark:text-white leading-none mt-0.5">
                 {Math.round(weather.temperature_2m)}°C
               </span>
               <a 
                 href="https://www.google.com/search?q=weather"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[8px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-0.5"
+                className="text-[9px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-1 inline-block"
                 style={{ textDecoration: 'none' }}
               >
                 Google Weather
               </a>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* 2. UNEXTENDED VIEW (Image 1) - Adapts to Light/Dark mode, compact size */}
-      {!isOpen && (
-        <div 
-          onClick={() => {
-            if (weather) setIsOpen(true);
-          }}
-          className="flex items-center gap-2 px-2 py-1 h-[46px] bg-slate-50 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 shadow-sm rounded-xl border border-slate-200/60 dark:border-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer select-none"
-        >
-          {/* Left Arrow Chevron */}
-          <div className="flex items-center justify-center">
-            <svg className="w-3 h-3 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </div>
-
-          {/* Main Weather Icon */}
-          <div className="flex-shrink-0">
-            {loading && !weather ? (
-              <div className="w-5 h-5 rounded-full border border-blue-500 border-t-transparent animate-spin" />
-            ) : (
-              React.cloneElement(weatherDetails.icon, { className: "w-7 h-7" })
-            )}
-          </div>
-
-          {/* Info Block */}
-          {!loading && weather && (
-            <div className="flex flex-col justify-center leading-none pr-0.5">
-              <div className="flex items-center gap-0.5 text-[8px] font-bold text-slate-400 dark:text-slate-500">
-                <span className="truncate max-w-[55px]">{locationName}</span>
-                <TargetIcon />
-              </div>
-              <span className="text-xs font-black text-slate-800 dark:text-white leading-none mt-0.5">
-                {Math.round(weather.temperature_2m)}°C
-              </span>
-              <a 
-                href="https://www.google.com/search?q=weather"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="text-[8px] text-blue-500 dark:text-blue-400 font-bold hover:underline mt-0.5"
-                style={{ textDecoration: 'none' }}
-              >
-                Google Weather
-              </a>
-            </div>
-          )}
         </div>
       )}
     </div>
