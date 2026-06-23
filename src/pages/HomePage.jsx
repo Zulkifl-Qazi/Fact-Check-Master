@@ -37,17 +37,18 @@ const HomePage = () => {
       {/* Below-the-fold sections — lazy loaded */}
       <div className="w-full space-y-0">
         <div className="w-full space-y-20 py-16">
-          {/* Articles & Guides Section */}
-          <Suspense fallback={<div className="w-full py-10" />}>
-            <ArticlesSection />
-          </Suspense>
-
+          {/* LiveFeed (Latest News) */}
           <Suspense fallback={
             <div id="live-feed" className="w-full py-20 flex items-center justify-center">
               <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
             </div>
           }>
             <LiveFeed searchQuery={searchQuery} />
+          </Suspense>
+
+          {/* Articles & Guides Section */}
+          <Suspense fallback={<div className="w-full py-10" />}>
+            <ArticlesSection />
           </Suspense>
           
           {/* View All News Button */}
