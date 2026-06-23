@@ -43,12 +43,17 @@ const HomePage = () => {
               <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
             </div>
           }>
-            <LiveFeed searchQuery={searchQuery} />
+            <LiveFeed searchQuery={searchQuery} showOnly="latest" />
           </Suspense>
 
           {/* Articles & Guides Section */}
           <Suspense fallback={<div className="w-full py-10" />}>
             <ArticlesSection />
+          </Suspense>
+
+          {/* LiveFeed (More Latest News) */}
+          <Suspense fallback={<div className="w-full py-10" />}>
+            <LiveFeed searchQuery={searchQuery} showOnly="more" />
           </Suspense>
           
           {/* View All News Button */}
