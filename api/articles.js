@@ -136,7 +136,7 @@ export default async function handler(req, res) {
       const { data, error } = await query;
       if (error) throw error;
 
-      res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+      res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
       return res.status(200).json(data || []);
     }
 
