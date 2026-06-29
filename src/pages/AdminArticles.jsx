@@ -107,7 +107,7 @@ const AdminArticles = () => {
   const editorRef = useRef(null);
 
   const getDeviceId = () => {
-    try { return localStorage.getItem('af_device_id') || ''; } catch { return ''; }
+    try { return localStorage.getItem('device_id') || ''; } catch { return ''; }
   };
 
   const showNotif = (message, type = 'success') => {

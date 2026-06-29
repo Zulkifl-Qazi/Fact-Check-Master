@@ -124,6 +124,8 @@ export default async function handler(req, res) {
       let query = supabase.from('articles').select('*');
 
       if (all === 'true') {
+        const admin = await requireApprovedAdmin(req, res);
+        if (!admin) return;
         // Admin: return all, newest first
         query = query.order('created_at', { ascending: false });
       } else {
