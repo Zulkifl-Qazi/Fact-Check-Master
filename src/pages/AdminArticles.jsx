@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import {
   FaPlus, FaTrash, FaEye, FaPen, FaImage, FaBookOpen,
-  FaTimes, FaCheck, FaFileAlt, FaExternalLinkAlt, FaSearch
+  FaTimes, FaCheck, FaFileAlt, FaExternalLinkAlt, FaSearch, FaUpload
 } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -85,6 +85,34 @@ function slugify(str) {
     .replace(/^-+|-+$/g, '');
 }
 
+// Client-side image compression utility
+const compressImage = (file, maxWidth = 1200, quality = 0.8) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 const AdminArticles = () => {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
@@ -95,6 +123,7 @@ const AdminArticles = () => {
   const [saving, setSaving] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   // Form state
   const [title, setTitle] = useState('');
@@ -442,21 +471,80 @@ const AdminArticles = () => {
                     />
                   </div>
 
-                  {/* Cover Image URL */}
+                  {/* Cover Image URL + Upload */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">
-                      <FaImage className="inline mr-1.5 text-blue-400" /> Cover Image URL
+                      <FaImage className="inline mr-1.5 text-blue-400" /> Cover Image
                     </label>
-                    <input
-                      type="url"
-                      value={coverImage}
-                      onChange={(e) => setCoverImage(e.target.value)}
-                      placeholder="https://example.com/image.jpg"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border-2 border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 text-sm transition-colors"
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={coverImage}
+                        onChange={(e) => setCoverImage(e.target.value)}
+                        placeholder="Paste image URL or upload from device →"
+                        className="flex-1 px-4 py-3 rounded-xl bg-slate-800/80 border-2 border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 text-sm transition-colors"
+                      />
+                      <label className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all border-2 ${
+                        uploading
+                          ? 'bg-blue-900/40 border-blue-700/50 text-blue-300 cursor-wait'
+                          : 'bg-blue-600/20 border-blue-600/40 text-blue-400 hover:bg-blue-600/30 hover:border-blue-500'
+                      }`}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploading}
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            setUploading(true);
+                            try {
+                              const compressedBase64 = await compressImage(file, 1200, 0.8);
+                              const res = await axios.post('/api/upload', {
+                                imageBase64: compressedBase64,
+                                fileName: file.name.replace(/\.[^/.]+$/, '') + '.jpg',
+                                contentType: 'image/jpeg'
+                              }, {
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'X-Device-ID': getDeviceId()
+                                }
+                              });
+                              setCoverImage(res.data.imageUrl);
+                              showNotif('Image uploaded successfully');
+                            } catch (err) {
+                              console.error('Upload failed:', err);
+                              showNotif('Failed to upload image', 'error');
+                            } finally {
+                              setUploading(false);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                        {uploading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border border-blue-400/30 border-t-blue-400" />
+                            Uploading…
+                          </>
+                        ) : (
+                          <>
+                            <FaUpload className="text-xs" />
+                            Upload
+                          </>
+                        )}
+                      </label>
+                    </div>
                     {coverImage && (
-                      <div className="mt-3 rounded-xl overflow-hidden border border-slate-700 max-h-48">
+                      <div className="mt-3 rounded-xl overflow-hidden border border-slate-700 max-h-48 relative group">
                         <img src={coverImage} alt="Preview" className="w-full h-48 object-cover" onError={(e) => e.target.style.display='none'} />
+                        <button
+                          type="button"
+                          onClick={() => setCoverImage('')}
+                          className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 backdrop-blur-sm text-white/80 hover:text-red-400 hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-all"
+                          title="Remove image"
+                        >
+                          <FaTimes className="text-xs" />
+                        </button>
                       </div>
                     )}
                   </div>
