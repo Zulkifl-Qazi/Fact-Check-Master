@@ -75,7 +75,7 @@ const Footer = () => {
             </a>
 
             <a 
-              href="https://linkedin.com/company/fact-check-master" 
+              href="https://www.linkedin.com/company/factcheckmaster/" 
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Follow us on LinkedIn"

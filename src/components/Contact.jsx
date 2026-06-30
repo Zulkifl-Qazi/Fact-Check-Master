@@ -44,7 +44,7 @@ const Contact = () => {
   const socialLinks = [
     { icon: FaTwitter, url: "https://twitter.com/fcheckmaster", label: "Twitter" },
     { icon: FaFacebook, url: "#", label: "Facebook" },
-    { icon: FaLinkedin, url: "#", label: "LinkedIn" }
+    { icon: FaLinkedin, url: "https://www.linkedin.com/company/factcheckmaster/", label: "LinkedIn" }
   ];
 
   return (

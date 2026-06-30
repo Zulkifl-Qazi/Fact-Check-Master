@@ -311,7 +311,7 @@ const Contact = () => {
             {[
               { icon: FaTwitter, url: 'https://twitter.com/fcheckmaster', color: 'rgb(29, 161, 242)' },
               { icon: FaFacebook, url: 'https://www.facebook.com/share/14MbJJKH8mD/?mibextid=wwXIfr', color: 'rgb(24, 119, 242)' },
-              { icon: FaLinkedin, url: 'https://linkedin.com/company/fact-check-master', color: 'rgb(0, 119, 181)' }
+              { icon: FaLinkedin, url: 'https://www.linkedin.com/company/factcheckmaster/', color: 'rgb(0, 119, 181)' }
             ].map((social, i) => (
               <a
                 key={i}
