@@ -25,6 +25,15 @@ const ArticleView = () => {
         const data = await res.json();
         setArticle(data);
 
+        // Update document title and description dynamically for SEO
+        if (data?.title) {
+          document.title = `${data.title} - Fact Check Master`;
+          let metaDesc = document.querySelector('meta[name="description"]');
+          if (metaDesc) {
+            metaDesc.content = data.excerpt || stripHtml(data.content).substring(0, 150) + '...';
+          }
+        }
+
         // Increment view count
         if (data?.id) {
           fetch(`/api/articles?id=${data.id}&action=view`, { method: 'PATCH' }).catch(() => {});

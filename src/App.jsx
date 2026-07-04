@@ -65,6 +65,7 @@ function App() {
   return (
     <BrowserRouter>
     <ScrollToHash />
+    <SEOManager />
     <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
       <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
@@ -160,6 +161,40 @@ function ScrollToHash() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [location]);
+  return null;
+}
+
+// Dynamically manages page titles and canonical link tags for SEO on route transitions
+function SEOManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // 1. Dynamic Canonical Link Tag Update
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
+    }
+    const cleanUrl = 'https://www.factcheckmaster.com' + location.pathname;
+    link.setAttribute('href', cleanUrl);
+
+    // 2. Fallback titles for static pages (dynamic pages set their own)
+    const titles = {
+      '/': 'Fact Check Master - Real-Time Fact Checking & Verification',
+      '/articles': 'Articles & Guides - Fact Check Master',
+      '/news-dashboard': 'News Dashboard - Fact Check Master',
+      '/about': 'About Us - Fact Check Master',
+      '/contact': 'Contact Us - Fact Check Master',
+      '/privacy-policy': 'Privacy Policy - Fact Check Master',
+      '/terms-of-service': 'Terms of Service - Fact Check Master'
+    };
+
+    if (titles[location.pathname]) {
+      document.title = titles[location.pathname];
+    }
+  }, [location]);
+
   return null;
 }
 
