@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Sync Facebook and Instagram feed updates (Vercel deployment trigger comment)
+
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const fbPageId = process.env.FACEBOOK_PAGE_ID;
