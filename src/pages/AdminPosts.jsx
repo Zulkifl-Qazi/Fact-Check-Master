@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo, FaStar, FaFire } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo, FaStar, FaFire, FaRss } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { parseVideoUrl, getVideoPlatformIcon, getVideoPlatformName } from '../utils/videoParser';
@@ -370,10 +370,27 @@ const AdminPosts = () => {
   }, []);
 
   const [pinningId, setPinningId] = useState(null);
+  const [syncing, setSyncing] = useState(false);
 
   const getAdminHeaders = () => ({
     'X-Device-ID': localStorage.getItem('device_id') || ''
   });
+
+  const handleSyncSocials = async () => {
+    setSyncing(true);
+    try {
+      const res = await axios.post('/api/sync-facebook', {}, {
+        headers: getAdminHeaders()
+      });
+      alert(`Sync completed! Added ${res.data.syncedCount || 0} new posts.`);
+      loadPosts(false);
+    } catch (err) {
+      console.error('Sync failed:', err);
+      alert(err.response?.data?.error || 'Failed to sync Facebook & Instagram posts. Make sure environment variables are configured on Vercel.');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   // Check admin authentication
   useEffect(() => {
@@ -800,30 +817,69 @@ const AdminPosts = () => {
             }}>Countering Fake News Desk</p>
           </div>
           
-          {/* Add Button */}
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
-              color: 'white',
-              padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
-              borderRadius: '12px',
-              border: 'none',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s',
-              boxShadow: '0 8px 25px rgba(29, 78, 216, 0.4)',
-              fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-              whiteSpace: 'nowrap',
-              flexShrink: '0'
-            }}
-          >
-            <FaPlus />
-            {showAddForm ? 'Cancel' : 'Add Post'}
-          </button>
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            {/* Sync Button */}
+            <button
+              onClick={handleSyncSocials}
+              disabled={syncing}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'linear-gradient(to right, #059669, #10b981)',
+                color: 'white',
+                padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: '600',
+                cursor: syncing ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4)',
+                fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+                whiteSpace: 'nowrap',
+                flexShrink: '0',
+                opacity: syncing ? 0.7 : 1
+              }}
+            >
+              {syncing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border border-white/30 border-t-white" />
+                  <span>Syncing...</span>
+                </>
+              ) : (
+                <>
+                  <FaRss />
+                  <span>Sync Socials</span>
+                </>
+              )}
+            </button>
+
+            {/* Add Button */}
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
+                color: 'white',
+                padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: '0 8px 25px rgba(29, 78, 216, 0.4)',
+                fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+                whiteSpace: 'nowrap',
+                flexShrink: '0'
+              }}
+            >
+              <FaPlus />
+              {showAddForm ? 'Cancel' : 'Add Post'}
+            </button>
+          </div>
         </div>
 
         {/* Add Post Form */}
