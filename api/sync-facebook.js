@@ -5,6 +5,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const fbPageId = process.env.FACEBOOK_PAGE_ID;
 const fbAccessToken = process.env.FACEBOOK_PAGE_ACCESS_TOKEN;
 const cronSecret = process.env.CRON_SECRET;
+const fbVerifyToken = process.env.FB_VERIFY_TOKEN || process.env.CRON_SECRET;
 
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
@@ -18,10 +19,31 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Verify auth
+  // ────────────────────────────────────────────────────────
+  // 1. WEBHOOK VERIFICATION (GET request from Meta)
+  // ────────────────────────────────────────────────────────
+  if (req.method === 'GET') {
+    const mode = req.query['hub.mode'];
+    const token = req.query['hub.verify_token'];
+    const challenge = req.query['hub.challenge'];
+
+    if (mode && token) {
+      if (mode === 'subscribe' && token === fbVerifyToken) {
+        console.log('[FB Webhook] Webhook verified successfully.');
+        return res.status(200).send(challenge);
+      }
+      console.warn('[FB Webhook] Verification token mismatch.');
+      return res.status(403).json({ error: 'Verification token mismatch' });
+    }
+  }
+
+  // Verify auth for POST/Sync requests
   const authHeader = req.headers.authorization;
   const isCronAuthorized = cronSecret && authHeader === `Bearer ${cronSecret}`;
   
+  // Also check for Meta Webhook signature or direct POST from Meta
+  const isMetaWebhook = req.headers['x-hub-signature-256'] || req.headers['x-hub-signature'];
+
   // Also allow trigger if requested by an approved administrator via Device ID
   let isAdminAuthorized = false;
   const deviceId = req.headers['x-device-id'];
@@ -37,7 +59,7 @@ export default async function handler(req, res) {
     }
   }
 
-  if (!isCronAuthorized && !isAdminAuthorized) {
+  if (!isCronAuthorized && !isAdminAuthorized && !isMetaWebhook) {
     return res.status(401).json({ error: 'Unauthorized request' });
   }
 
@@ -53,7 +75,7 @@ export default async function handler(req, res) {
     const syncedPosts = [];
 
     // ────────────────────────────────────────────────────────
-    // 1. SYNC FACEBOOK POSTS
+    // 2. SYNC FACEBOOK POSTS
     // ────────────────────────────────────────────────────────
     console.log(`[FB Sync] Fetching feed for Page ID: ${fbPageId}`);
     const fbFeedUrl = `https://graph.facebook.com/v18.0/${fbPageId}/feed?fields=id,message,created_time,full_picture,permalink_url&access_token=${fbAccessToken}&limit=10`;
@@ -113,7 +135,7 @@ export default async function handler(req, res) {
     }
 
     // ────────────────────────────────────────────────────────
-    // 2. SYNC INSTAGRAM POSTS (if Instagram Business Account is linked)
+    // 3. SYNC INSTAGRAM POSTS (if Instagram Business Account is linked)
     // ────────────────────────────────────────────────────────
     console.log('[FB Sync] Querying linked Instagram Business Account...');
     const pageDetailsUrl = `https://graph.facebook.com/v18.0/${fbPageId}?fields=instagram_business_account&access_token=${fbAccessToken}`;
