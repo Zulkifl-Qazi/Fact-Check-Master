@@ -5,17 +5,8 @@
     },
     "api/articles.js": {
       "maxDuration": 10
-    },
-    "api/sync-facebook.js": {
-      "maxDuration": 25
     }
   },
-  "crons": [
-    {
-      "path": "/api/sync-facebook",
-      "schedule": "0 * * * *"
-    }
-  ],
   "rewrites": [
     {
       "source": "/((?!api/|google.*\\.html|sitemap\\.xml|ads\\.txt|robots\\.txt).*)",
