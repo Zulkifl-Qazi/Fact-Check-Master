@@ -481,10 +481,6 @@ const AdminPosts = () => {
         if (p.id === postId) {
           return { ...p, pinned_hero: !isCurrentlyPinned };
         }
-        // Unpin all other posts from hero if this one is being pinned
-        if (!isCurrentlyPinned && p.pinned_hero) {
-          return { ...p, pinned_hero: false };
-        }
         return p;
       });
     });
@@ -498,9 +494,6 @@ const AdminPosts = () => {
         setPosts(prevPosts => prevPosts.map(p => {
           if (p.id === response.data.post.id) {
             return { ...p, pinned_hero: response.data.post.pinned_hero };
-          }
-          if (response.data.post.pinned_hero && p.id !== response.data.post.id) {
-            return { ...p, pinned_hero: false };
           }
           return p;
         }));
@@ -1639,7 +1632,7 @@ const AdminPosts = () => {
                           whiteSpace: 'nowrap',
                           flexShrink: 0
                         }}>
-                          HERO LEAD
+                          HERO PINNED
                         </span>
                       ) : null}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

@@ -67,16 +67,18 @@ const HeroEditorialGrid = () => {
       // Single fetch to get the latest posts (utilizes the cached endpoint)
       const allPosts = await fetchPostsList({});
 
-      // Check if any post in the entire feed is explicitly pinned to the hero
-      const pinnedPost = allPosts.find((p) => p.pinned_hero);
-      let lead = null;
-      let usedFallback = false;
-      let postsPool = allPosts;
+      // Retrieve all posts where pinned_hero is true, sorted by date (newest first)
+      const pinnedPosts = allPosts
+        .filter((p) => p.pinned_hero)
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
-      if (pinnedPost) {
-        lead = pinnedPost;
-        postsPool = allPosts.filter((p) => p.id !== pinnedPost.id);
-      }
+      let lead = pinnedPosts[0] || null;
+      const pinnedSecondary = pinnedPosts.slice(1, 4);
+      const pinnedBottom = pinnedPosts.slice(4, 6);
+
+      // Exclude all used pinned posts from the general layout pool to avoid duplication
+      const pinnedUsedIds = new Set(pinnedPosts.slice(0, 6).map((p) => p.id));
+      const postsPool = allPosts.filter((p) => !pinnedUsedIds.has(p.id));
 
       const breakingRes = postsPool
         .filter((p) => p.category === BREAKING_CATEGORY || p.category === 'featured-news')
@@ -90,19 +92,20 @@ const HeroEditorialGrid = () => {
       const generalRes = postsPool.slice(0, 24);
 
       let breaking = dedupeByTitle(breakingRes);
+      let usedFallback = false;
 
       if (breaking.length === 0) {
         breaking = dedupeByTitle(fallbackRes);
         usedFallback = true;
       }
 
-      let secondary = [];
-      if (pinnedPost) {
-        secondary = breaking.slice(0, 3);
-      } else {
+      // If no post was explicitly pinned, fallback to the first breaking story
+      if (!lead) {
         lead = breaking[0] || null;
-        secondary = breaking.slice(1, 4);
       }
+
+      let secondary = [...pinnedSecondary];
+      let bottomRow = [...pinnedBottom];
 
       // Collect already used posts to avoid duplicates
       const usedIds = new Set();
@@ -121,6 +124,15 @@ const HeroEditorialGrid = () => {
       );
 
       // Fill secondary stories if we have fewer than 3 to prevent empty space
+      const remainingBreakingForSecondary = breaking.filter(
+        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
+      );
+      while (secondary.length < 3 && remainingBreakingForSecondary.length > 0) {
+        const fillPost = remainingBreakingForSecondary.shift();
+        secondary.push(fillPost);
+        usedIds.add(fillPost.id);
+        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
+      }
       while (secondary.length < 3 && latestPool.length > 0) {
         const fillPost = latestPool.shift();
         secondary.push(fillPost);
@@ -128,15 +140,16 @@ const HeroEditorialGrid = () => {
         if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
       }
 
-      // Find breaking posts for the bottom row
-      let bottomRow = breaking.filter(
+      // Fill bottomRow from breaking posts first, then from latestPool
+      const remainingBreakingForBottom = breaking.filter(
         (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      ).slice(0, 2);
-
-      bottomRow.forEach((p) => {
-        usedIds.add(p.id);
-        if (p.title) usedTitles.add(p.title.trim().toLowerCase());
-      });
+      );
+      while (bottomRow.length < 2 && remainingBreakingForBottom.length > 0) {
+        const fillPost = remainingBreakingForBottom.shift();
+        bottomRow.push(fillPost);
+        usedIds.add(fillPost.id);
+        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
+      }
 
       // Re-filter latestPool to exclude any bottomRow additions
       latestPool = latestPool.filter(

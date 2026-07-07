@@ -810,11 +810,6 @@ export default async function handler(req, res) {
 
         const newVal = current.pinned_hero ? false : true;
 
-        // Unpin all others first
-        if (newVal) {
-          await supabase.from('posts').update({ pinned_hero: false }).eq('pinned_hero', true);
-        }
-
         // Update all posts sharing the same title
         const { data: updatedRows, error: updateErr } = await supabase
           .from('posts')
