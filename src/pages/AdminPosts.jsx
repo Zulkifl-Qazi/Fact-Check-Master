@@ -1696,19 +1696,19 @@ const AdminPosts = () => {
                   <div className="post-actions-container">
                     <button
                       onClick={() => handlePinToggle(post.id)}
-                      disabled={pinningId !== null}
+                      disabled={pinningId === post.id}
                       style={{
                         padding: '0.5rem',
                         background: post.pinned_hero ? 'rgba(245, 158, 11, 0.3)' : 'rgba(100, 116, 139, 0.2)',
                         color: post.pinned_hero ? 'rgb(251, 191, 36)' : 'rgb(148, 163, 184)',
                         border: post.pinned_hero ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid transparent',
                         borderRadius: '8px',
-                        cursor: pinningId !== null ? 'wait' : 'pointer',
+                        cursor: pinningId === post.id ? 'wait' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         transition: 'all 0.3s',
-                        opacity: pinningId !== null ? 0.6 : 1
+                        opacity: pinningId === post.id ? 0.6 : 1
                       }}
                       title={post.pinned_hero ? 'Unpin from Hero (currently the lead story)' : 'Pin to Hero (make lead story)'}
                     >
@@ -1716,19 +1716,19 @@ const AdminPosts = () => {
                     </button>
                     <button
                       onClick={() => handlePopularPinToggle(post.id)}
-                      disabled={pinningId !== null}
+                      disabled={pinningId === post.id}
                       style={{
                         padding: '0.5rem',
                         background: post.pinned_popular ? 'rgba(239, 68, 68, 0.3)' : 'rgba(100, 116, 139, 0.2)',
                         color: post.pinned_popular ? 'rgb(248, 113, 113)' : 'rgb(148, 163, 184)',
                         border: post.pinned_popular ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid transparent',
                         borderRadius: '8px',
-                        cursor: pinningId !== null ? 'wait' : 'pointer',
+                        cursor: pinningId === post.id ? 'wait' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         transition: 'all 0.3s',
-                        opacity: pinningId !== null ? 0.6 : 1
+                        opacity: pinningId === post.id ? 0.6 : 1
                       }}
                       title={post.pinned_popular ? 'Remove from Most Popular section' : 'Pin to Most Popular section'}
                     >
