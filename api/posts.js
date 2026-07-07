@@ -771,7 +771,7 @@ export default async function handler(req, res) {
       if (action === 'pin-popular') {
         const { data: current, error: fetchErr } = await supabase
           .from('posts')
-          .select('id, pinned_popular')
+          .select('id, title, pinned_popular')
           .eq('id', postId)
           .single();
         if (fetchErr || !current) {
@@ -780,14 +780,16 @@ export default async function handler(req, res) {
 
         const newVal = current.pinned_popular ? false : true;
 
-        const { data: updated, error: updateErr } = await supabase
+        // Update all posts sharing the same title
+        const { data: updatedRows, error: updateErr } = await supabase
           .from('posts')
           .update({ pinned_popular: newVal })
-          .eq('id', postId)
-          .select()
-          .single();
+          .eq('title', current.title)
+          .select();
 
         if (updateErr) throw updateErr;
+
+        const updated = updatedRows.find(p => p.id === postId) || updatedRows[0];
 
         // Invalidate frontend caches on layout changes
         clearCache();
@@ -799,7 +801,7 @@ export default async function handler(req, res) {
       if (!action || action === 'pin-hero') {
         const { data: current, error: fetchErr } = await supabase
           .from('posts')
-          .select('id, pinned_hero')
+          .select('id, title, pinned_hero')
           .eq('id', postId)
           .single();
         if (fetchErr || !current) {
@@ -813,14 +815,16 @@ export default async function handler(req, res) {
           await supabase.from('posts').update({ pinned_hero: false }).eq('pinned_hero', true);
         }
 
-        const { data: updated, error: updateErr } = await supabase
+        // Update all posts sharing the same title
+        const { data: updatedRows, error: updateErr } = await supabase
           .from('posts')
           .update({ pinned_hero: newVal })
-          .eq('id', postId)
-          .select()
-          .single();
+          .eq('title', current.title)
+          .select();
 
         if (updateErr) throw updateErr;
+
+        const updated = updatedRows.find(p => p.id === postId) || updatedRows[0];
 
         // Invalidate frontend caches on layout changes
         clearCache();

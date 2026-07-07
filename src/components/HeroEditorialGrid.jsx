@@ -67,35 +67,41 @@ const HeroEditorialGrid = () => {
       // Single fetch to get the latest posts (utilizes the cached endpoint)
       const allPosts = await fetchPostsList({});
 
-      const breakingRes = allPosts
+      // Check if any post in the entire feed is explicitly pinned to the hero
+      const pinnedPost = allPosts.find((p) => p.pinned_hero);
+      let lead = null;
+      let usedFallback = false;
+      let postsPool = allPosts;
+
+      if (pinnedPost) {
+        lead = pinnedPost;
+        postsPool = allPosts.filter((p) => p.id !== pinnedPost.id);
+      }
+
+      const breakingRes = postsPool
         .filter((p) => p.category === BREAKING_CATEGORY || p.category === 'featured-news')
         .slice(0, 8);
-      const fallbackRes = allPosts
+      const fallbackRes = postsPool
         .filter((p) => p.category === LATEST_FALLBACK)
         .slice(0, 8);
-      const latestPoolRes = allPosts
+      const latestPoolRes = postsPool
         .filter((p) => p.category === LATEST_FALLBACK)
         .slice(0, 16);
-      const generalRes = allPosts.slice(0, 24);
+      const generalRes = postsPool.slice(0, 24);
 
       let breaking = dedupeByTitle(breakingRes);
-      let usedFallback = false;
 
       if (breaking.length === 0) {
         breaking = dedupeByTitle(fallbackRes);
         usedFallback = true;
       }
 
-      // Check if any post is pinned_hero — it becomes the lead
-      const pinnedIdx = breaking.findIndex((p) => p.pinned_hero);
-      let lead;
       let secondary = [];
-      if (pinnedIdx >= 0) {
-        lead = breaking[pinnedIdx];
-        secondary = [...breaking.slice(0, pinnedIdx), ...breaking.slice(pinnedIdx + 1)].slice(0, 3);
+      if (pinnedPost) {
+        secondary = breaking.slice(0, 3);
       } else {
         lead = breaking[0] || null;
-        secondary = breaking.slice(1, 4); // max 3 secondary
+        secondary = breaking.slice(1, 4);
       }
 
       // Collect already used posts to avoid duplicates
