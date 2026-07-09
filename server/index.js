@@ -1061,6 +1061,56 @@ app.delete('/api/comments/:id', async (req, res) => {
   }
 });
 
+app.post('/api/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Valid email is required' });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log(`[AUTH] Generated OTP for ${email}: ${code}`);
+
+    let emailSent = false;
+    let emailError = null;
+
+    if (smtpConfigured && mailer) {
+      try {
+        await mailer.sendMail({
+          from: process.env.FROM_EMAIL || process.env.SMTP_USER,
+          to: email.trim(),
+          subject: 'Your Fact Check Master Login Code',
+          html: `
+            <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
+              <h2 style="color: #2563eb; margin-top: 0; font-weight: 800;">Fact Check Master</h2>
+              <p style="color: #475569; font-size: 15px; line-height: 1.6;">Hello,</p>
+              <p style="color: #475569; font-size: 15px; line-height: 1.6;">Use the following verification code to complete your login. This code will expire shortly.</p>
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; text-align: center; margin: 24px 0;">
+                <span style="font-size: 32px; font-weight: 900; letter-spacing: 6px; color: #1e293b; font-family: monospace;">${code}</span>
+              </div>
+              <p style="color: #64748b; font-size: 12px; margin-bottom: 0;">If you did not request this login, please ignore this email.</p>
+            </div>
+          `
+        });
+        emailSent = true;
+      } catch (err) {
+        console.error('[AUTH] Failed to send email:', err);
+        emailError = err.message;
+      }
+    }
+
+    res.json({
+      success: true,
+      emailSent,
+      emailError,
+      otp: code
+    });
+  } catch (error) {
+    console.error('[API] Error sending OTP:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Fetch post data from URL
 app.post('/api/fetch-post', async (req, res) => {
   try {

@@ -22,21 +22,44 @@ const AuthModal = () => {
   const [customEmail, setCustomEmail] = useState('');
   const [error, setError] = useState('');
   const [sentOtp, setSentOtp] = useState('');
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [otpHelpText, setOtpHelpText] = useState('');
 
   if (!showAuthModal) return null;
 
-  const handleMainEmailContinue = (e) => {
+  const handleMainEmailContinue = async (e) => {
     e.preventDefault();
     if (!emailInput.trim() || !emailInput.includes('@')) {
       setError('Please enter a valid email address.');
       return;
     }
     setError('');
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setSentOtp(code);
-    setView('email-otp');
-    // Log code to console for easy testing
-    console.log(`[AUTH] Verification code sent to ${emailInput}: ${code}`);
+    setIsSendingOtp(true);
+    try {
+      const response = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: emailInput.trim() })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to send code');
+      }
+      const data = await response.json();
+      setSentOtp(data.otp);
+      if (data.emailSent) {
+        setOtpHelpText('✉️ Verification code sent to your email inbox!');
+      } else {
+        setOtpHelpText(`⚠️ SMTP is not configured. For testing, please use this code: ${data.otp}`);
+      }
+      setView('email-otp');
+    } catch (err) {
+      console.error(err);
+      setError('Could not send verification code. Please try again.');
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
   const handleVerifyOtp = (e) => {
@@ -49,7 +72,7 @@ const AuthModal = () => {
       });
       resetForm();
     } else {
-      setError('Incorrect verification code. (Hint: enter "123456" or check developer console)');
+      setError('Incorrect verification code. (Hint: enter "123456" or use code provided above)');
     }
   };
 
@@ -168,10 +191,11 @@ const AuthModal = () => {
 
                   <button 
                     type="submit"
-                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl border-none cursor-pointer shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
+                    disabled={isSendingOtp}
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-75 active:scale-[0.98] text-white font-bold rounded-xl border-none cursor-pointer shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
                   >
-                    Continue
-                    <FaChevronRight className="text-xs" />
+                    {isSendingOtp ? 'Sending...' : 'Continue'}
+                    {!isSendingOtp && <FaChevronRight className="text-xs" />}
                   </button>
                 </form>
 
@@ -397,6 +421,11 @@ const AuthModal = () => {
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 px-4">
                     We sent a 6-digit OTP code to <span className="font-bold text-slate-700 dark:text-slate-300">{emailInput}</span>
                   </p>
+                  {otpHelpText && (
+                    <div className="mt-3 p-3 bg-blue-50/50 dark:bg-slate-950/50 border border-blue-200/50 dark:border-blue-800/40 rounded-xl text-[11px] text-blue-700 dark:text-blue-400 font-semibold leading-relaxed">
+                      {otpHelpText}
+                    </div>
+                  )}
                 </div>
 
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
