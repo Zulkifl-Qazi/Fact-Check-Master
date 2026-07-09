@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import { AuthProvider } from './hooks/useAuth';
+import AuthModal from './components/AuthModal';
 
 const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
 const Contact = lazy(() => import('./pages/Contact'));
@@ -64,67 +66,70 @@ function App() {
 
   return (
     <BrowserRouter>
-    <ScrollToHash />
-    <SEOManager />
-    <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
-      <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
-      <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
-        <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />
+    <AuthProvider>
+      <ScrollToHash />
+      <SEOManager />
+      <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+        <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
+        <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
+        <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
+          <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />
+        </div>
+        <Navbar />
+        <AuthModal />
+        <main id="main-content" className="relative flex-grow w-full z-10">
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/news-dashboard" element={<NewsDashboard />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/post/:id" element={<PostView />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/articles" element={<ArticlesList />} />
+              <Route path="/articles/:slug" element={<ArticleView />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin/feedback"
+                element={
+                  <RequireAdmin>
+                    <AdminFeedback />
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/posts"
+                element={
+                  <RequireAdmin>
+                    <AdminPosts />
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/articles"
+                element={
+                  <RequireAdmin>
+                    <AdminArticles />
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/devices"
+                element={
+                  <RequireAdmin>
+                    <DeviceManagement />
+                  </RequireAdmin>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </main>
+        <Footer />
       </div>
-      <Navbar />
-      <main id="main-content" className="relative flex-grow w-full z-10">
-        <Suspense fallback={null}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/news-dashboard" element={<NewsDashboard />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/post/:id" element={<PostView />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/articles" element={<ArticlesList />} />
-            <Route path="/articles/:slug" element={<ArticleView />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-              path="/admin/feedback"
-              element={
-                <RequireAdmin>
-                  <AdminFeedback />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/posts"
-              element={
-                <RequireAdmin>
-                  <AdminPosts />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/articles"
-              element={
-                <RequireAdmin>
-                  <AdminArticles />
-                </RequireAdmin>
-              }
-            />
-            <Route
-              path="/admin/devices"
-              element={
-                <RequireAdmin>
-                  <DeviceManagement />
-                </RequireAdmin>
-              }
-            />
-          </Routes>
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
-    <Analytics />
+      <Analytics />
+    </AuthProvider>
     </BrowserRouter>
   );
 }

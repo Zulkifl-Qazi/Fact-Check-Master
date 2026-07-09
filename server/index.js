@@ -203,6 +203,21 @@ async function initDb() {
   try {
     if (!hasEmailError) await db.exec('ALTER TABLE feedback_replies ADD COLUMN email_error TEXT');
   } catch {}
+
+  // Create comments table
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS comments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_title TEXT NOT NULL,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL,
+      avatar_url TEXT,
+      provider TEXT DEFAULT 'email',
+      content TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+  console.log('[DB] Comments table initialized');
 }
 
 // Mock device auth for local testing (mimics Vercel serverless function)
@@ -989,6 +1004,46 @@ app.delete('/api/posts/:id', async (req, res) => {
     });
   } catch (error) {
     console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Comments endpoints
+app.get('/api/comments', async (req, res) => {
+  try {
+    const { post_title } = req.query;
+    if (!post_title) {
+      return res.status(400).json({ error: 'Post title is required' });
+    }
+    const comments = await db.all(
+      'SELECT * FROM comments WHERE LOWER(TRIM(post_title)) = LOWER(TRIM(?)) ORDER BY created_at ASC',
+      [post_title]
+    );
+    res.json(comments);
+  } catch (error) {
+    console.error('[API] Error fetching comments:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/api/comments', async (req, res) => {
+  try {
+    const { post_title, username, email, avatar_url, provider, content } = req.body;
+    if (!post_title || !username || !email || !content) {
+      return res.status(400).json({ error: 'Missing required comment fields' });
+    }
+    const result = await db.run(
+      'INSERT INTO comments (post_title, username, email, avatar_url, provider, content) VALUES (?, ?, ?, ?, ?, ?)',
+      [post_title.trim(), username.trim(), email.trim(), avatar_url || null, provider || 'email', content.trim()]
+    );
+    const newComment = await db.get('SELECT * FROM comments WHERE id = ?', [result.lastID]);
+    
+    // Broadcast through WebSockets
+    io.emit('comment_added', newComment);
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('[API] Error creating comment:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
