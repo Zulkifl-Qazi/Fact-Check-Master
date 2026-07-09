@@ -18,7 +18,7 @@ function q(query, key) {
 export default async function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -28,20 +28,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    // GET /api/comments?post_title=...
+    // GET /api/comments
     if (req.method === 'GET') {
       const post_title = q(req.query, 'post_title');
-      if (!post_title) {
-        return res.status(400).json({ error: 'Post title is required' });
+
+      let query = supabase.from('comments').select('*');
+      if (post_title) {
+        query = query.eq('post_title', post_title.trim()).order('created_at', { ascending: true });
+      } else {
+        query = query.order('created_at', { ascending: false });
       }
 
-      const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('post_title', post_title.trim())
-        .order('created_at', { ascending: true });
+      const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        // Handle missing table error gracefully
+        if (error.code === '42P01' || error.message?.includes('relation "comments" does not exist')) {
+          return res.status(500).json({
+            error: "Supabase table 'comments' does not exist. Please run the SQL migration script inside 'supabase-comments-table.sql' on your Supabase dashboard editor."
+          });
+        }
+        throw error;
+      }
       return res.status(200).json(data || []);
     }
 
@@ -65,8 +73,33 @@ export default async function handler(req, res) {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('relation "comments" does not exist')) {
+          return res.status(500).json({
+            error: "Supabase table 'comments' does not exist. Please run the SQL migration script inside 'supabase-comments-table.sql' on your Supabase dashboard editor."
+          });
+        }
+        throw error;
+      }
       return res.status(201).json(data);
+    }
+
+    // DELETE /api/comments?id=...
+    if (req.method === 'DELETE') {
+      const id = q(req.query, 'id');
+      if (!id) {
+        return res.status(400).json({ error: 'Comment ID is required' });
+      }
+
+      const { data, error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', parseInt(id, 10))
+        .select()
+        .single();
+
+      if (error) throw error;
+      return res.status(200).json({ success: true, deleted: data });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

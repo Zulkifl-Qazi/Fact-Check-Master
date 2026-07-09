@@ -82,19 +82,34 @@ export default function DeviceManagement() {
               Authorize devices for admin access
             </p>
           </div>
-          <button
-            onClick={() => navigate('/admin/posts')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: 'rgba(71, 85, 105, 0.5)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            ← Back to Posts
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              onClick={() => navigate('/admin/posts')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(71, 85, 105, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              ← Back to Posts
+            </button>
+            <button
+              onClick={() => navigate('/admin/comments')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(236, 72, 153, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              💬 Comments
+            </button>
+          </div>
         </div>
 
         {deviceId && (

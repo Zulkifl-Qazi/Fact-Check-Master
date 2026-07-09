@@ -169,6 +169,21 @@ export default function AdminFeedback() {
                 Manage Articles
               </button>
               <button
+                onClick={() => navigate('/admin/comments')}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontWeight: 700,
+                  background: 'linear-gradient(90deg, #ec4899, #f43f5e)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  flex: '1 1 120px'
+                }}>
+                Manage Comments
+              </button>
+              <button
                 onClick={() => { try { localStorage.removeItem('af_logged_in'); localStorage.removeItem('af_admin_key'); } catch {} navigate('/admin/login', { replace: true }); }}
                 style={{ 
                   padding: '12px 16px', 

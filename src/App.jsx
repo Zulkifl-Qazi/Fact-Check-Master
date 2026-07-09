@@ -20,6 +20,8 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ArticleView = lazy(() => import('./pages/ArticleView'));
 const ArticlesList = lazy(() => import('./pages/ArticlesList'));
 const AdminArticles = lazy(() => import('./pages/AdminArticles'));
+const AdminComments = lazy(() => import('./pages/AdminComments'));
+
 
 function App() {
   useEffect(() => {
@@ -112,6 +114,14 @@ function App() {
                 element={
                   <RequireAdmin>
                     <AdminArticles />
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/admin/comments"
+                element={
+                  <RequireAdmin>
+                    <AdminComments />
                   </RequireAdmin>
                 }
               />

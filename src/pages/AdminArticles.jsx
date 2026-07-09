@@ -294,6 +294,12 @@ const AdminArticles = () => {
                 ← Back to Posts
               </button>
               <button
+                onClick={() => navigate('/admin/comments')}
+                className="px-4 py-2.5 rounded-lg text-sm font-medium bg-pink-900/40 hover:bg-pink-900/60 border border-pink-700/50 text-pink-200 transition-colors"
+              >
+                💬 Comments
+              </button>
+              <button
                 onClick={openNew}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
               >

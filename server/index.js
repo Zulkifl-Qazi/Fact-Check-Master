@@ -1012,13 +1012,15 @@ app.delete('/api/posts/:id', async (req, res) => {
 app.get('/api/comments', async (req, res) => {
   try {
     const { post_title } = req.query;
-    if (!post_title) {
-      return res.status(400).json({ error: 'Post title is required' });
+    let comments;
+    if (post_title) {
+      comments = await db.all(
+        'SELECT * FROM comments WHERE LOWER(TRIM(post_title)) = LOWER(TRIM(?)) ORDER BY created_at ASC',
+        [post_title]
+      );
+    } else {
+      comments = await db.all('SELECT * FROM comments ORDER BY created_at DESC');
     }
-    const comments = await db.all(
-      'SELECT * FROM comments WHERE LOWER(TRIM(post_title)) = LOWER(TRIM(?)) ORDER BY created_at ASC',
-      [post_title]
-    );
     res.json(comments);
   } catch (error) {
     console.error('[API] Error fetching comments:', error);
@@ -1044,6 +1046,17 @@ app.post('/api/comments', async (req, res) => {
     res.status(201).json(newComment);
   } catch (error) {
     console.error('[API] Error creating comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/comments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.run('DELETE FROM comments WHERE id = ?', [id]);
+    res.json({ success: true, message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('[API] Error deleting comment:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

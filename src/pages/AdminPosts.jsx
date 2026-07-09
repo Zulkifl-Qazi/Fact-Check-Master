@@ -793,6 +793,21 @@ const AdminPosts = () => {
             >
               🔒 Devices
             </button>
+            <button
+              onClick={() => navigate('/admin/comments')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(236, 72, 153, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              💬 Comments
+            </button>
           </div>
           
           {/* Title Section */}
