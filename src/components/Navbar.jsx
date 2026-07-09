@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon, FaUserCircle, FaSignOutAlt, FaGoogle, FaFacebook, FaApple, FaInstagram, FaUser } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon, FaUserCircle, FaSignOutAlt, FaGoogle, FaFacebook, FaApple, FaInstagram, FaUser, FaEnvelope } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import useDarkMode from '../hooks/useDarkMode';
