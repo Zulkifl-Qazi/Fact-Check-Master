@@ -39,7 +39,45 @@ export default async function handler(req, res) {
     if (!requireSupabase(res)) return;
 
     if (req.method === 'POST') {
-      // Check device authorization
+      const { deviceIdToApprove } = req.body;
+
+      // Handle Device Approval if deviceIdToApprove parameter is present
+      if (deviceIdToApprove) {
+        const requestingDeviceId = req.headers['x-device-id'];
+
+        // Verify requesting device is approved
+        const { data: requestingDevice } = await supabase
+          .from('approved_devices')
+          .select('*')
+          .eq('device_id', requestingDeviceId)
+          .eq('approved', true)
+          .single();
+
+        if (!requestingDevice) {
+          return res.status(403).json({ error: 'Unauthorized device' });
+        }
+
+        // Approve the device
+        const { data, error } = await supabase
+          .from('approved_devices')
+          .update({ 
+            approved: true,
+            approved_at: new Date().toISOString(),
+            approved_by: requestingDeviceId
+          })
+          .eq('device_id', deviceIdToApprove)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        return res.json({ 
+          success: true, 
+          device: data
+        });
+      }
+
+      // Check device authorization (Standard login flow)
       const { deviceId, deviceName, password } = req.body;
       
       // Verify password first

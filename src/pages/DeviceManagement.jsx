@@ -38,7 +38,7 @@ export default function DeviceManagement() {
   const approveDevice = async (deviceIdToApprove) => {
     try {
       const currentDeviceId = localStorage.getItem('device_id');
-      await axios.post('/api/approve-device', 
+      await axios.post('/api/device-auth', 
         { deviceIdToApprove },
         { headers: { 'X-Device-ID': currentDeviceId } }
       );
