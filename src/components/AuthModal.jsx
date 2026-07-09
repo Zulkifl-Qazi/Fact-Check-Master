@@ -64,7 +64,7 @@ const AuthModal = () => {
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    if (otpInput === sentOtp || otpInput === '123456') {
+    if (otpInput === sentOtp) {
       login('email', {
         name: emailInput.split('@')[0],
         email: emailInput.trim(),
@@ -72,7 +72,7 @@ const AuthModal = () => {
       });
       resetForm();
     } else {
-      setError('Incorrect verification code. (Hint: enter "123456" or use code provided above)');
+      setError('Incorrect verification code. Please check the code provided and try again.');
     }
   };
 
