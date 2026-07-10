@@ -21,6 +21,7 @@ const ArticleView = lazy(() => import('./pages/ArticleView'));
 const ArticlesList = lazy(() => import('./pages/ArticlesList'));
 const AdminArticles = lazy(() => import('./pages/AdminArticles'));
 const AdminComments = lazy(() => import('./pages/AdminComments'));
+const PressConference = lazy(() => import('./pages/PressConference'));
 
 
 function App() {
@@ -92,6 +93,7 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/articles" element={<ArticlesList />} />
               <Route path="/articles/:slug" element={<ArticleView />} />
+              <Route path="/press-conference" element={<PressConference />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
                 path="/admin/feedback"

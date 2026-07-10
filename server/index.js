@@ -1111,6 +1111,16 @@ app.post('/api/send-otp', async (req, res) => {
   }
 });
 
+app.get('/api/youtube-feed', (req, res) => {
+  res.json({
+    isLive: false,
+    videoId: '5c-PzN0a1s8',
+    title: '[Local Mock] Latest Press Briefing by DG ISPR',
+    publishedAt: new Date().toISOString(),
+    channelId: 'UCw8U3G10a8d672rDkC6W4Yw'
+  });
+});
+
 // Fetch post data from URL
 app.post('/api/fetch-post', async (req, res) => {
   try {

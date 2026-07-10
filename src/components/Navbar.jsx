@@ -157,6 +157,82 @@ const Navbar = () => {
               {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
             </button>
 
+            {/* Desktop User Profile Avatar (Far Right) */}
+            <div className="relative ml-1 overflow-visible flex-shrink-0 flex items-center">
+              {user ? (
+                <div className="relative overflow-visible">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center p-0.5 rounded-full border-none bg-transparent cursor-pointer transition focus:outline-none hover:scale-105 active:scale-95 duration-200"
+                    title={`Logged in as ${user.name}`}
+                  >
+                    <div className="relative">
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/50 hover:ring-blue-500 transition-all duration-300 shadow-md"
+                      />
+                      <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-slate-950" />
+                    </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isProfileOpen && (
+                    <>
+                      {/* Invisible backdrop to close dropdown */}
+                      <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsProfileOpen(false)} />
+                      <div className="absolute top-full right-0 mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-xl shadow-xl p-4 min-w-[240px] z-50 transition-all duration-200 origin-top-right">
+                        <div className="flex items-center gap-3 pb-3 border-b border-slate-200/50 dark:border-slate-800/50 mb-3">
+                          <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{user.name}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2 mb-3">
+                          <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                            <span>Signed in via</span>
+                            <span className="capitalize text-blue-600 dark:text-blue-400 font-bold flex items-center gap-1">
+                              {user.provider === 'google' && <FaGoogle className="text-red-500 text-[10px]" />}
+                              {user.provider === 'facebook' && <FaFacebook className="text-blue-600 text-[10px]" />}
+                              {user.provider === 'instagram' && <FaInstagram className="text-pink-500 text-[10px]" />}
+                              {user.provider === 'apple' && <FaApple className="text-slate-800 dark:text-slate-200 text-[10px]" />}
+                              {user.provider === 'email' && <FaEnvelope className="text-[10px]" />}
+                              {user.provider}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                            <span>Joined</span>
+                            <span>{new Date(user.joinedAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            logout();
+                            setIsProfileOpen(false);
+                          }}
+                          className="w-full py-2 bg-red-50/80 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 rounded-lg font-bold text-xs border-none cursor-pointer transition flex items-center justify-center gap-2"
+                        >
+                          <FaSignOutAlt />
+                          Sign Out
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={openAuthModal}
+                  className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm"
+                  title="Sign In"
+                >
+                  <FaUser className="text-[10px]" />
+                </button>
+              )}
+            </div>
+
             {/* Animated Search Bar */}
             <div 
               className="absolute top-full right-4 mt-2 w-64 max-w-[calc(100%-2rem)] z-50 origin-top-right transition-all duration-300"
@@ -191,6 +267,81 @@ const Navbar = () => {
               >
                 {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
               </button>
+
+              {/* Mobile User Profile Avatar */}
+              <div className="relative overflow-visible flex items-center">
+                {user ? (
+                  <div className="relative overflow-visible">
+                    <button
+                      onClick={() => setIsProfileOpen(!isProfileOpen)}
+                      className="flex items-center p-0.5 rounded-full border-none bg-transparent cursor-pointer transition focus:outline-none hover:scale-105 active:scale-95 duration-200"
+                    >
+                      <div className="relative">
+                        <img
+                          src={user.avatar}
+                          alt={user.name}
+                          className="w-7 h-7 rounded-full object-cover ring-2 ring-blue-500/50"
+                        />
+                        <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-slate-950" />
+                      </div>
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    {isProfileOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsProfileOpen(false)} />
+                        <div className="absolute top-full right-0 mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-xl shadow-xl p-4 min-w-[240px] z-50 transition-all duration-200 origin-top-right">
+                          <div className="flex items-center gap-3 pb-3 border-b border-slate-200/50 dark:border-slate-800/50 mb-3">
+                            <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
+                            <div className="min-w-0">
+                              <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{user.name}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 mb-3">
+                            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                              <span>Signed in via</span>
+                              <span className="capitalize text-blue-600 dark:text-blue-400 font-bold flex items-center gap-1">
+                                {user.provider === 'google' && <FaGoogle className="text-red-500 text-[10px]" />}
+                                {user.provider === 'facebook' && <FaFacebook className="text-blue-600 text-[10px]" />}
+                                {user.provider === 'instagram' && <FaInstagram className="text-pink-500 text-[10px]" />}
+                                {user.provider === 'apple' && <FaApple className="text-slate-800 dark:text-slate-200 text-[10px]" />}
+                                {user.provider === 'email' && <FaEnvelope className="text-[10px]" />}
+                                {user.provider}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                              <span>Joined</span>
+                              <span>{new Date(user.joinedAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              logout();
+                              setIsProfileOpen(false);
+                            }}
+                            className="w-full py-2 bg-red-50/80 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 rounded-lg font-bold text-xs border-none cursor-pointer transition flex items-center justify-center gap-2"
+                          >
+                            <FaSignOutAlt />
+                            Sign Out
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={openAuthModal}
+                    className="flex items-center justify-center w-7 h-7 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm"
+                    title="Sign In"
+                  >
+                    <FaUser className="text-[10px]" />
+                  </button>
+                )}
+              </div>
+
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className="p-2 rounded-lg bg-transparent border-none text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
@@ -206,85 +357,6 @@ const Navbar = () => {
       {/* Sub-Navbar */}
       <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300 relative z-30">
         <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-between relative overflow-visible">
-          
-          {/* User Profile on the Far Left of Sub-Navbar */}
-          <div className="relative mr-4 overflow-visible flex-shrink-0 flex items-center">
-            {user ? (
-              <div className="relative overflow-visible">
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-1.5 p-1 rounded-full border-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 cursor-pointer transition focus:outline-none relative"
-                  title={`Logged in as ${user.name}`}
-                >
-                  <div className="relative">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-6 h-6 rounded-full object-cover ring-2 ring-blue-500/50"
-                    />
-                    <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-2 ring-white dark:ring-slate-950" />
-                  </div>
-                  <span className="hidden sm:inline text-xs font-bold text-slate-700 dark:text-slate-300 max-w-[80px] truncate pr-1">
-                    {user.name.split(' ')[0]}
-                  </span>
-                </button>
-
-                {/* Dropdown Menu */}
-                {isProfileOpen && (
-                  <>
-                    {/* Invisible backdrop to close dropdown */}
-                    <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsProfileOpen(false)} />
-                    <div className="absolute top-full left-0 mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-xl shadow-xl p-4 min-w-[240px] z-50 transition-all duration-200">
-                      <div className="flex items-center gap-3 pb-3 border-b border-slate-200/50 dark:border-slate-800/50 mb-3">
-                        <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/30" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{user.name}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2 mb-3">
-                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-                          <span>Signed in via</span>
-                          <span className="capitalize text-blue-600 dark:text-blue-400 font-bold flex items-center gap-1">
-                            {user.provider === 'google' && <FaGoogle className="text-red-500 text-[10px]" />}
-                            {user.provider === 'facebook' && <FaFacebook className="text-blue-600 text-[10px]" />}
-                            {user.provider === 'instagram' && <FaInstagram className="text-pink-500 text-[10px]" />}
-                            {user.provider === 'apple' && <FaApple className="text-slate-800 dark:text-slate-200 text-[10px]" />}
-                            {user.provider === 'email' && <FaEnvelope className="text-[10px]" />}
-                            {user.provider}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-                          <span>Joined</span>
-                          <span>{new Date(user.joinedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsProfileOpen(false);
-                        }}
-                        className="w-full py-2 bg-red-50/80 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 rounded-lg font-bold text-xs border-none cursor-pointer transition flex items-center justify-center gap-2"
-                      >
-                        <FaSignOutAlt />
-                        Sign Out
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={openAuthModal}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold text-xs cursor-pointer transition focus:outline-none"
-              >
-                <FaUser className="text-[10px]" />
-                Log In
-              </button>
-            )}
-          </div>
 
           {/* Categories Container */}
           <div className="flex items-center justify-start md:justify-center gap-5 overflow-x-auto scrollbar-none subnav-container flex-grow pr-16 md:pr-0">
@@ -311,7 +383,8 @@ const Navbar = () => {
                 { path: '/news-dashboard?category=health', label: 'Health' },
                 { path: '/news-dashboard?category=sports', label: 'Sports' },
                 { path: '/news-dashboard?category=world-news', label: 'World News' },
-                { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' }
+                { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' },
+                { path: '/press-conference', label: 'Press Conference' }
               ].map((cat, i) => (
                 <Link
                   key={i}
