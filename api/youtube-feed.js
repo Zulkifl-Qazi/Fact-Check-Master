@@ -53,10 +53,17 @@ export default async function handler(req, res) {
       if (liveRes.ok) {
         const html = await liveRes.text();
         
-        // Check if the HTML contains live player flags
-        const isLiveActive = html.includes('"isLive":true') || 
+        // Check if the HTML contains live player flags, excluding scheduled/upcoming/offline events
+        const isUpcomingOrOffline = html.includes('"upcomingEventData"') || 
+                                     html.includes('LIVE_STREAM_OFFLINE') || 
+                                     html.includes('"status":"UPCOMING"') ||
+                                     html.includes('"upcomingEventData"');
+
+        const isLiveActive = !isUpcomingOrOffline && (
+                             html.includes('"isLive":true') || 
                              html.includes('"liveStreamability"') ||
-                             html.includes('yt-playability-error-supported-renderers');
+                             html.includes('yt-playability-error-supported-renderers')
+        );
 
         if (isLiveActive) {
           // Extract video ID from canonical link or watch URL
