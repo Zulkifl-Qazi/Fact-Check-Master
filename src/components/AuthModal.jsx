@@ -1,14 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaTimes, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser, FaCamera } from 'react-icons/fa';
+import { FaTimes, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const PRESET_AVATARS = [
-  { label: 'Neutral', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80' },
-  { label: 'Male', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80' },
-  { label: 'Female', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80' }
-];
 
 const AuthModal = () => {
   const { showAuthModal, closeAuthModal, login } = useAuth();
@@ -19,16 +13,12 @@ const AuthModal = () => {
   const [otpInput, setOtpInput] = useState('');
   const [profileName, setProfileName] = useState('');
   const [profileEmail, setProfileEmail] = useState('');
-  const [profileAvatar, setProfileAvatar] = useState(PRESET_AVATARS[0].url);
   const [setupProvider, setSetupProvider] = useState('email'); // 'email', 'google', 'facebook', 'instagram'
   
   const [error, setError] = useState('');
   const [sentOtp, setSentOtp] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [otpHelpText, setOtpHelpText] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-
-  const fileInputRef = useRef(null);
 
   if (!showAuthModal) return null;
 
@@ -85,61 +75,8 @@ const AuthModal = () => {
     setSetupProvider(provider);
     setProfileEmail('');
     setProfileName('');
-    setProfileAvatar(PRESET_AVATARS[0].url);
     setError('');
     setView('profile-setup');
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file.');
-      return;
-    }
-
-    setIsUploading(true);
-    setError('');
-
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64data = reader.result;
-        
-        try {
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              imageBase64: base64data,
-              fileName: file.name,
-              contentType: file.type
-            })
-          });
-
-          if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || 'Failed to upload photo');
-          }
-
-          const data = await res.json();
-          setProfileAvatar(data.imageUrl);
-        } catch (uploadErr) {
-          console.error('Profile photo upload error:', uploadErr);
-          setError(uploadErr.message || 'Failed to upload image. Please try a preset instead.');
-        } finally {
-          setIsUploading(false);
-        }
-      };
-    } catch (err) {
-      console.error(err);
-      setError('Failed to read image file.');
-      setIsUploading(false);
-    }
   };
 
   const handleCompleteSetupSubmit = (e) => {
@@ -153,10 +90,26 @@ const AuthModal = () => {
       return;
     }
 
+    const cleanName = profileName.trim();
+    const cleanEmail = profileEmail.trim();
+    const username = cleanEmail.split('@')[0];
+
+    // Automatically assign real profile photo via unavatar.io service, falling back to beautiful initials SVGs
+    let avatarUrl = '';
+    if (setupProvider === 'google' || setupProvider === 'email') {
+      avatarUrl = `https://unavatar.io/${cleanEmail}?fallback=https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`;
+    } else if (setupProvider === 'facebook') {
+      avatarUrl = `https://unavatar.io/facebook/${username}?fallback=https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`;
+    } else if (setupProvider === 'instagram') {
+      avatarUrl = `https://unavatar.io/instagram/${username}?fallback=https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`;
+    } else {
+      avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanName)}`;
+    }
+
     login(setupProvider, {
-      name: profileName.trim(),
-      email: profileEmail.trim(),
-      avatar: profileAvatar
+      name: cleanName,
+      email: cleanEmail,
+      avatar: avatarUrl
     });
     resetForm();
   };
@@ -167,7 +120,6 @@ const AuthModal = () => {
     setOtpInput('');
     setProfileName('');
     setProfileEmail('');
-    setProfileAvatar(PRESET_AVATARS[0].url);
     setError('');
     setSentOtp('');
   };
@@ -347,7 +299,7 @@ const AuthModal = () => {
               </div>
             )}
 
-            {/* View 3: Setup Profile Details (Name, Email, Custom Avatar) */}
+            {/* View 3: Setup Profile Details (Name, Email, Auto-Avatar) */}
             {view === 'profile-setup' && (
               <div>
                 <div className="text-center mb-6">
@@ -355,71 +307,12 @@ const AuthModal = () => {
                     Set Up Your Profile
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Choose your display name and profile picture
+                    Confirm your details to finalize sign in
                   </p>
                 </div>
 
                 <form onSubmit={handleCompleteSetupSubmit} className="space-y-5">
                   
-                  {/* Circular Avatar Preview with camera overlay */}
-                  <div className="flex flex-col items-center justify-center gap-2 mb-2">
-                    <div 
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500/50 hover:border-blue-500 cursor-pointer relative group transition shadow-md bg-slate-100 dark:bg-slate-950"
-                    >
-                      <img 
-                        src={profileAvatar} 
-                        alt="Profile Preview" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <FaCamera className="text-white text-base" />
-                      </div>
-                      {isUploading && (
-                        <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-300 border-t-blue-500" />
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      disabled={isUploading}
-                      onClick={() => fileInputRef.current?.click()}
-                      className="px-3 py-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg cursor-pointer border-none transition"
-                    >
-                      Upload Photo
-                    </button>
-                    <input 
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                  </div>
-
-                  {/* Preset Avatar Selection Grid */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 text-center">
-                      Or Choose Preset Avatar
-                    </label>
-                    <div className="flex items-center justify-center gap-3">
-                      {PRESET_AVATARS.map((preset, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setProfileAvatar(preset.url)}
-                          className={`w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 transition p-0 bg-slate-100 ${
-                            profileAvatar === preset.url ? 'border-blue-500 scale-110 shadow-md' : 'border-transparent hover:border-slate-300'
-                          }`}
-                          title={preset.label}
-                        >
-                          <img src={preset.url} alt={preset.label} className="w-full h-full object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Profile inputs */}
                   <div className="space-y-3">
                     <div>
@@ -474,8 +367,7 @@ const AuthModal = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={isUploading}
-                      className="flex-grow py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl border-none cursor-pointer transition shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 disabled:opacity-50"
+                      className="flex-grow py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl border-none cursor-pointer transition shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20"
                     >
                       Complete Sign In
                     </button>

@@ -6,8 +6,46 @@ import {
   FaPlus, FaTrash, FaEye, FaPen, FaImage, FaBookOpen,
   FaTimes, FaCheck, FaFileAlt, FaExternalLinkAlt, FaSearch, FaUpload
 } from 'react-icons/fa';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+// Register Custom Image Format to allow style attributes in Quill
+if (Quill) {
+  const ImageFormat = Quill.import('formats/image');
+  class CustomImage extends ImageFormat {
+    static create(value) {
+      const node = super.create(value);
+      if (typeof value === 'string') {
+        node.setAttribute('src', this.sanitize(value));
+      }
+      return node;
+    }
+    static formats(node) {
+      const format = {};
+      if (node.hasAttribute('style')) {
+        format.style = node.getAttribute('style');
+      }
+      if (node.hasAttribute('class')) {
+        format.class = node.getAttribute('class');
+      }
+      return format;
+    }
+    format(name, value) {
+      if (name === 'style' || name === 'class') {
+        if (value) {
+          this.domNode.setAttribute(name, value);
+        } else {
+          this.domNode.removeAttribute(name);
+        }
+      } else {
+        super.format(name, value);
+      }
+    }
+  }
+  CustomImage.blotName = 'image';
+  CustomImage.tagName = 'img';
+  Quill.register(CustomImage, true);
+}
 
 // Quill editor styles (reuse from AdminPosts)
 const quillStyles = `
