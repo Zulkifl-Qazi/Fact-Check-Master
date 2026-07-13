@@ -287,26 +287,27 @@ const PostView = () => {
                         </h1>
 
                         {/* Meta info */}
-                        <div className="flex items-center flex-wrap gap-3 md:gap-6 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200/60 dark:border-slate-800/60 w-full relative">
-                            <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
-                                <FaUser className="mr-2 text-blue-600 dark:text-blue-500" />
-                                <span className="font-semibold">{post.author || 'Admin'}</span>
-                            </div>
-                            
-                            <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
-                                <FaClock className="mr-2 text-blue-600 dark:text-blue-500" />
-                                <span>{new Date(post.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}</span>
+                        <div className="flex items-center justify-between gap-4 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200/60 dark:border-slate-800/60 w-full relative">
+                            {/* Author & Date Group */}
+                            <div className="flex items-center gap-3 md:gap-6 flex-shrink-0">
+                                <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
+                                    <FaUser className="mr-1.5 md:mr-2 text-blue-600 dark:text-blue-500" />
+                                    <span className="font-semibold">{post.author || 'Admin'}</span>
+                                </div>
+                                
+                                <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs md:text-sm">
+                                    <FaClock className="mr-1.5 md:mr-2 text-blue-600 dark:text-blue-500" />
+                                    <span>{new Date(post.created_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}</span>
+                                </div>
                             </div>
 
                             {/* Flat Inline Share Buttons */}
-                            <div className="ml-auto flex items-center gap-2.5">
-                                <span className="text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
+                            <div className="flex items-center gap-2 md:mr-12 flex-shrink-0">
+                                <span className="hidden sm:inline text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
                                 <div className="flex items-center gap-1.5 md:gap-2">
                                     <button
                                         onClick={() => handleShare('facebook')}

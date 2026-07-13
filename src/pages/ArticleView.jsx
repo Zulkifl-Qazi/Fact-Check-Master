@@ -198,33 +198,36 @@ const ArticleView = () => {
         </h1>
 
         {/* Meta row */}
-        <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-8 pb-8 border-b border-slate-200 dark:border-slate-800">
-          <span className="flex items-center gap-1.5">
-            <FaUser className="text-xs text-blue-500" />
-            {article.author || 'Fact Check Master'}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <FaCalendarAlt className="text-xs text-blue-500" />
-            {new Date(article.created_at).toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <FaClock className="text-xs text-blue-500" />
-            {article.read_time || 5} min read
-          </span>
-          {article.views > 0 && (
-            <span className="flex items-center gap-1.5">
-              <FaEye className="text-xs text-blue-500" />
-              {article.views.toLocaleString()} views
+        <div className="flex items-center justify-between gap-4 mb-8 pb-8 border-b border-slate-200 dark:border-slate-800 w-full relative">
+          {/* Author & Date/Read Group */}
+          <div className="flex items-center gap-3 md:gap-6 flex-shrink-0 flex-wrap sm:flex-nowrap">
+            <span className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-slate-400">
+              <FaUser className="text-xs text-blue-500" />
+              <span className="font-semibold">{article.author || 'Fact Check Master'}</span>
             </span>
-          )}
+            <span className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-slate-400">
+              <FaCalendarAlt className="text-xs text-blue-500" />
+              <span>{new Date(article.created_at).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-slate-400">
+              <FaClock className="text-xs text-blue-500" />
+              <span>{article.read_time || 5} min read</span>
+            </span>
+            {article.views > 0 && (
+              <span className="flex items-center gap-1.5 text-xs md:text-sm text-slate-500 dark:text-slate-400">
+                <FaEye className="text-xs text-blue-500" />
+                <span>{article.views.toLocaleString()} views</span>
+              </span>
+            )}
+          </div>
           
           {/* Flat Inline Share Buttons */}
-          <div className="ml-auto flex items-center gap-2.5">
-            <span className="text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
+          <div className="flex items-center gap-2 md:mr-12 flex-shrink-0">
+            <span className="hidden sm:inline text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
             <div className="flex items-center gap-1.5 md:gap-2">
               <button
                 onClick={() => handleShare('facebook')}
