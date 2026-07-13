@@ -133,6 +133,12 @@ const AdminArticles = () => {
   const [author, setAuthor] = useState('Fact Check Master');
   const [status, setStatus] = useState('draft');
   const [slug, setSlug] = useState('');
+  
+  // Inline Image Helper State
+  const [helperUrl, setHelperUrl] = useState('');
+  const [helperSize, setHelperSize] = useState('50');
+  const [helperAlign, setHelperAlign] = useState('center');
+  const [helperUploading, setHelperUploading] = useState(false);
 
   const editorRef = useRef(null);
 
@@ -195,6 +201,38 @@ const AdminArticles = () => {
   const closeEditor = () => {
     setShowEditor(false);
     resetForm();
+  };
+
+  const insertInlineImage = (url, size, alignment) => {
+    if (!editorRef.current) return;
+    const quill = editorRef.current.getEditor();
+    const range = quill.getSelection(true) || { index: quill.getLength() };
+    
+    let widthStyle = 'max-width: 50% !important;';
+    if (size === '25') widthStyle = 'width: 25% !important; max-width: 200px !important;';
+    else if (size === '50') widthStyle = 'width: 50% !important; max-width: 380px !important;';
+    else if (size === '75') widthStyle = 'width: 75% !important; max-width: 580px !important;';
+    else if (size === '100') widthStyle = 'width: 100% !important;';
+
+    let alignStyle = 'display: block !important; margin: 1.5rem auto !important; float: none !important;';
+    if (alignment === 'left') {
+      alignStyle = 'float: left !important; margin-right: 1.5rem !important; margin-bottom: 1.5rem !important; margin-top: 0.5rem !important; display: inline-block !important;';
+    } else if (alignment === 'right') {
+      alignStyle = 'float: right !important; margin-left: 1.5rem !important; margin-bottom: 1.5rem !important; margin-top: 0.5rem !important; display: inline-block !important;';
+    }
+
+    const htmlToInsert = `<img src="${url}" style="border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); ${widthStyle} ${alignStyle}" alt="Inline Image" />`;
+    quill.clipboard.dangerouslyPasteHTML(range.index, htmlToInsert);
+  };
+
+  const handleInsertHelperImage = () => {
+    if (!helperUrl.trim()) {
+      showNotif('Upload an image or paste a URL first', 'error');
+      return;
+    }
+    insertInlineImage(helperUrl.trim(), helperSize, helperAlign);
+    showNotif('Image inserted into editor');
+    setHelperUrl('');
   };
 
   // ─── Save ──────────────────────────────────────────────────
@@ -596,6 +634,115 @@ const AdminArticles = () => {
                   {/* Content Editor */}
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">Content *</label>
+                    
+                    {/* Inline Image Helper Tool Box */}
+                    <div className="p-4 bg-slate-800/40 border border-slate-700/60 rounded-xl mb-4 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
+                        <span className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
+                          <FaImage /> Inline Image Helper Tool
+                        </span>
+                        <span className="text-[10px] text-slate-400">Position cursor below, configure options, and insert.</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* URL + Upload input */}
+                        <div className="md:col-span-1 space-y-1.5">
+                          <label className="block text-[11px] font-bold text-slate-400 uppercase">Image URL or Upload</label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="url"
+                              value={helperUrl}
+                              onChange={(e) => setHelperUrl(e.target.value)}
+                              placeholder="Paste URL or upload →"
+                              className="flex-1 px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                            />
+                            <label className={`flex items-center justify-center p-2 rounded-lg cursor-pointer border ${
+                              helperUploading
+                                ? 'bg-blue-900/30 border-blue-800 text-blue-400 cursor-wait'
+                                : 'bg-blue-600/10 border-blue-600/30 text-blue-400 hover:bg-blue-600/20'
+                            }`}>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                disabled={helperUploading}
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  setHelperUploading(true);
+                                  try {
+                                    const base64 = await compressImage(file, 1200, 0.8);
+                                    const res = await axios.post('/api/upload', {
+                                      imageBase64: base64,
+                                      fileName: file.name.replace(/\.[^/.]+$/, '') + '.jpg',
+                                      contentType: 'image/jpeg'
+                                    }, {
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Device-ID': getDeviceId()
+                                      }
+                                    });
+                                    setHelperUrl(res.data.imageUrl);
+                                    showNotif('Image uploaded successfully');
+                                  } catch (err) {
+                                    console.error(err);
+                                    showNotif('Upload failed', 'error');
+                                  } finally {
+                                    setHelperUploading(false);
+                                    e.target.value = '';
+                                  }
+                                }}
+                              />
+                              {helperUploading ? (
+                                <div className="animate-spin rounded-full h-3.5 w-3.5 border border-blue-400/30 border-t-blue-400" />
+                              ) : (
+                                <FaUpload className="text-xs" />
+                              )}
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Size Dropdown */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-bold text-slate-400 uppercase">Image Size</label>
+                          <select
+                            value={helperSize}
+                            onChange={(e) => setHelperSize(e.target.value)}
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                          >
+                            <option value="25">Small (25% Width)</option>
+                            <option value="50">Medium (50% Width)</option>
+                            <option value="75">Large (75% Width)</option>
+                            <option value="100">Full Width (100%)</option>
+                          </select>
+                        </div>
+
+                        {/* Alignment Dropdown */}
+                        <div className="space-y-1.5">
+                          <label className="block text-[11px] font-bold text-slate-400 uppercase">Alignment / Wrap</label>
+                          <select
+                            value={helperAlign}
+                            onChange={(e) => setHelperAlign(e.target.value)}
+                            className="w-full px-3 py-2 text-xs rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-blue-500"
+                          >
+                            <option value="center">Centered (No Text Wrapping)</option>
+                            <option value="left">Left Align (Text Wraps Right)</option>
+                            <option value="right">Right Align (Text Wraps Left)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={handleInsertHelperImage}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg border-none cursor-pointer transition shadow-md shadow-blue-500/10"
+                        >
+                          Insert at Cursor Position
+                        </button>
+                      </div>
+                    </div>
+
                     <div className="article-editor">
                       <ReactQuill
                         ref={editorRef}
