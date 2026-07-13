@@ -48,7 +48,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-300 overflow-visible">
+    <nav className="fixed top-0 left-0 right-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-300 overflow-visible">
       <style>{`
         @media (max-width: 767px) {
           .navbar-desktop-menu {
@@ -358,47 +358,55 @@ const Navbar = () => {
       <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300 relative z-30">
         <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-between relative overflow-visible">
 
-          {/* Categories Container */}
-          <div className="flex items-center justify-start md:justify-center gap-5 overflow-x-auto scrollbar-none subnav-container flex-grow pr-16 md:pr-0">
-            <style>{`
-              .subnav-container::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
+          {/* Categories Container with Left and Right Fade Mask on Mobile */}
+          <div className="relative flex-grow flex items-center overflow-hidden">
+            {/* Left Fade Mask (visible only on mobile) */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-950 to-transparent pointer-events-none z-10 md:hidden" />
             
-            {/* Bold Label */}
-            <div className="flex items-center gap-1 font-bold text-xs text-red-500 uppercase tracking-wider flex-shrink-0">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
-                <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
-                <polyline points="17 6 23 6 23 12"></polyline>
-              </svg>
-              <span>Trending</span>
+            <div className="flex items-center justify-start md:justify-center gap-3 overflow-x-auto scrollbar-none subnav-container flex-grow pr-16 md:pr-0 py-1">
+              <style>{`
+                .subnav-container::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
+              
+              {/* Bold Label */}
+              <div className="flex items-center gap-1 font-bold text-xs text-red-500 uppercase tracking-wider flex-shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
+                  <path d="M23 6l-9.5 9.5-5-5L1 18"></path>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <span>Trending</span>
+              </div>
+
+              {/* Links */}
+              <div className="flex items-center gap-2 md:gap-5">
+                {[
+                  { path: '/news-dashboard?category=political', label: 'Politics' },
+                  { path: '/news-dashboard?category=technology', label: 'Technology' },
+                  { path: '/news-dashboard?category=health', label: 'Health' },
+                  { path: '/news-dashboard?category=sports', label: 'Sports' },
+                  { path: '/news-dashboard?category=world-news', label: 'World News' },
+                  { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' },
+                  { path: '/press-conference', label: 'Press Conference' }
+                ].map((cat, i) => (
+                  <Link
+                    key={i}
+                    to={cat.path}
+                    className="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 px-3 py-1.5 rounded-full bg-slate-100/50 hover:bg-slate-200/50 dark:bg-slate-900/40 dark:hover:bg-slate-800/60 md:bg-transparent md:hover:bg-transparent md:dark:bg-transparent md:dark:hover:bg-transparent md:px-0 md:py-0 border border-slate-200/20 dark:border-slate-800/30 md:border-none"
+                    style={{
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* Links */}
-            <div className="flex items-center gap-5">
-              {[
-                { path: '/news-dashboard?category=political', label: 'Politics' },
-                { path: '/news-dashboard?category=technology', label: 'Technology' },
-                { path: '/news-dashboard?category=health', label: 'Health' },
-                { path: '/news-dashboard?category=sports', label: 'Sports' },
-                { path: '/news-dashboard?category=world-news', label: 'World News' },
-                { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' },
-                { path: '/press-conference', label: 'Press Conference' }
-              ].map((cat, i) => (
-                <Link
-                  key={i}
-                  to={cat.path}
-                  className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                  style={{
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {cat.label}
-                </Link>
-              ))}
-            </div>
+            {/* Right Fade Mask (visible only on mobile) */}
+            <div className="absolute right-12 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-950 to-transparent pointer-events-none z-10 md:hidden" />
           </div>
 
           {/* Weather Widget */}

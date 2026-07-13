@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaTimes, FaGoogle, FaFacebook, FaApple, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
+import { FaTimes, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser, FaCamera } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// High-quality mock profile images
-const MOCK_AVATARS = {
-  qzulkifl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-  qazi: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-  zulkifl18: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
-  case: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80',
-  default: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80'
-};
+const PRESET_AVATARS = [
+  { label: 'Neutral', url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80' },
+  { label: 'Male', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80' },
+  { label: 'Female', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80' }
+];
 
 const AuthModal = () => {
   const { showAuthModal, closeAuthModal, login } = useAuth();
-  const [view, setView] = useState('main'); // 'main', 'google', 'facebook', 'instagram', 'email-otp', 'custom-user'
+  const [view, setView] = useState('main'); // 'main', 'email-otp', 'profile-setup'
+  
+  // Form fields
   const [emailInput, setEmailInput] = useState('');
   const [otpInput, setOtpInput] = useState('');
-  const [customName, setCustomName] = useState('');
-  const [customEmail, setCustomEmail] = useState('');
+  const [profileName, setProfileName] = useState('');
+  const [profileEmail, setProfileEmail] = useState('');
+  const [profileAvatar, setProfileAvatar] = useState(PRESET_AVATARS[0].url);
+  const [setupProvider, setSetupProvider] = useState('email'); // 'email', 'google', 'facebook', 'instagram'
+  
   const [error, setError] = useState('');
   const [sentOtp, setSentOtp] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [otpHelpText, setOtpHelpText] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+
+  const fileInputRef = useRef(null);
 
   if (!showAuthModal) return null;
 
@@ -65,36 +70,93 @@ const AuthModal = () => {
   const handleVerifyOtp = (e) => {
     e.preventDefault();
     if (otpInput === sentOtp) {
-      login('email', {
-        name: emailInput.split('@')[0],
-        email: emailInput.trim(),
-        avatar: MOCK_AVATARS.default
-      });
-      resetForm();
+      // Transition to profile setup step rather than direct login
+      setSetupProvider('email');
+      setProfileEmail(emailInput.trim());
+      setProfileName(emailInput.split('@')[0]);
+      setError('');
+      setView('profile-setup');
     } else {
-      setError('Incorrect verification code. Please check the code provided and try again.');
+      setError('Incorrect verification code. Please check the code and try again.');
     }
   };
 
-  const selectGoogleAccount = (account) => {
-    login('google', {
-      name: account.name,
-      email: account.email,
-      avatar: account.avatar
-    });
-    resetForm();
+  const handleSocialClick = (provider) => {
+    setSetupProvider(provider);
+    setProfileEmail('');
+    setProfileName('');
+    setProfileAvatar(PRESET_AVATARS[0].url);
+    setError('');
+    setView('profile-setup');
   };
 
-  const handleCustomUserSubmit = (e) => {
-    e.preventDefault();
-    if (!customName.trim() || !customEmail.trim() || !customEmail.includes('@')) {
-      setError('Please enter a valid name and email.');
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file.');
       return;
     }
-    login('google', {
-      name: customName.trim(),
-      email: customEmail.trim(),
-      avatar: MOCK_AVATARS.default
+
+    setIsUploading(true);
+    setError('');
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64data = reader.result;
+        
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              imageBase64: base64data,
+              fileName: file.name,
+              contentType: file.type
+            })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Failed to upload photo');
+          }
+
+          const data = await res.json();
+          setProfileAvatar(data.imageUrl);
+        } catch (uploadErr) {
+          console.error('Profile photo upload error:', uploadErr);
+          setError(uploadErr.message || 'Failed to upload image. Please try a preset instead.');
+        } finally {
+          setIsUploading(false);
+        }
+      };
+    } catch (err) {
+      console.error(err);
+      setError('Failed to read image file.');
+      setIsUploading(false);
+    }
+  };
+
+  const handleCompleteSetupSubmit = (e) => {
+    e.preventDefault();
+    if (!profileName.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
+    if (!profileEmail.trim() || !profileEmail.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    login(setupProvider, {
+      name: profileName.trim(),
+      email: profileEmail.trim(),
+      avatar: profileAvatar
     });
     resetForm();
   };
@@ -103,8 +165,9 @@ const AuthModal = () => {
     setView('main');
     setEmailInput('');
     setOtpInput('');
-    setCustomName('');
-    setCustomEmail('');
+    setProfileName('');
+    setProfileEmail('');
+    setProfileAvatar(PRESET_AVATARS[0].url);
     setError('');
     setSentOtp('');
   };
@@ -113,13 +176,6 @@ const AuthModal = () => {
     resetForm();
     closeAuthModal();
   };
-
-  const googleAccounts = [
-    { name: 'Zulkifl Qazi', email: 'qzulkifl@gmail.com', avatar: MOCK_AVATARS.qzulkifl, status: 'Active' },
-    { name: 'Qazi', email: 'qazi.piffer@gmail.com', avatar: MOCK_AVATARS.qazi, status: 'Signed out' },
-    { name: 'Muhammad Zulkifl Qazi', email: 'zulkiflqazi18@gmail.com', avatar: MOCK_AVATARS.zulkifl18, status: 'Active' },
-    { name: 'Zulkifl Qazi', email: '2230-0112.zulkifl@case.edu.pk', avatar: MOCK_AVATARS.case, status: 'Signed out' }
-  ];
 
   return (
     <AnimatePresence>
@@ -153,7 +209,6 @@ const AuthModal = () => {
             {/* View 1: Main Login Panel */}
             {view === 'main' && (
               <div>
-                {/* Logo & Header */}
                 <div className="text-center mb-8">
                   <div className="inline-block relative mb-3">
                     <img src={logo} alt="Fact Check Master Logo" className="w-14 h-14 rounded-xl shadow-md border-2 border-blue-500/20" />
@@ -209,7 +264,7 @@ const AuthModal = () => {
                 {/* Social Login Options */}
                 <div className="space-y-3">
                   <button 
-                    onClick={() => setView('google')}
+                    onClick={() => handleSocialClick('google')}
                     className="w-full py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition flex items-center justify-center gap-3 relative"
                   >
                     <FaGoogle className="text-red-500 absolute left-4 text-base" />
@@ -217,7 +272,7 @@ const AuthModal = () => {
                   </button>
 
                   <button 
-                    onClick={() => setView('facebook')}
+                    onClick={() => handleSocialClick('facebook')}
                     className="w-full py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition flex items-center justify-center gap-3 relative"
                   >
                     <FaFacebook className="text-blue-600 absolute left-4 text-base" />
@@ -225,7 +280,7 @@ const AuthModal = () => {
                   </button>
 
                   <button 
-                    onClick={() => setView('instagram')}
+                    onClick={() => handleSocialClick('instagram')}
                     className="w-full py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition flex items-center justify-center gap-3 relative"
                   >
                     <FaInstagram className="text-pink-600 absolute left-4 text-base" />
@@ -233,182 +288,13 @@ const AuthModal = () => {
                   </button>
                 </div>
 
-                {/* Footer disclaimer */}
                 <p className="text-center text-[10px] text-slate-400 dark:text-slate-500 mt-6 leading-relaxed">
                   By signing in, you agree to our Terms of Service and Privacy Policy. All profile operations are secure.
                 </p>
               </div>
             )}
 
-            {/* View 2: Google Choose Account Screen */}
-            {view === 'google' && (
-              <div>
-                {/* Header */}
-                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">
-                  <FaGoogle className="text-red-500 text-lg" />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sign in with Google</span>
-                </div>
-
-                <div className="text-center mb-6">
-                  <img src={logo} alt="Logo" className="w-10 h-10 rounded-lg mx-auto mb-2 shadow" />
-                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-                    Choose an account
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    to continue to <span className="font-bold text-blue-600 dark:text-blue-400">Fact Check Master</span>
-                  </p>
-                </div>
-
-                {/* List of accounts */}
-                <div className="space-y-1 max-h-[280px] overflow-y-auto pr-1">
-                  {googleAccounts.map((acc, i) => (
-                    <button
-                      key={i}
-                      onClick={() => selectGoogleAccount(acc)}
-                      className="w-full p-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-left border-none cursor-pointer rounded-xl transition flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img src={acc.avatar} alt={acc.name} className="w-9 h-9 rounded-full object-cover border border-slate-200/50 dark:border-slate-700" />
-                        <div>
-                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {acc.name}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {acc.email}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-semibold">
-                        {acc.status}
-                      </span>
-                    </button>
-                  ))}
-
-                  {/* Use another account option */}
-                  <button
-                    onClick={() => setView('custom-user')}
-                    className="w-full p-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-left border-none cursor-pointer rounded-xl transition flex items-center gap-3"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">
-                      <FaUser className="text-sm" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                        Use another account
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        Login with a custom Google email
-                      </p>
-                    </div>
-                  </button>
-                </div>
-
-                {/* Google Footer */}
-                <div className="mt-8 text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
-                  Before using this app, you can review Fact Check Master's <a href="/privacy-policy" className="text-blue-500 hover:underline">Privacy Policy</a> and <a href="/terms-of-service" className="text-blue-500 hover:underline">Terms of Service</a>.
-                </div>
-              </div>
-            )}
-
-            {/* View 3: Facebook Simulated Login */}
-            {view === 'facebook' && (
-              <div>
-                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">
-                  <FaFacebook className="text-blue-600 text-lg" />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sign in with Facebook</span>
-                </div>
-
-                <div className="text-center mb-6">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                    Facebook Login
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Fact Check Master is requesting access to your name, email address, and profile picture.
-                  </p>
-                </div>
-
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 flex items-center gap-4">
-                  <img src={MOCK_AVATARS.qzulkifl} alt="Profile" className="w-12 h-12 rounded-full border shadow" />
-                  <div>
-                    <h4 className="font-bold text-slate-800 dark:text-slate-200">Zulkifl Qazi</h4>
-                    <p className="text-xs text-slate-500">Facebook User</p>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <button
-                    onClick={() => {
-                      login('facebook', {
-                        name: 'Zulkifl Qazi',
-                        email: 'qzulkifl@gmail.com',
-                        avatar: MOCK_AVATARS.qzulkifl
-                      });
-                      resetForm();
-                    }}
-                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl border-none cursor-pointer transition"
-                  >
-                    Continue as Zulkifl
-                  </button>
-                  <button
-                    onClick={() => setView('main')}
-                    className="w-full py-3 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* View 4: Instagram Simulated Login */}
-            {view === 'instagram' && (
-              <div>
-                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">
-                  <FaInstagram className="text-pink-600 text-lg" />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sign in with Instagram</span>
-                </div>
-
-                <div className="text-center mb-6">
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                    Instagram/Meta Auth
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Connect using your Meta social details.
-                  </p>
-                </div>
-
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 mb-6 flex items-center gap-4">
-                  <img src={MOCK_AVATARS.zulkifl18} alt="Profile" className="w-12 h-12 rounded-full border shadow" />
-                  <div>
-                    <h4 className="font-bold text-slate-800 dark:text-slate-200">zulkifl_qazi</h4>
-                    <p className="text-xs text-slate-500">Instagram Profile</p>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <button
-                    onClick={() => {
-                      login('instagram', {
-                        name: 'Zulkifl Qazi',
-                        email: 'zulkiflqazi18@gmail.com',
-                        avatar: MOCK_AVATARS.zulkifl18
-                      });
-                      resetForm();
-                    }}
-                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl border-none cursor-pointer transition"
-                  >
-                    Log In with Instagram
-                  </button>
-                  <button
-                    onClick={() => setView('main')}
-                    className="w-full py-3 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* View 5: Email OTP verification */}
+            {/* View 2: Email OTP verification */}
             {view === 'email-otp' && (
               <div>
                 <div className="text-center mb-6">
@@ -446,7 +332,7 @@ const AuthModal = () => {
                     type="submit"
                     className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold rounded-xl border-none cursor-pointer transition"
                   >
-                    Verify & Sign In
+                    Verify & Continue
                   </button>
                 </form>
 
@@ -461,58 +347,137 @@ const AuthModal = () => {
               </div>
             )}
 
-            {/* View 6: Google Custom Sign In Form */}
-            {view === 'custom-user' && (
+            {/* View 3: Setup Profile Details (Name, Email, Custom Avatar) */}
+            {view === 'profile-setup' && (
               <div>
-                <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">
-                  <FaGoogle className="text-red-500 text-lg" />
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sign in with Google</span>
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+                    Set Up Your Profile
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Choose your display name and profile picture
+                  </p>
                 </div>
 
-                <form onSubmit={handleCustomUserSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                      Full Name
-                    </label>
+                <form onSubmit={handleCompleteSetupSubmit} className="space-y-5">
+                  
+                  {/* Circular Avatar Preview with camera overlay */}
+                  <div className="flex flex-col items-center justify-center gap-2 mb-2">
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500/50 hover:border-blue-500 cursor-pointer relative group transition shadow-md bg-slate-100 dark:bg-slate-950"
+                    >
+                      <img 
+                        src={profileAvatar} 
+                        alt="Profile Preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <FaCamera className="text-white text-base" />
+                      </div>
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-slate-300 border-t-blue-500" />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      disabled={isUploading}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3 py-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg cursor-pointer border-none transition"
+                    >
+                      Upload Photo
+                    </button>
                     <input 
-                      type="text"
-                      required
-                      value={customName}
-                      onChange={(e) => setCustomName(e.target.value)}
-                      placeholder="Your Name"
-                      className="w-full text-sm px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      accept="image/*"
+                      className="hidden"
                     />
                   </div>
 
+                  {/* Preset Avatar Selection Grid */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                      Google Email
+                    <label className="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 text-center">
+                      Or Choose Preset Avatar
                     </label>
-                    <input 
-                      type="email"
-                      required
-                      value={customEmail}
-                      onChange={(e) => setCustomEmail(e.target.value)}
-                      placeholder="your.email@gmail.com"
-                      className="w-full text-sm px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
-                    />
+                    <div className="flex items-center justify-center gap-3">
+                      {PRESET_AVATARS.map((preset, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setProfileAvatar(preset.url)}
+                          className={`w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 transition p-0 bg-slate-100 ${
+                            profileAvatar === preset.url ? 'border-blue-500 scale-110 shadow-md' : 'border-transparent hover:border-slate-300'
+                          }`}
+                          title={preset.label}
+                        >
+                          <img src={preset.url} alt={preset.label} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  {error && <p className="text-red-500 text-xs font-semibold">{error}</p>}
+                  {/* Profile inputs */}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Your Display Name
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                          <FaUser className="text-xs" />
+                        </div>
+                        <input 
+                          type="text"
+                          required
+                          value={profileName}
+                          onChange={(e) => setProfileName(e.target.value)}
+                          placeholder="e.g. Zulkifl Qazi"
+                          className="w-full text-sm pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Email Address
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                          <FaEnvelope className="text-xs" />
+                        </div>
+                        <input 
+                          type="email"
+                          required
+                          disabled={setupProvider === 'email'}
+                          value={profileEmail}
+                          onChange={(e) => setProfileEmail(e.target.value)}
+                          placeholder="name@domain.com"
+                          className="w-full text-sm pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 disabled:opacity-75 disabled:cursor-not-allowed transition focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {error && <p className="text-red-500 text-xs font-semibold text-center">{error}</p>}
 
                   <div className="flex gap-3 pt-2">
                     <button
                       type="button"
-                      onClick={() => setView('google')}
-                      className="flex-1 py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition"
+                      onClick={() => setView(setupProvider === 'email' ? 'email-otp' : 'main')}
+                      className="flex-grow py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition"
                     >
                       Back
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl border-none cursor-pointer transition"
+                      disabled={isUploading}
+                      className="flex-grow py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl border-none cursor-pointer transition shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 disabled:opacity-50"
                     >
-                      Continue
+                      Complete Sign In
                     </button>
                   </div>
                 </form>

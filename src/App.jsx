@@ -81,7 +81,7 @@ function App() {
         </div>
         <Navbar />
         <AuthModal />
-        <main id="main-content" className="relative flex-grow w-full z-10">
+        <main id="main-content" className="relative flex-grow w-full z-10 pt-[104px]">
           <Suspense fallback={null}>
             <Routes>
               <Route path="/" element={<HomePage />} />

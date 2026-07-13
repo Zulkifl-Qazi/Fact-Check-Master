@@ -174,14 +174,15 @@ const PostView = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to post comment');
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || 'Failed to post comment');
             }
 
             const newComment = await response.json();
             setComments(prev => [...prev, newComment]);
             setNewCommentText('');
         } catch (err) {
-            setCommentError('Failed to submit comment. Please try again.');
+            setCommentError(err.message || 'Failed to submit comment. Please try again.');
         } finally {
             setIsSubmittingComment(false);
         }
