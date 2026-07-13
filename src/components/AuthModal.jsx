@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FaTimes, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
+import { FaTimes, FaGoogle, FaFacebook, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -262,14 +262,6 @@ const AuthModal = () => {
                   >
                     <FaFacebook className="text-blue-600 absolute left-4 text-base" />
                     Continue with Facebook
-                  </button>
-
-                  <button 
-                    onClick={() => handleSocialClick('instagram')}
-                    className="w-full py-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-200 dark:border-slate-800 cursor-pointer transition flex items-center justify-center gap-3 relative"
-                  >
-                    <FaInstagram className="text-pink-600 absolute left-4 text-base" />
-                    Continue with Instagram
                   </button>
                 </div>
 
