@@ -149,7 +149,7 @@ const AdminArticles = () => {
   const fetchArticles = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/articles?all=true', {
+      const res = await axios.get(`/api/articles?all=true&t=${Date.now()}`, {
         headers: { 'X-Device-ID': getDeviceId() },
       });
       setArticles(res.data || []);

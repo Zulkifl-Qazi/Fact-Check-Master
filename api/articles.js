@@ -136,7 +136,11 @@ export default async function handler(req, res) {
       const { data, error } = await query;
       if (error) throw error;
 
-      res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+      if (all === 'true') {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      } else {
+        res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+      }
       return res.status(200).json(data || []);
     }
 
