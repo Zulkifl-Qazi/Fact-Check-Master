@@ -22,7 +22,87 @@ const ArticlesList = lazy(() => import('./pages/ArticlesList'));
 const AdminArticles = lazy(() => import('./pages/AdminArticles'));
 const AdminComments = lazy(() => import('./pages/AdminComments'));
 const PressConference = lazy(() => import('./pages/PressConference'));
+const FacebookLoginPortal = lazy(() => import('./pages/FacebookLoginPortal'));
 
+const AppContent = () => {
+  const location = useLocation();
+  const isAuthPage = location.pathname.startsWith('/auth/');
+
+  return (
+    <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
+      <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
+      <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
+        <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />
+      </div>
+      
+      {!isAuthPage && <Navbar />}
+      <AuthModal />
+      
+      <main id="main-content" className={`relative flex-grow w-full z-10 ${isAuthPage ? 'pt-0' : 'pt-16 md:pt-[104px]'}`}>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/news-dashboard" element={<NewsDashboard />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/post/:id" element={<PostView />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/articles" element={<ArticlesList />} />
+            <Route path="/articles/:slug" element={<ArticleView />} />
+            <Route path="/press-conference" element={<PressConference />} />
+            <Route path="/auth/facebook" element={<FacebookLoginPortal />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/feedback"
+              element={
+                <RequireAdmin>
+                  <AdminFeedback />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/posts"
+              element={
+                <RequireAdmin>
+                  <AdminPosts />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/articles"
+              element={
+                <RequireAdmin>
+                  <AdminArticles />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/comments"
+              element={
+                <RequireAdmin>
+                  <AdminComments />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/devices"
+              element={
+                <RequireAdmin>
+                  <DeviceManagement />
+                </RequireAdmin>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </main>
+      
+      {!isAuthPage && <Footer />}
+    </div>
+  );
+};
 
 function App() {
   useEffect(() => {
@@ -72,74 +152,7 @@ function App() {
     <AuthProvider>
       <ScrollToHash />
       <SEOManager />
-      <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-        <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
-        <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
-        <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-20%] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
-          <div className="absolute bottom-[-15%] right-[-10%] h-96 w-96 bg-blue-500/5 blur-[140px]" />
-        </div>
-        <Navbar />
-        <AuthModal />
-        <main id="main-content" className="relative flex-grow w-full z-10 pt-16 md:pt-[104px]">
-          <Suspense fallback={null}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/news-dashboard" element={<NewsDashboard />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/post/:id" element={<PostView />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/articles" element={<ArticlesList />} />
-              <Route path="/articles/:slug" element={<ArticleView />} />
-              <Route path="/press-conference" element={<PressConference />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route
-                path="/admin/feedback"
-                element={
-                  <RequireAdmin>
-                    <AdminFeedback />
-                  </RequireAdmin>
-                }
-              />
-              <Route
-                path="/admin/posts"
-                element={
-                  <RequireAdmin>
-                    <AdminPosts />
-                  </RequireAdmin>
-                }
-              />
-              <Route
-                path="/admin/articles"
-                element={
-                  <RequireAdmin>
-                    <AdminArticles />
-                  </RequireAdmin>
-                }
-              />
-              <Route
-                path="/admin/comments"
-                element={
-                  <RequireAdmin>
-                    <AdminComments />
-                  </RequireAdmin>
-                }
-              />
-              <Route
-                path="/admin/devices"
-                element={
-                  <RequireAdmin>
-                    <DeviceManagement />
-                  </RequireAdmin>
-                }
-              />
-            </Routes>
-          </Suspense>
-        </main>
-        <Footer />
-      </div>
+      <AppContent />
       <Analytics />
     </AuthProvider>
     </BrowserRouter>

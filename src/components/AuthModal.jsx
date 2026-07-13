@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { FaTimes, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
@@ -19,6 +19,26 @@ const AuthModal = () => {
   const [sentOtp, setSentOtp] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [otpHelpText, setOtpHelpText] = useState('');
+
+  useEffect(() => {
+    const handleAuthMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'facebook-auth-success') {
+        const { name, email } = event.data.user;
+        const username = email.split('@')[0];
+        const avatarUrl = `https://unavatar.io/facebook/${username}?fallback=https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+        
+        login('facebook', {
+          name,
+          email,
+          avatar: avatarUrl
+        });
+        closeAuthModal();
+      }
+    };
+    window.addEventListener('message', handleAuthMessage);
+    return () => window.removeEventListener('message', handleAuthMessage);
+  }, [login, closeAuthModal]);
 
   if (!showAuthModal) return null;
 
@@ -72,6 +92,19 @@ const AuthModal = () => {
   };
 
   const handleSocialClick = (provider) => {
+    if (provider === 'facebook') {
+      const width = 580;
+      const height = 650;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+      window.open(
+        '/auth/facebook',
+        'FacebookLoginPopup',
+        `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
+      );
+      return;
+    }
+
     setSetupProvider(provider);
     setProfileEmail('');
     setProfileName('');
