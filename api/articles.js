@@ -145,19 +145,19 @@ export default async function handler(req, res) {
       const admin = await requireApprovedAdmin(req, res);
       if (!admin) return;
 
-      const { title, content, excerpt, cover_image, author, status } = req.body;
+      const { title, slug, content, excerpt, cover_image, author, status } = req.body;
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
 
-      const slug = slugify(title);
+      const finalSlug = slug ? slugify(slug) : slugify(title);
       const read_time = estimateReadTime(content);
 
       const { data, error } = await supabase
         .from('articles')
         .insert({
           title: title.trim(),
-          slug,
+          slug: finalSlug,
           content,
           excerpt: excerpt || '',
           cover_image: cover_image || null,
@@ -187,19 +187,19 @@ export default async function handler(req, res) {
       const id = parseInt(q(req.query, 'id'), 10);
       if (!id) return res.status(400).json({ error: 'Article ID is required' });
 
-      const { title, content, excerpt, cover_image, author, status } = req.body;
+      const { title, slug, content, excerpt, cover_image, author, status } = req.body;
       if (!title || !content) {
         return res.status(400).json({ error: 'Title and content are required' });
       }
 
-      const slug = slugify(title);
+      const finalSlug = slug ? slugify(slug) : slugify(title);
       const read_time = estimateReadTime(content);
 
       const { data, error } = await supabase
         .from('articles')
         .update({
           title: title.trim(),
-          slug,
+          slug: finalSlug,
           content,
           excerpt: excerpt || '',
           cover_image: cover_image || null,

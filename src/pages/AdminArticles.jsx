@@ -132,6 +132,7 @@ const AdminArticles = () => {
   const [coverImage, setCoverImage] = useState('');
   const [author, setAuthor] = useState('Fact Check Master');
   const [status, setStatus] = useState('draft');
+  const [slug, setSlug] = useState('');
 
   const editorRef = useRef(null);
 
@@ -170,6 +171,7 @@ const AdminArticles = () => {
     setCoverImage('');
     setAuthor('Fact Check Master');
     setStatus('draft');
+    setSlug('');
     setEditingArticle(null);
   };
 
@@ -186,6 +188,7 @@ const AdminArticles = () => {
     setCoverImage(article.cover_image || '');
     setAuthor(article.author || 'Fact Check Master');
     setStatus(article.status || 'draft');
+    setSlug(article.slug || '');
     setShowEditor(true);
   };
 
@@ -205,6 +208,7 @@ const AdminArticles = () => {
     try {
       const body = {
         title: title.trim(),
+        slug: slug.trim() || slugify(title),
         excerpt: excerpt.trim(),
         content,
         cover_image: coverImage.trim() || null,
@@ -458,11 +462,21 @@ const AdminArticles = () => {
                       placeholder="How to Identify Fake News"
                       className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border-2 border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 text-base transition-colors"
                     />
-                    {title && (
-                      <p className="text-xs text-slate-500 mt-1.5">
-                        Slug: <span className="text-blue-400">/articles/{slugify(title)}</span>
-                      </p>
-                    )}
+                  </div>
+
+                  {/* Slug */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Custom URL Slug</label>
+                    <input
+                      type="text"
+                      value={slug}
+                      onChange={(e) => setSlug(slugify(e.target.value))}
+                      placeholder="custom-url-slug (auto-generated from title if blank)"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border-2 border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 text-base transition-colors"
+                    />
+                    <p className="text-xs text-slate-500 mt-1.5 font-mono">
+                      Preview URL: <span className="text-blue-400">/articles/{slug || slugify(title) || 'your-slug'}</span>
+                    </p>
                   </div>
 
                   {/* Excerpt */}
