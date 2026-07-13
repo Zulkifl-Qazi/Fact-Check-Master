@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
       let query = supabase.from('comments').select('*');
       if (post_title) {
-        query = query.eq('post_title', post_title.trim()).order('created_at', { ascending: true });
+        query = query.ilike('post_title', post_title.trim()).order('created_at', { ascending: true });
       } else {
         query = query.order('created_at', { ascending: false });
       }

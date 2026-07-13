@@ -435,7 +435,7 @@ const AuthModal = () => {
                           required
                           value={profileName}
                           onChange={(e) => setProfileName(e.target.value)}
-                          placeholder="e.g. Zulkifl Qazi"
+                          placeholder="e.g. John Doe"
                           className="w-full text-sm pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition focus:bg-white dark:focus:bg-slate-950 focus:border-blue-500 focus:outline-none"
                         />
                       </div>
