@@ -304,54 +304,51 @@ const PostView = () => {
                                 })}</span>
                             </div>
 
-                            {/* Share Bubble Hover Dropdown */}
-                            <div className="relative group ml-auto">
-                                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 bg-transparent border-none cursor-pointer transition">
-                                    <FaShareAlt className="text-sm" />
-                                    <span>Share</span>
-                                </button>
-                                
-                                {/* Dropdown bridge and container */}
-                                <div className="absolute top-full right-0 pt-2 hidden group-hover:block z-[99]">
-                                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-2 flex flex-col gap-1 min-w-[140px]">
+                            {/* Flat Inline Share Buttons */}
+                            <div className="ml-auto flex items-center gap-2.5">
+                                <span className="text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
+                                <div className="flex items-center gap-1.5 md:gap-2">
+                                    <button
+                                        onClick={() => handleShare('facebook')}
+                                        className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-[#1877F2]/10 dark:bg-slate-800 dark:hover:bg-[#1877F2]/20 text-[#1877F2] transition duration-200 cursor-pointer border-none"
+                                        title="Share on Facebook"
+                                    >
+                                        <FaFacebook className="text-xs md:text-sm" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleShare('twitter')}
+                                        className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition duration-200 cursor-pointer border-none"
+                                        title="Share on X"
+                                    >
+                                        <FaTwitter className="text-xs md:text-sm" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleShare('whatsapp')}
+                                        className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-[#25D366]/10 dark:bg-slate-800 dark:hover:bg-[#25D366]/20 text-[#25D366] transition duration-200 cursor-pointer border-none"
+                                        title="Share on WhatsApp"
+                                    >
+                                        <FaWhatsapp className="text-xs md:text-sm" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleShare('copy')}
+                                        className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition duration-200 cursor-pointer border-none ${
+                                            shareCopied 
+                                                ? 'bg-green-500/10 dark:bg-green-500/20 text-green-500' 
+                                                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300'
+                                        }`}
+                                        title={shareCopied ? 'Link Copied!' : 'Copy Link'}
+                                    >
+                                        <FaLink className="text-xs md:text-sm" />
+                                    </button>
+                                    {navigator.share && (
                                         <button
-                                            onClick={() => handleShare('facebook')}
-                                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                                            onClick={() => handleShare('native')}
+                                            className="w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition duration-200 cursor-pointer border-none"
+                                            title="More Options"
                                         >
-                                            <FaFacebook className="text-[#1877F2] text-sm" />
-                                            Facebook
+                                            <FaGlobe className="text-xs md:text-sm" />
                                         </button>
-                                        <button
-                                            onClick={() => handleShare('twitter')}
-                                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
-                                        >
-                                            <FaTwitter className="text-slate-900 dark:text-white text-sm" />
-                                            X (Twitter)
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare('whatsapp')}
-                                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
-                                        >
-                                            <FaWhatsapp className="text-[#25D366] text-sm" />
-                                            WhatsApp
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare('copy')}
-                                            className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
-                                        >
-                                            <FaLink className="text-slate-500 text-sm" />
-                                            {shareCopied ? 'Copied!' : 'Copy Link'}
-                                        </button>
-                                        {navigator.share && (
-                                            <button
-                                                onClick={() => handleShare('native')}
-                                                className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
-                                            >
-                                                <FaGlobe className="text-blue-500 text-sm" />
-                                                More Options
-                                            </button>
-                                        )}
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
