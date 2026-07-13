@@ -355,7 +355,7 @@ const Navbar = () => {
       </div>
 
       {/* Sub-Navbar */}
-      <div className="border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300 relative z-30">
+      <div className="hidden md:block border-t border-b border-slate-200/50 dark:border-slate-800/50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300 relative z-30">
         <div className="max-w-7xl mx-auto px-4 h-10 flex items-center justify-between relative overflow-visible">
 
           {/* Categories Container with Left and Right Fade Mask on Mobile */}
@@ -450,14 +450,40 @@ const Navbar = () => {
           >
             Articles
           </Link>
-          <Link 
-            to="/news-dashboard?category=trending-news" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-            style={{ textDecoration: 'none' }}
-            onClick={handleLinkClick}
-          >
-            Trending
-          </Link>
+          {/* Collapsible Trending Topics Menu */}
+          <div>
+            <div 
+              className="flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+            >
+              <span>Trending Topics</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 200ms', transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            
+            {isCategoriesOpen && (
+              <div className="pl-4 flex flex-col gap-1 mt-1 border-l-2 border-slate-200/50 dark:border-slate-800/50 ml-4">
+                {[
+                  { path: '/news-dashboard?category=political', label: 'Politics' },
+                  { path: '/news-dashboard?category=technology', label: 'Technology' },
+                  { path: '/news-dashboard?category=health', label: 'Health' },
+                  { path: '/news-dashboard?category=sports', label: 'Sports' },
+                  { path: '/news-dashboard?category=world-news', label: 'World News' },
+                  { path: '/news-dashboard?category=viral-claims', label: 'Viral Claims' },
+                  { path: '/press-conference', label: 'Press Conference' }
+                ].map((cat, i) => (
+                  <Link 
+                    key={i} 
+                    to={cat.path} 
+                    className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                    style={{ textDecoration: 'none' }}
+                    onClick={handleLinkClick}
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           
           {/* Collapsible News Dashboard Menu */}
           <div>
