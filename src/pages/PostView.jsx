@@ -306,7 +306,7 @@ const PostView = () => {
                             </div>
 
                             {/* Flat Inline Share Buttons */}
-                            <div className="flex items-center gap-2 md:mr-12 flex-shrink-0">
+                            <div className="flex items-center gap-2 flex-shrink-0">
                                 <span className="hidden sm:inline text-[10px] md:text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Share:</span>
                                 <div className="flex items-center gap-1.5 md:gap-2">
                                     <button
