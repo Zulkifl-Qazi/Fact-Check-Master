@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FaClock, FaEye, FaCalendarAlt, FaUser, FaArrowLeft, FaBookOpen, FaShareAlt, FaLock, FaCommentDots, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaApple } from 'react-icons/fa';
+import { FaClock, FaEye, FaCalendarAlt, FaUser, FaArrowLeft, FaBookOpen, FaShareAlt, FaLock, FaCommentDots, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaApple, FaTwitter, FaWhatsapp, FaLink, FaGlobe } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 
 const stripHtml = (str) => {
@@ -21,6 +21,7 @@ const ArticleView = () => {
   const [newCommentText, setNewCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState('');
+  const [shareCopied, setShareCopied] = useState(false);
 
   const { user, openAuthModal } = useAuth();
 
@@ -77,15 +78,30 @@ const ArticleView = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [slug]);
 
-  const handleShare = async () => {
+  const handleShare = async (platform) => {
     const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: article.title, url });
-      } catch {}
-    } else {
-      await navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard!');
+    const text = `Check out this article: "${article?.title}"`;
+    
+    switch (platform) {
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+        break;
+      case 'whatsapp':
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+        break;
+      case 'copy':
+        await navigator.clipboard.writeText(url).catch(() => {});
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+        break;
+      default:
+        if (navigator.share) {
+          navigator.share({ title: article.title, url }).catch(() => {});
+        }
+        break;
     }
   };
 
@@ -205,12 +221,57 @@ const ArticleView = () => {
               {article.views.toLocaleString()} views
             </span>
           )}
-          <button
-            onClick={handleShare}
-            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-slate-600 dark:text-slate-300 transition-colors"
-          >
-            <FaShareAlt className="text-[10px]" /> Share
-          </button>
+          
+          {/* Share Bubble Hover Dropdown */}
+          <div className="relative group ml-auto">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-slate-600 dark:text-slate-300 transition-colors border-none cursor-pointer">
+              <FaShareAlt className="text-[10px]" />
+              <span>Share</span>
+            </button>
+            
+            {/* Dropdown bridge and container */}
+            <div className="absolute top-full right-0 pt-2 hidden group-hover:block z-[99]">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-2 flex flex-col gap-1 min-w-[140px]">
+                <button
+                  onClick={() => handleShare('facebook')}
+                  className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                >
+                  <FaFacebook className="text-[#1877F2] text-sm" />
+                  Facebook
+                </button>
+                <button
+                  onClick={() => handleShare('twitter')}
+                  className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                >
+                  <FaTwitter className="text-slate-900 dark:text-white text-sm" />
+                  X (Twitter)
+                </button>
+                <button
+                  onClick={() => handleShare('whatsapp')}
+                  className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                >
+                  <FaWhatsapp className="text-[#25D366] text-sm" />
+                  WhatsApp
+                </button>
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                >
+                  <FaLink className="text-slate-500 text-sm" />
+                  {shareCopied ? 'Copied!' : 'Copy Link'}
+                </button>
+                {navigator.share && (
+                  <button
+                    onClick={() => handleShare('native')}
+                    className="flex items-center gap-2.5 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border-none bg-transparent cursor-pointer transition text-left"
+                  >
+                    <FaGlobe className="text-blue-500 text-sm" />
+                    More Options
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Article Body */}

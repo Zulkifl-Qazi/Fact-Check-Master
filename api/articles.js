@@ -102,7 +102,7 @@ export default async function handler(req, res) {
 
         if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
-        res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
+        res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
         return res.status(200).json(data);
       }
 
@@ -116,7 +116,7 @@ export default async function handler(req, res) {
 
         if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
-        res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+        res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
         return res.status(200).json(data);
       }
 
@@ -156,6 +156,7 @@ export default async function handler(req, res) {
 
       const finalSlug = slug ? slugify(slug) : slugify(title);
       const read_time = estimateReadTime(content);
+      const finalCoverImage = (cover_image && typeof cover_image === 'string' && cover_image.trim()) ? cover_image.trim() : null;
 
       const { data, error } = await supabase
         .from('articles')
@@ -164,7 +165,7 @@ export default async function handler(req, res) {
           slug: finalSlug,
           content,
           excerpt: excerpt || '',
-          cover_image: cover_image || null,
+          cover_image: finalCoverImage,
           author: author?.trim() || 'Fact Check Master',
           status: status || 'draft',
           read_time,
@@ -198,6 +199,7 @@ export default async function handler(req, res) {
 
       const finalSlug = slug ? slugify(slug) : slugify(title);
       const read_time = estimateReadTime(content);
+      const finalCoverImage = (cover_image && typeof cover_image === 'string' && cover_image.trim()) ? cover_image.trim() : null;
 
       const { data, error } = await supabase
         .from('articles')
@@ -206,7 +208,7 @@ export default async function handler(req, res) {
           slug: finalSlug,
           content,
           excerpt: excerpt || '',
-          cover_image: cover_image || null,
+          cover_image: finalCoverImage,
           author: author?.trim() || 'Fact Check Master',
           status: status || 'draft',
           read_time,
