@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FaClock, FaEye, FaCalendarAlt, FaUser, FaArrowLeft, FaBookOpen, FaShareAlt } from 'react-icons/fa';
+import { FaClock, FaEye, FaCalendarAlt, FaUser, FaArrowLeft, FaBookOpen, FaShareAlt, FaLock, FaCommentDots, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaApple } from 'react-icons/fa';
+import { useAuth } from '../hooks/useAuth';
 
 const stripHtml = (str) => {
   if (!str) return '';
@@ -15,6 +16,26 @@ const ArticleView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Comments State
+  const [comments, setComments] = useState([]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [commentError, setCommentError] = useState('');
+
+  const { user, openAuthModal } = useAuth();
+
+  const loadComments = async (title) => {
+    try {
+      const response = await fetch(`/api/comments?post_title=${encodeURIComponent(title)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+      }
+    } catch (e) {
+      console.error('Failed to load comments:', e);
+    }
+  };
+
   useEffect(() => {
     const fetchArticle = async () => {
       setLoading(true);
@@ -24,6 +45,7 @@ const ArticleView = () => {
         if (!res.ok) throw new Error('Article not found');
         const data = await res.json();
         setArticle(data);
+        loadComments(data.title);
 
         // Update document title and description dynamically for SEO
         if (data?.title) {
@@ -64,6 +86,44 @@ const ArticleView = () => {
     } else {
       await navigator.clipboard.writeText(url);
       alert('Link copied to clipboard!');
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newCommentText.trim()) return;
+
+    try {
+      setIsSubmittingComment(true);
+      setCommentError('');
+
+      const response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          post_title: article.title,
+          username: user.name,
+          email: user.email,
+          avatar_url: user.avatar,
+          provider: user.provider,
+          content: newCommentText.trim()
+        })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to post comment');
+      }
+
+      const newComment = await response.json();
+      setComments(prev => [...prev, newComment]);
+      setNewCommentText('');
+    } catch (err) {
+      setCommentError(err.message || 'Failed to submit comment. Please try again.');
+    } finally {
+      setIsSubmittingComment(false);
     }
   };
 
@@ -174,6 +234,106 @@ const ArticleView = () => {
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Published by</span>
             <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{article.author || 'Fact Check Master'}</span>
+          </div>
+        </div>
+
+        {/* Discussion / Comments Section */}
+        <div className="mt-12 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 p-6 md:p-8 shadow-sm transition-colors duration-300">
+          <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 mb-6 flex items-center gap-3">
+            <FaCommentDots className="text-blue-600 dark:text-blue-500 text-xl" />
+            Discussion ({comments.length})
+          </h3>
+
+          {/* Write Comment Box */}
+          {user ? (
+            <form onSubmit={handleCommentSubmit} className="mb-8">
+              <div className="flex gap-4 items-start">
+                <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover border border-slate-200/50 dark:border-slate-700" />
+                <div className="flex-grow">
+                  <textarea
+                    rows="3"
+                    required
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                    placeholder="Add to the article. What is your perspective?"
+                    className="w-full text-sm p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition focus:border-blue-500 focus:outline-none"
+                  />
+                  {commentError && <p className="text-red-500 text-xs font-semibold mt-1">{commentError}</p>}
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingComment || !newCommentText.trim()}
+                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl border-none cursor-pointer transition shadow-md shadow-blue-500/10 hover:shadow-blue-500/20"
+                    >
+                      {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          ) : (
+            <div className="p-6 md:p-8 bg-white dark:bg-slate-950/30 rounded-2xl border border-slate-200/50 dark:border-slate-800/40 text-center mb-8 flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-3">
+                <FaLock className="text-lg" />
+              </div>
+              <h4 className="text-base font-bold text-slate-900 dark:text-slate-100">Join the discussion</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4 max-w-sm">
+                To ensure high quality debates, only logged in users can publish comments. Connect with social login or email securely.
+              </p>
+              <button
+                onClick={openAuthModal}
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-sm rounded-xl border-none cursor-pointer transition shadow-md shadow-blue-500/10 hover:shadow-blue-500/20"
+              >
+                Log In to Comment
+              </button>
+            </div>
+          )}
+
+          {/* Comments List */}
+          <div className="space-y-6">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <div key={comment.id || index} className="flex gap-4 items-start group">
+                  <img 
+                    src={comment.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80'} 
+                    alt={comment.username} 
+                    className="w-10 h-10 rounded-full object-cover border border-slate-200/50 dark:border-slate-700" 
+                  />
+                  <div className="flex-grow min-w-0">
+                    <div className="flex items-center flex-wrap gap-2 mb-1">
+                      <span className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                        {comment.username}
+                        <span className="capitalize text-[10px] bg-white dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                          {comment.provider === 'google' && <FaGoogle className="text-red-500 text-[8px]" />}
+                          {comment.provider === 'facebook' && <FaFacebook className="text-blue-600 text-[8px]" />}
+                          {comment.provider === 'instagram' && <FaInstagram className="text-pink-500 text-[8px]" />}
+                          {comment.provider === 'apple' && <FaApple className="text-slate-850 dark:text-slate-200 text-[8px]" />}
+                          {comment.provider === 'email' && <FaEnvelope className="text-[8px]" />}
+                          {comment.provider}
+                        </span>
+                      </span>
+                      <span className="text-[11px] text-slate-400">
+                        {new Date(comment.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed pr-4">
+                      {comment.content}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-slate-400 dark:text-slate-500">
+                <FaCommentDots className="text-4xl text-slate-200 dark:text-slate-800 mb-2 mx-auto" />
+                <p className="text-sm font-semibold">No comments yet</p>
+                <p className="text-xs">Be the first to share your perspective!</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
