@@ -8,18 +8,18 @@ export default async function handler(req, res) {
 
   const fallbackVideos = [
     {
-      videoId: '5cQv1u9sW48',
-      title: 'Har Dil ki Awaz - Pakistan Zindabad | Sahir Ali Bagga (ISPR Official Song)',
+      videoId: '680g9nQ2d-w',
+      title: 'National Anthem of Pakistan (Official Vocal Version) - ISPR Broadcast',
       publishedAt: new Date('2019-03-23').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/5cQv1u9sW48/mqdefault.jpg',
-      description: 'ISPR Official national song celebrating the unity, pride, and courage of the Pakistan Armed Forces and the nation.'
+      thumbnail: 'https://i.ytimg.com/vi/680g9nQ2d-w/mqdefault.jpg',
+      description: 'The official vocal performance of the Qaumi Tarana (National Anthem of Pakistan) broadcasted by the military media wing.'
     },
     {
-      videoId: 'k-aW12oR1kM',
-      title: 'Kabhi Percham Mein Lipte Hain | Atif Aslam | Defence and Martyrs Day (ISPR Official)',
+      videoId: 'ZfKz2hZ6w7w',
+      title: 'Pak Sar Zameen Shaad Baad - National Anthem Tribute (ISPR Special)',
       publishedAt: new Date('2017-09-06').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/k-aW12oR1kM/mqdefault.jpg',
-      description: "Tribute performance by Atif Aslam honoring the valor, sacrifice, and dedication of the nation's defenders."
+      thumbnail: 'https://i.ytimg.com/vi/ZfKz2hZ6w7w/mqdefault.jpg',
+      description: "A patriotic media briefing compilation honoring the martyrs and military defenders of Pakistan on National Day."
     },
     {
       videoId: '4C_dWCtpYdE',
