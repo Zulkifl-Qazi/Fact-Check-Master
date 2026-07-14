@@ -1114,16 +1114,16 @@ app.post('/api/send-otp', async (req, res) => {
 app.get('/api/youtube-feed', (req, res) => {
   res.json({
     isLive: false,
-    videoId: '5c-PzN0a1s8',
+    videoId: '5cQv1u9sW48',
     title: '[Local Mock] Latest Press Briefing by DG ISPR',
     publishedAt: new Date().toISOString(),
     channelId: 'UCw8U3G10a8d672rDkC6W4Yw',
     videos: [
       {
-        videoId: '5c-PzN0a1s8',
+        videoId: '5cQv1u9sW48',
         title: '[Local Mock] Latest Press Briefing by DG ISPR',
         publishedAt: new Date().toISOString(),
-        thumbnail: 'https://img.youtube.com/vi/5c-PzN0a1s8/hqdefault.jpg',
+        thumbnail: 'https://img.youtube.com/vi/5cQv1u9sW48/hqdefault.jpg',
         description: 'DG ISPR conducts a detailed press briefing at the General Headquarters (GHQ) highlighting state security operations, counter-terrorism highlights, and media questions.'
       },
       {
