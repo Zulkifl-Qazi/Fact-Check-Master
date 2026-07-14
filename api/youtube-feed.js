@@ -11,28 +11,28 @@ export default async function handler(req, res) {
       videoId: '5cQv1u9sW48',
       title: 'Har Dil ki Awaz - Pakistan Zindabad | Sahir Ali Bagga (ISPR Official Song)',
       publishedAt: new Date('2019-03-23').toISOString(),
-      thumbnail: 'https://img.youtube.com/vi/5cQv1u9sW48/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/5cQv1u9sW48/mqdefault.jpg',
       description: 'ISPR Official national song celebrating the unity, pride, and courage of the Pakistan Armed Forces and the nation.'
     },
     {
       videoId: 'k-aW12oR1kM',
       title: 'Kabhi Percham Mein Lipte Hain | Atif Aslam | Defence and Martyrs Day (ISPR Official)',
       publishedAt: new Date('2017-09-06').toISOString(),
-      thumbnail: 'https://img.youtube.com/vi/k-aW12oR1kM/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/k-aW12oR1kM/mqdefault.jpg',
       description: "Tribute performance by Atif Aslam honoring the valor, sacrifice, and dedication of the nation's defenders."
     },
     {
       videoId: '4C_dWCtpYdE',
       title: 'Pakistan Day Joint Services Parade Highlights - ISPR Special Broadcast',
       publishedAt: new Date('2024-03-23').toISOString(),
-      thumbnail: 'https://img.youtube.com/vi/4C_dWCtpYdE/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/4C_dWCtpYdE/mqdefault.jpg',
       description: 'Highlights of the Pakistan Day Joint Services Parade showcasing military drills, flight demonstrations, and cultural floats.'
     },
     {
       videoId: 'Q7h2_Cy0Pn0',
       title: 'ISPR Press Briefing: Updates on Security Operations and National Defense Briefs',
       publishedAt: new Date('2025-12-05').toISOString(),
-      thumbnail: 'https://img.youtube.com/vi/Q7h2_Cy0Pn0/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/Q7h2_Cy0Pn0/mqdefault.jpg',
       description: 'Press briefing updates regarding active national defense measures, border security status, and tactical counter-terrorism operations.'
     }
   ];
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
         videoId: liveVideoId,
         title: liveTitle || 'Press Conference - LIVE',
         publishedAt: new Date().toISOString(),
-        thumbnail: `https://img.youtube.com/vi/${liveVideoId}/hqdefault.jpg`,
+        thumbnail: `https://i.ytimg.com/vi/${liveVideoId}/mqdefault.jpg`,
         description: '🔴 LIVE BROADCAST: Streaming official ISPR press conference statements in real-time.'
       };
       
@@ -171,7 +171,7 @@ export default async function handler(req, res) {
               videoId: fetchedVideoId,
               title: fetchedTitle,
               publishedAt: fetchedPublishedAt,
-              thumbnail: `https://img.youtube.com/vi/${fetchedVideoId}/hqdefault.jpg`,
+              thumbnail: `https://i.ytimg.com/vi/${fetchedVideoId}/mqdefault.jpg`,
               description: 'Official press conference statement and media briefing updates on national security and operational progress.'
             };
 

@@ -44,7 +44,7 @@ export default function PressConference() {
           videoId: feed.videoId,
           title: feed.title,
           publishedAt: feed.publishedAt,
-          thumbnail: `https://img.youtube.com/vi/${feed.videoId}/hqdefault.jpg`,
+          thumbnail: `https://i.ytimg.com/vi/${feed.videoId}/mqdefault.jpg`,
           description: "This desk connects directly to the official YouTube channel to check for live broadcasts. When the channel is live, the video theater above will automatically stream the live broadcast feed. Otherwise, it defaults to playing the channel's most recent uploaded press conference or media briefing."
         }
       ];
@@ -201,7 +201,7 @@ export default function PressConference() {
                     videoId: feed.videoId,
                     title: feed.title,
                     publishedAt: feed.publishedAt,
-                    thumbnail: `https://img.youtube.com/vi/${feed.videoId}/hqdefault.jpg`
+                    thumbnail: `https://i.ytimg.com/vi/${feed.videoId}/mqdefault.jpg`
                   }
                 ]).map((vid) => {
                   const isActive = activeVideo.videoId === vid.videoId;
@@ -226,7 +226,7 @@ export default function PressConference() {
                       {/* Thumbnail Container */}
                       <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
                         <img 
-                          src={vid.thumbnail || `https://img.youtube.com/vi/${vid.videoId}/hqdefault.jpg`} 
+                          src={vid.thumbnail || `https://i.ytimg.com/vi/${vid.videoId}/mqdefault.jpg`} 
                           alt={vid.title} 
                           className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                         />

@@ -54,7 +54,7 @@ export function parseVideoUrl(url) {
       platform: 'youtube',
       videoId,
       embedUrl: `https://www.youtube.com/embed/${videoId}`,
-      thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`
     };
   }
   
