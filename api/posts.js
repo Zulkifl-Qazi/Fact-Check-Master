@@ -1,5 +1,6 @@
 // Supabase configuration for permanent post storage
 import { createClient } from '@supabase/supabase-js';
+import nodemailer from 'nodemailer';
 
 // Supabase configuration - you'll need to set these environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -28,6 +29,92 @@ const supabase = supabaseConfigured
 // Simple in-memory cache map for GET responses (persists while container is warm)
 const apiCache = new Map();
 const CACHE_TTL_MS = 300000; // 5 minutes (invalidated on writes)
+
+// Helper to broadcast emails on new post
+async function sendNewPostNotifications(post) {
+  if (!supabase) return;
+
+  try {
+    // 1. Fetch subscribers
+    const { data: subscribers, error: fetchError } = await supabase
+      .from('subscribers')
+      .select('email, name');
+
+    if (fetchError || !subscribers || subscribers.length === 0) {
+      console.log('[Notifications] No subscribers found to notify.');
+      return;
+    }
+
+    // 2. SMTP configuration
+    const host = process.env.SMTP_HOST;
+    const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
+    const secure = String(process.env.SMTP_SECURE || '').toLowerCase() === 'true';
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const fromEmail = process.env.FROM_EMAIL || 'contact@factcheckmaster.com';
+
+    const smtpConfigured = !!host && !!user && !!pass;
+
+    if (smtpConfigured) {
+      const mailer = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: { user, pass }
+      });
+
+      const postUrl = `https://www.factcheckmaster.com/post/${post.id}`;
+      const cleanContent = post.content
+        ? post.content.replace(/<[^>]*>/g, '').substring(0, 250) + '...'
+        : 'A new verification update has been posted on Fact Check Master.';
+
+      const sendPromises = subscribers.map(async (sub) => {
+        try {
+          await mailer.sendMail({
+            from: `Fact Check Master <${fromEmail}>`,
+            to: sub.email,
+            subject: `Alert: New Fact-Check Posted — ${post.title}`,
+            html: `
+              <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                <div style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 32px 24px; text-align: center; color: #ffffff;">
+                  <h1 style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -0.5px;">Fact Check Master</h1>
+                  <p style="margin: 8px 0 0 0; font-size: 13px; color: #bfdbfe; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">New Verification Alert</p>
+                </div>
+                <div style="padding: 32px 24px; color: #1e293b; line-height: 1.6;">
+                  <p style="margin-top: 0; font-size: 16px; font-weight: 700; color: #0f172a;">Hello ${sub.name || 'Subscriber'},</p>
+                  <p style="font-size: 15px; color: #334155;">A new verification post has been published on the News Dashboard:</p>
+                  <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin: 24px 0;">
+                    <h3 style="margin-top: 0; margin-bottom: 8px; color: #1e3a8a; font-size: 17px; font-weight: 800;">${post.title}</h3>
+                    <p style="font-size: 12px; font-weight: 700; margin-top: 0; margin-bottom: 12px; color: #dc2626; text-transform: uppercase; letter-spacing: 0.5px;">Status: ${post.fact_check_status || 'Verified'}</p>
+                    <p style="margin: 0; color: #475569; font-size: 14px; line-height: 1.5;">${cleanContent}</p>
+                  </div>
+                  <div style="text-align: center; margin: 32px 0;">
+                    <a href="${postUrl}" target="_blank" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; font-size: 14px; font-weight: 700; text-decoration: none; border-radius: 8px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">
+                      Read Full Fact-Check
+                    </a>
+                  </div>
+                </div>
+                <div style="background-color: #f8fafc; padding: 24px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b;">
+                  <p style="margin: 0 0 8px 0;">You are receiving this because you subscribed to alerts on Fact Check Master.</p>
+                  <p style="margin: 0;">Fact Check Master &bull; Verification Division &bull; contact@factcheckmaster.com</p>
+                </div>
+              </div>
+            `
+          });
+        } catch (err) {
+          console.error(`[Notifications] Failed to send email to ${sub.email}:`, err);
+        }
+      });
+
+      await Promise.all(sendPromises);
+      console.log(`[Notifications] Broadcast sent successfully to ${subscribers.length} subscribers.`);
+    } else {
+      console.warn('[Notifications] SMTP not configured. Simulated dispatch for post:', post.title);
+    }
+  } catch (err) {
+    console.error('[Notifications] Failed to dispatch notifications:', err);
+  }
+}
 
 function getCachedData(key) {
   const cached = apiCache.get(key);
@@ -666,6 +753,11 @@ export default async function handler(req, res) {
       
       // Invalidate frontend caches
       clearCache();
+
+      // Dispatch alert notifications to all subscribers in background (non-blocking)
+      sendNewPostNotifications(newPost).catch(err => {
+        console.error('[Notifications] Background dispatch error:', err);
+      });
 
       res.status(201).json({ 
         id: newPost.id,
