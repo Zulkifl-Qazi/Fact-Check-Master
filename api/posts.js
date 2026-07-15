@@ -71,7 +71,7 @@ async function sendNewPostNotifications(post) {
       const sendPromises = subscribers.map(async (sub) => {
         try {
           await mailer.sendMail({
-            from: `Fact Check Master <${fromEmail}>`,
+            from: `"Fact Check Master" <${fromEmail}>`,
             to: sub.email,
             subject: `Alert: New Fact-Check Posted — ${post.title}`,
             html: `

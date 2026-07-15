@@ -144,7 +144,7 @@ export default async function handler(req, res) {
           const sendPromises = subscribers.map(async (sub) => {
             try {
               await mailer.sendMail({
-                from: `Fact Check Master <${fromEmail}>`,
+                from: `"Fact Check Master" <${fromEmail}>`,
                 to: sub.email,
                 subject: subject,
                 html: `
