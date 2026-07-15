@@ -617,7 +617,18 @@ async function removePost(postId) {
       .eq('id', postId)
       .single();
 
-    if (fetchErr || !post) throw fetchErr || new Error('Post not found');
+    if (fetchErr) {
+      if (fetchErr.code === 'PGRST116') {
+        console.log(`[Database] Post with ID ${postId} already deleted (0 rows).`);
+        return true;
+      }
+      throw fetchErr;
+    }
+
+    if (!post) {
+      console.log(`[Database] Post with ID ${postId} not found.`);
+      return true;
+    }
 
     const { error } = await supabase
       .from('posts')
