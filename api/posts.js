@@ -30,6 +30,32 @@ const supabase = supabaseConfigured
 const apiCache = new Map();
 const CACHE_TTL_MS = 300000; // 5 minutes (invalidated on writes)
 
+// Helper to clean mathematical bold/italic characters to standard text for email subjects
+function cleanSubjectText(text) {
+  if (!text) return '';
+  return [...text].map(char => {
+    const code = char.codePointAt(0);
+    if (!code) return char;
+    // Bold Serif: 𝐀-𝐙 (U+1D400 to U+1D419)
+    if (code >= 0x1D400 && code <= 0x1D419) return String.fromCharCode(code - 0x1D400 + 65);
+    // Bold Serif: 𝐚-𝐳 (U+1D41A to U+1D433)
+    if (code >= 0x1D41A && code <= 0x1D433) return String.fromCharCode(code - 0x1D41A + 97);
+    // Italic Serif: 𝐴-𝑍 (U+1D434 to U+1D44D)
+    if (code >= 0x1D434 && code <= 0x1D44D) return String.fromCharCode(code - 0x1D434 + 65);
+    // Italic Serif: 𝑎-𝑧 (U+1D44E to U+1D467)
+    if (code >= 0x1D44E && code <= 0x1D467) return String.fromCharCode(code - 0x1D44E + 97);
+    // Bold Italic Serif: 𝑨-𝒁 (U+1D468 to U+1D481)
+    if (code >= 0x1D468 && code <= 0x1D481) return String.fromCharCode(code - 0x1D468 + 65);
+    // Bold Italic Serif: 𝒂-𝒛 (U+1D482 to U+1D49B)
+    if (code >= 0x1D482 && code <= 0x1D49B) return String.fromCharCode(code - 0x1D482 + 97);
+    // Sans-serif Bold: 𝗔-𝗭 (U+1D5D4 to U+1D5ED)
+    if (code >= 0x1D5D4 && code <= 0x1D5ED) return String.fromCharCode(code - 0x1D5D4 + 65);
+    // Sans-serif Bold: 𝗮-𝘇 (U+1D5EE to U+1D607)
+    if (code >= 0x1D5EE && code <= 0x1D607) return String.fromCharCode(code - 0x1D5EE + 97);
+    return char;
+  }).join('');
+}
+
 // Helper to broadcast emails on new post
 async function sendNewPostNotifications(post) {
   if (!supabase) return;
@@ -73,7 +99,7 @@ async function sendNewPostNotifications(post) {
           await mailer.sendMail({
             from: `"Fact Check Master" <${fromEmail}>`,
             to: sub.email,
-            subject: `Alert: New Fact-Check Posted — ${post.title}`,
+            subject: `Alert: New Fact-Check Posted — ${cleanSubjectText(post.title)}`,
             html: `
               <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                 <div style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 32px 24px; text-align: center; color: #ffffff;">
