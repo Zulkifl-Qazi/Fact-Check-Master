@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import CategoryFeed from '../components/CategoryFeed';
+import { FaBell, FaEnvelope } from 'react-icons/fa';
+import { useAuth } from '../hooks/useAuth';
 import worldNewsImg from '../assets/latest-news.jpeg';
 import viralNewsImg from '../assets/viral-news.jpeg';
 import militaryNewsImg from '../assets/military-news.jpeg';
@@ -101,6 +103,86 @@ const NewsDashboard = () => {
   const [activeCategory, setActiveCategory] = useState(null);
 
   const validIds = useMemo(() => new Set(NEWS_DASHBOARD_CATEGORIES.map((c) => c.id)), []);
+
+  const { user } = useAuth();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  // Sync subscription state on mount & user change
+  useEffect(() => {
+    const checkSubscribed = async () => {
+      if (user && user.email) {
+        try {
+          const res = await fetch(`/api/subscribe?email=${encodeURIComponent(user.email)}`);
+          if (res.ok) {
+            const data = await res.json();
+            setIsSubscribed(data.subscribed);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        const guestSub = localStorage.getItem('fcm_guest_subscribed') === '1';
+        setIsSubscribed(guestSub);
+        if (guestSub) {
+          setEmail(localStorage.getItem('fcm_guest_email') || '');
+        }
+      }
+    };
+    checkSubscribed();
+  }, [user]);
+
+  const handleSubscribeSubmit = async (e) => {
+    e.preventDefault();
+    const targetEmail = user ? user.email : email;
+    if (!targetEmail || !targetEmail.includes('@')) {
+      setMsg('⚠️ Please enter a valid email address.');
+      return;
+    }
+    setSubmitting(true);
+    setMsg('');
+    try {
+      const action = isSubscribed ? 'unsubscribe' : 'subscribe';
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: targetEmail.trim(),
+          name: user ? user.name : targetEmail.trim().split('@')[0],
+          provider: user ? user.provider : 'email',
+          action
+        })
+      });
+      if (res.ok) {
+        if (action === 'subscribe') {
+          setIsSubscribed(true);
+          if (!user) {
+            localStorage.setItem('fcm_guest_subscribed', '1');
+            localStorage.setItem('fcm_guest_email', targetEmail.trim());
+          }
+          setMsg('🎉 Subscribed to alerts successfully!');
+        } else {
+          setIsSubscribed(false);
+          if (!user) {
+            localStorage.removeItem('fcm_guest_subscribed');
+            localStorage.removeItem('fcm_guest_email');
+            setEmail('');
+          }
+          setMsg('👋 Unsubscribed successfully.');
+        }
+      } else {
+        const err = await res.json();
+        setMsg(`❌ Failed: ${err.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      setMsg('❌ Connection error. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -259,6 +341,98 @@ const NewsDashboard = () => {
           </motion.div>
         </div>
       </div>
+      )}
+
+      {/* Subscription Alert Card Section */}
+      {!activeCategory && (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12 md:mt-16">
+          <div className="max-w-7xl mx-auto rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-950 text-white p-8 md:p-12 relative overflow-hidden shadow-xl border border-blue-500/20">
+            {/* Background design accents */}
+            <div className="absolute right-[-10%] top-[-10%] w-96 h-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+            <div className="absolute left-[-5%] bottom-[-5%] w-64 h-64 rounded-full bg-cyan-500/5 blur-2xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="space-y-4 max-w-2xl text-left">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                  <FaBell className="animate-bounce" />
+                  <span>Real-Time Alerts</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-white">
+                  Never Miss a Critical Fact-Check Alert
+                </h2>
+                <p className="text-sm md:text-base text-slate-300 leading-relaxed font-light">
+                  Subscribe to receive prioritized email notifications directly from <strong className="text-blue-400 font-semibold">contact@factcheckmaster.com</strong> whenever we verify viral rumors or release urgent security briefs.
+                </p>
+              </div>
+
+              <div className="w-full lg:w-auto flex-shrink-0">
+                <div className="bg-slate-950/60 backdrop-blur-md p-6 rounded-2xl border border-slate-800/80 shadow-inner w-full sm:min-w-[400px]">
+                  {isSubscribed ? (
+                    <div className="space-y-4 text-center">
+                      <div className="w-12 h-12 bg-emerald-600/10 rounded-full flex items-center justify-center text-emerald-500 mx-auto">
+                        <FaBell className="text-xl" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-200">Alert Notifications Active</h4>
+                        <p className="text-xs text-slate-400 mt-1 truncate">
+                          Receiving alerts to: {user ? user.email : email}
+                        </p>
+                      </div>
+                      {msg && (
+                        <p className="text-xs font-semibold text-emerald-400">
+                          {msg}
+                        </p>
+                      )}
+                      <button
+                        onClick={handleSubscribeSubmit}
+                        disabled={submitting}
+                        className="px-6 py-2 bg-red-950/40 hover:bg-red-900/40 text-red-400 text-xs font-bold rounded-xl border border-red-900/30 cursor-pointer transition w-full active:scale-[0.98]"
+                      >
+                        {submitting ? 'Processing...' : 'Unsubscribe alerts'}
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubscribeSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                          {user ? 'Logged-In Email' : 'Email Address'}
+                        </label>
+                        {user ? (
+                          <div className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 text-sm font-semibold truncate">
+                            {user.email}
+                          </div>
+                        ) : (
+                          <input
+                            type="email"
+                            placeholder="Enter your Gmail / Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-sm transition"
+                          />
+                        )}
+                      </div>
+                      
+                      {msg && (
+                        <p className={`text-xs font-semibold ${msg.includes('🎉') ? 'text-emerald-400' : 'text-amber-400'}`}>
+                          {msg}
+                        </p>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl border-none cursor-pointer transition shadow-lg shadow-blue-600/20"
+                      >
+                        {submitting ? 'Subscribing...' : 'Activate Alerts'}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Show selected category posts - Full width when active */}

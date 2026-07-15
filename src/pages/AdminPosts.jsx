@@ -813,6 +813,21 @@ const AdminPosts = () => {
             >
               💬 Comments
             </button>
+            <button
+              onClick={() => navigate('/admin/notifications')}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(245, 158, 11, 0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              📢 Notifications
+            </button>
           </div>
           
           {/* Title Section */}

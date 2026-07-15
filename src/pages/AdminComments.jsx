@@ -160,6 +160,21 @@ export default function AdminComments() {
                 }}>
                 Articles
               </button>
+              <button
+                onClick={() => navigate('/admin/notifications')}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  border: 'none',
+                  fontWeight: 700,
+                  background: 'linear-gradient(90deg, #d97706, #f59e0b)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  flex: '1 1 120px'
+                }}>
+                Notifications
+              </button>
             </div>
             
             <input

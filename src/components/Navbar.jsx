@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon, FaUserCircle, FaSignOutAlt, FaGoogle, FaFacebook, FaApple, FaInstagram, FaUser, FaEnvelope } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShieldAlt, FaSearch, FaSun, FaMoon, FaUserCircle, FaSignOutAlt, FaGoogle, FaFacebook, FaApple, FaInstagram, FaUser, FaEnvelope, FaBell } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import useDarkMode from '../hooks/useDarkMode';
@@ -19,6 +19,137 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { user, logout, openAuthModal } = useAuth();
+
+  // Follow/Subscriber states
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [followEmail, setFollowEmail] = useState('');
+  const [showFollowDropdown, setShowFollowDropdown] = useState(false);
+  const [followSubmitting, setFollowSubmitting] = useState(false);
+  const [followStatusMsg, setFollowStatusMsg] = useState('');
+  const [isHoveredFollow, setIsHoveredFollow] = useState(false);
+
+  // Sync follow state with user email
+  useEffect(() => {
+    const checkSubscribed = async () => {
+      if (user && user.email) {
+        try {
+          const res = await fetch(`/api/subscribe?email=${encodeURIComponent(user.email)}`);
+          if (res.ok) {
+            const data = await res.json();
+            setIsFollowed(data.subscribed);
+          }
+        } catch (err) {
+          console.error('[Subscribe check failed]:', err);
+        }
+      } else {
+        const guestSubscribed = localStorage.getItem('fcm_guest_subscribed') === '1';
+        const guestEmail = localStorage.getItem('fcm_guest_email');
+        if (guestSubscribed && guestEmail) {
+          setIsFollowed(true);
+          setFollowEmail(guestEmail);
+        } else {
+          setIsFollowed(false);
+        }
+      }
+    };
+    checkSubscribed();
+  }, [user]);
+
+  const handleFollowClick = async (e) => {
+    e.preventDefault();
+    if (user && user.email) {
+      setFollowSubmitting(true);
+      try {
+        const action = isFollowed ? 'unsubscribe' : 'subscribe';
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.name,
+            provider: user.provider,
+            action
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIsFollowed(data.subscribed);
+        }
+      } catch (err) {
+        console.error('Follow failed:', err);
+      } finally {
+        setFollowSubmitting(false);
+      }
+    } else {
+      setShowFollowDropdown(prev => !prev);
+      setFollowStatusMsg('');
+    }
+  };
+
+  const handleGuestSubscribeSubmit = async (e) => {
+    e.preventDefault();
+    if (!followEmail.trim() || !followEmail.includes('@')) {
+      setFollowStatusMsg('⚠️ Enter a valid email address.');
+      return;
+    }
+    setFollowSubmitting(true);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: followEmail.trim(),
+          name: followEmail.trim().split('@')[0],
+          provider: 'email',
+          action: 'subscribe'
+        })
+      });
+      if (res.ok) {
+        localStorage.setItem('fcm_guest_subscribed', '1');
+        localStorage.setItem('fcm_guest_email', followEmail.trim());
+        setIsFollowed(true);
+        setFollowStatusMsg('🎉 Subscribed to alerts successfully!');
+        setTimeout(() => setShowFollowDropdown(false), 2000);
+      } else {
+        const errData = await res.json();
+        setFollowStatusMsg(`❌ Error: ${errData.error || 'Failed to subscribe'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      setFollowStatusMsg('❌ Failed to subscribe. Please try again.');
+    } finally {
+      setFollowSubmitting(false);
+    }
+  };
+
+  const handleGuestUnsubscribeClick = async (e) => {
+    e.preventDefault();
+    const storedEmail = localStorage.getItem('fcm_guest_email') || followEmail;
+    if (!storedEmail) return;
+
+    setFollowSubmitting(true);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: storedEmail.trim(),
+          action: 'unsubscribe'
+        })
+      });
+      if (res.ok) {
+        localStorage.removeItem('fcm_guest_subscribed');
+        localStorage.removeItem('fcm_guest_email');
+        setIsFollowed(false);
+        setFollowEmail('');
+        setShowFollowDropdown(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setFollowSubmitting(false);
+    }
+  };
 
   // Handle window resize
   useEffect(() => {
@@ -157,6 +288,81 @@ const Navbar = () => {
               {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
             </button>
 
+            {/* Follow / Subscribe Action Button */}
+            <div className="relative overflow-visible flex items-center">
+              <button
+                onClick={handleFollowClick}
+                onMouseEnter={() => setIsHoveredFollow(true)}
+                onMouseLeave={() => setIsHoveredFollow(false)}
+                disabled={followSubmitting}
+                className={`px-3 py-2 rounded-lg border-none flex items-center justify-center gap-1.5 cursor-pointer text-xs font-bold transition-all duration-300 ${
+                  isFollowed
+                    ? 'bg-emerald-600/10 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600/20'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 active:scale-95'
+                }`}
+                title={isFollowed ? "You are subscribed to alerts! Click to manage subscription settings." : "Subscribe to verification alerts"}
+              >
+                <FaBell className={`text-sm ${isFollowed && !isHoveredFollow ? 'animate-bounce' : ''}`} />
+                <span>{isFollowed ? 'Following' : 'Follow'}</span>
+              </button>
+
+              {/* Guest subscription popover */}
+              {showFollowDropdown && !user && (
+                <>
+                  <div className="fixed inset-0 z-40 cursor-default" onClick={() => setShowFollowDropdown(false)} />
+                  <div className="absolute top-full right-0 mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/60 rounded-xl shadow-xl p-4 min-w-[280px] z-50 transition-all duration-200 origin-top-right">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <FaBell className="text-blue-500" />
+                      <span>Get Alert Notifications</span>
+                    </h4>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mb-3 leading-relaxed">
+                      Subscribe to receive real-time verification alerts directly from contact@factcheckmaster.com.
+                    </p>
+
+                    {isFollowed ? (
+                      <div className="space-y-3">
+                        <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold truncate">
+                          🔔 Active: {localStorage.getItem('fcm_guest_email') || followEmail}
+                        </div>
+                        <button
+                          onClick={handleGuestUnsubscribeClick}
+                          disabled={followSubmitting}
+                          className="w-full py-2 bg-red-50/80 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 rounded-lg font-bold text-xs border-none cursor-pointer transition flex items-center justify-center gap-1.5"
+                        >
+                          Unsubscribe Alerts
+                        </button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleGuestSubscribeSubmit} className="space-y-3">
+                        <div>
+                          <input
+                            type="email"
+                            placeholder="Enter your email address"
+                            value={followEmail}
+                            onChange={(e) => setFollowEmail(e.target.value)}
+                            required
+                            className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        {followStatusMsg && (
+                          <p className={`text-[10px] font-semibold ${followStatusMsg.includes('🎉') ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            {followStatusMsg}
+                          </p>
+                        )}
+                        <button
+                          type="submit"
+                          disabled={followSubmitting}
+                          className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs border-none cursor-pointer transition shadow-md flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                        >
+                          {followSubmitting ? 'Subscribing...' : 'Subscribe'}
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* Desktop User Profile Avatar (Far Right) */}
             <div className="relative ml-1 overflow-visible flex-shrink-0 flex items-center">
               {user ? (
@@ -267,6 +473,66 @@ const Navbar = () => {
               >
                 {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
               </button>
+
+              {/* Mobile Follow Button */}
+              <div className="relative overflow-visible flex items-center">
+                <button
+                  onClick={handleFollowClick}
+                  disabled={followSubmitting}
+                  className={`p-2 rounded-lg border-none flex items-center justify-center gap-1.5 cursor-pointer text-xs font-bold transition-all duration-300 ${
+                    isFollowed
+                      ? 'bg-emerald-600/10 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600/20'
+                      : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/10'
+                  }`}
+                  title={isFollowed ? "Following" : "Follow alerts"}
+                >
+                  <FaBell className="text-xs" />
+                </button>
+
+                {/* Mobile guest subscription popover */}
+                {showFollowDropdown && !user && (
+                  <>
+                    <div className="fixed inset-0 z-40 cursor-default" onClick={() => setShowFollowDropdown(false)} />
+                    <div className="absolute top-full right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-4 min-w-[250px] z-50 transition-all duration-200 origin-top-right">
+                      <h4 className="text-xs font-bold text-slate-850 dark:text-slate-150 mb-2 flex items-center gap-1.5">
+                        <FaBell className="text-blue-500 animate-swing" />
+                        <span>Get Alerts</span>
+                      </h4>
+                      {isFollowed ? (
+                        <div className="space-y-2">
+                          <p className="text-[10px] text-slate-500 truncate">🔔 {localStorage.getItem('fcm_guest_email') || followEmail}</p>
+                          <button
+                            onClick={handleGuestUnsubscribeClick}
+                            disabled={followSubmitting}
+                            className="w-full py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 text-red-600 rounded font-bold text-[11px] border-none cursor-pointer"
+                          >
+                            Unsubscribe
+                          </button>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleGuestSubscribeSubmit} className="space-y-2">
+                          <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={followEmail}
+                            onChange={(e) => setFollowEmail(e.target.value)}
+                            required
+                            className="w-full text-xs px-2.5 py-1.5 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:outline-none"
+                          />
+                          {followStatusMsg && <p className="text-[9px] text-blue-500 m-0">{followStatusMsg}</p>}
+                          <button
+                            type="submit"
+                            disabled={followSubmitting}
+                            className="w-full py-1.5 bg-blue-600 text-white rounded font-bold text-xs border-none cursor-pointer"
+                          >
+                            Subscribe
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Mobile User Profile Avatar */}
               <div className="relative overflow-visible flex items-center">

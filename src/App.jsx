@@ -23,6 +23,7 @@ const AdminArticles = lazy(() => import('./pages/AdminArticles'));
 const AdminComments = lazy(() => import('./pages/AdminComments'));
 const PressConference = lazy(() => import('./pages/PressConference'));
 const FacebookLoginPortal = lazy(() => import('./pages/FacebookLoginPortal'));
+const AdminNotifications = lazy(() => import('./pages/AdminNotifications'));
 
 const AppContent = () => {
   const location = useLocation();
@@ -92,6 +93,14 @@ const AppContent = () => {
               element={
                 <RequireAdmin>
                   <DeviceManagement />
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/notifications"
+              element={
+                <RequireAdmin>
+                  <AdminNotifications />
                 </RequireAdmin>
               }
             />
