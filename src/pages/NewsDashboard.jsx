@@ -115,7 +115,7 @@ const NewsDashboard = () => {
     const checkSubscribed = async () => {
       if (user && user.email) {
         try {
-          const res = await fetch(`/api/subscribe?email=${encodeURIComponent(user.email)}`);
+          const res = await fetch(`/api/subscribers?email=${encodeURIComponent(user.email)}`);
           if (res.ok) {
             const data = await res.json();
             setIsSubscribed(data.subscribed);
@@ -145,7 +145,7 @@ const NewsDashboard = () => {
     setMsg('');
     try {
       const action = isSubscribed ? 'unsubscribe' : 'subscribe';
-      const res = await fetch('/api/subscribe', {
+      const res = await fetch('/api/subscribers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

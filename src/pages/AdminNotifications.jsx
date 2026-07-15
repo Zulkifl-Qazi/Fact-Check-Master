@@ -27,14 +27,7 @@ export default function AdminNotifications() {
     setLoading(true);
     setError('');
     try {
-      // In this system, we use Supabase database.
-      // We check subscription count by querying the subscribers list.
-      // Since there's no separate GET API yet, we can query Supabase or create a route.
-      // Wait, let's look at the database subscribers. Can we query them via the API?
-      // Let's check `/api/subscribe` -- wait, we wrote GET `/api/subscribe?email=...` but not full list.
-      // Let's implement full list retrieval in GET `/api/subscribe` if no email is supplied!
-      // This is a brilliant and clean design that keeps endpoints concise.
-      const response = await axios.get('/api/subscribe', {
+      const response = await axios.get('/api/subscribers', {
         headers: getAdminHeaders()
       });
       setSubscribers(response.data || []);
@@ -59,7 +52,7 @@ export default function AdminNotifications() {
     if (!window.confirm(`Are you sure you want to remove subscription for ${email}?`)) return;
 
     try {
-      await axios.post('/api/subscribe', {
+      await axios.post('/api/subscribers', {
         email,
         action: 'unsubscribe'
       });
@@ -81,7 +74,8 @@ export default function AdminNotifications() {
     setSubmitting(true);
     setSentReport(null);
     try {
-      const res = await axios.post('/api/send-notifications', {
+      const res = await axios.post('/api/subscribers', {
+        action: 'notify',
         subject: subject.trim(),
         body: body.trim(),
         targetGroup

@@ -33,7 +33,7 @@ const Navbar = () => {
     const checkSubscribed = async () => {
       if (user && user.email) {
         try {
-          const res = await fetch(`/api/subscribe?email=${encodeURIComponent(user.email)}`);
+          const res = await fetch(`/api/subscribers?email=${encodeURIComponent(user.email)}`);
           if (res.ok) {
             const data = await res.json();
             setIsFollowed(data.subscribed);
@@ -61,7 +61,7 @@ const Navbar = () => {
       setFollowSubmitting(true);
       try {
         const action = isFollowed ? 'unsubscribe' : 'subscribe';
-        const res = await fetch('/api/subscribe', {
+        const res = await fetch('/api/subscribers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -94,7 +94,7 @@ const Navbar = () => {
     }
     setFollowSubmitting(true);
     try {
-      const res = await fetch('/api/subscribe', {
+      const res = await fetch('/api/subscribers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -129,7 +129,7 @@ const Navbar = () => {
 
     setFollowSubmitting(true);
     try {
-      const res = await fetch('/api/subscribe', {
+      const res = await fetch('/api/subscribers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
