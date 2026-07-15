@@ -3,12 +3,25 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { FaYoutube, FaExternalLinkAlt, FaSyncAlt, FaBroadcastTower } from 'react-icons/fa';
 
+// Placeholder component for when thumbnail fails to load
+function ThumbnailPlaceholder({ title }) {
+  return (
+    <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="text-center px-4">
+        <FaYoutube className="text-red-600/60 text-3xl mx-auto mb-2" />
+        <p className="text-[10px] text-slate-400 font-semibold line-clamp-2">{title || 'Press Briefing'}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function PressConference() {
   const [feed, setFeed] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [failedThumbnails, setFailedThumbnails] = useState(new Set());
 
   const loadFeed = async (showRefreshIndicator = false) => {
     if (showRefreshIndicator) setRefreshing(true);
@@ -38,20 +51,12 @@ export default function PressConference() {
 
   // Update active video when feed is loaded or updated
   useEffect(() => {
-    if (feed) {
-      const videoList = feed.videos || [
-        {
-          videoId: feed.videoId,
-          title: feed.title,
-          publishedAt: feed.publishedAt,
-          thumbnail: `https://i.ytimg.com/vi/${feed.videoId}/mqdefault.jpg`,
-          description: "This desk connects directly to the official YouTube channel to check for live broadcasts. When the channel is live, the video theater above will automatically stream the live broadcast feed. Otherwise, it defaults to playing the channel's most recent uploaded press conference or media briefing."
-        }
-      ];
+    if (feed && feed.videos && feed.videos.length > 0) {
+      const videoList = feed.videos;
 
       const mainVid = videoList.find(v => v.videoId === feed.videoId) || videoList[0];
       if (!mainVid.description) {
-        mainVid.description = "DG ISPR conducts a detailed press briefing at the General Headquarters (GHQ) highlighting state security operations, counter-terrorism highlights, and media questions.";
+        mainVid.description = "This desk connects directly to the official YouTube channel to check for live broadcasts. When the channel is live, the video theater above will automatically stream the live broadcast feed. Otherwise, it defaults to playing the channel's most recent uploaded press conference or media briefing.";
       }
 
       setActiveVideo(prev => {
@@ -60,8 +65,18 @@ export default function PressConference() {
         }
         return mainVid;
       });
+    } else if (feed && feed.fallbackMode) {
+      // No videos available from RSS — set a placeholder active video for the channel
+      setActiveVideo(null);
     }
   }, [feed]);
+
+  const handleThumbnailError = (videoId) => {
+    setFailedThumbnails(prev => new Set(prev).add(videoId));
+  };
+
+  // Fallback mode: no videos from RSS, show channel link instead
+  const isFallbackMode = feed && feed.fallbackMode && (!feed.videos || feed.videos.length === 0);
 
   return (
     <section className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 pt-20 pb-16 px-4 md:px-8">
@@ -94,7 +109,7 @@ export default function PressConference() {
         </div>
 
         {/* Main Body */}
-        {loading || !activeVideo ? (
+        {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-300 dark:border-slate-800 border-t-red-600" />
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Loading broadcast stream...</span>
@@ -109,7 +124,44 @@ export default function PressConference() {
               Retry Connection
             </button>
           </div>
-        ) : (
+        ) : isFallbackMode ? (
+          /* Fallback Mode — no valid videos from RSS, show channel link */
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-xl p-8 md:p-12 text-center">
+              <div className="w-20 h-20 rounded-2xl bg-red-600/10 flex items-center justify-center text-red-600 mx-auto mb-6">
+                <FaYoutube className="text-4xl" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-3">
+                Watch on ISPR Official Channel
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-8 leading-relaxed">
+                The live feed is temporarily unavailable. Visit the official ISPR YouTube channel directly to watch the latest press conferences and media briefings.
+              </p>
+              <a
+                href={`https://www.youtube.com/channel/${feed.channelId || 'UCw8U3G10a8d672rDkC6W4Yw'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white font-bold text-sm rounded-xl border-none cursor-pointer transition shadow-lg shadow-red-600/20"
+                style={{ textDecoration: 'none' }}
+              >
+                <FaYoutube />
+                Open ISPR YouTube Channel
+                <FaExternalLinkAlt className="text-[10px]" />
+              </a>
+              <button
+                onClick={() => loadFeed(true)}
+                className="block mx-auto mt-4 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 font-semibold bg-transparent border-none cursor-pointer transition"
+              >
+                <FaSyncAlt className={`inline mr-1 ${refreshing ? 'animate-spin' : ''}`} />
+                Try refreshing feed
+              </button>
+            </div>
+          </motion.div>
+        ) : activeVideo ? (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -189,82 +241,87 @@ export default function PressConference() {
             </div>
 
             {/* Previous Uploads / YouTube Grid */}
-            <div className="mt-10">
-              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2">
-                <FaYoutube className="text-red-600 text-xl" />
-                <span>Recent Press Briefings</span>
-              </h3>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {(feed.videos || [
-                  {
-                    videoId: feed.videoId,
-                    title: feed.title,
-                    publishedAt: feed.publishedAt,
-                    thumbnail: `https://i.ytimg.com/vi/${feed.videoId}/mqdefault.jpg`
-                  }
-                ]).map((vid) => {
-                  const isActive = activeVideo.videoId === vid.videoId;
-                  return (
-                    <div 
-                      key={vid.videoId}
-                      onClick={() => {
-                        const targetVid = (feed.videos || []).find(v => v.videoId === vid.videoId) || vid;
-                        if (!targetVid.description) {
-                          targetVid.description = "Official press conference statement and media briefing updates on national security and operational progress.";
-                        }
-                        setActiveVideo(targetVid);
-                        // Scroll to player smooth
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className={`group cursor-pointer bg-white dark:bg-slate-900 border rounded-xl overflow-hidden hover:shadow-md transition duration-200 ${
-                        isActive 
-                          ? 'border-red-500/50 dark:border-red-500/50 ring-1 ring-red-500/30 shadow-md' 
-                          : 'border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700'
-                      }`}
-                    >
-                      {/* Thumbnail Container */}
-                      <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
-                        <img 
-                          src={vid.thumbnail || `https://i.ytimg.com/vi/${vid.videoId}/mqdefault.jpg`} 
-                          alt={vid.title} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                        />
-                        {/* Play Overlay */}
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 flex items-center justify-center transition">
-                          <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-200">
-                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
+            {feed.videos && feed.videos.length > 1 && (
+              <div className="mt-10">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2">
+                  <FaYoutube className="text-red-600 text-xl" />
+                  <span>Recent Press Briefings</span>
+                </h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {feed.videos.map((vid) => {
+                    const isActive = activeVideo.videoId === vid.videoId;
+                    const thumbnailFailed = failedThumbnails.has(vid.videoId);
+                    return (
+                      <div 
+                        key={vid.videoId}
+                        onClick={() => {
+                          const targetVid = { ...vid };
+                          if (!targetVid.description) {
+                            targetVid.description = "Official press conference statement and media briefing updates on national security and operational progress.";
+                          }
+                          setActiveVideo(targetVid);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`group cursor-pointer bg-white dark:bg-slate-900 border rounded-xl overflow-hidden hover:shadow-md transition duration-200 ${
+                          isActive 
+                            ? 'border-red-500/50 dark:border-red-500/50 ring-1 ring-red-500/30 shadow-md' 
+                            : 'border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        {/* Thumbnail Container */}
+                        <div className="relative aspect-video w-full bg-slate-900 overflow-hidden">
+                          {thumbnailFailed ? (
+                            <ThumbnailPlaceholder title={vid.title} />
+                          ) : (
+                            <img 
+                              src={`https://i.ytimg.com/vi/${vid.videoId}/mqdefault.jpg`}
+                              alt={vid.title} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                              onError={() => handleThumbnailError(vid.videoId)}
+                            />
+                          )}
+                          {/* Play Overlay */}
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 flex items-center justify-center transition">
+                            <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition duration-200">
+                              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
                           </div>
+                          {isActive && (
+                            <div className="absolute bottom-2 right-2 bg-red-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded tracking-wide uppercase">
+                              Now Playing
+                            </div>
+                          )}
                         </div>
-                        {isActive && (
-                          <div className="absolute bottom-2 right-2 bg-red-600 text-white font-black text-[9px] px-1.5 py-0.5 rounded tracking-wide uppercase">
-                            Now Playing
-                          </div>
-                        )}
+                        
+                        {/* Meta text content */}
+                        <div className="p-3">
+                          <h4 className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition mb-1">
+                            {vid.title}
+                          </h4>
+                          {vid.publishedAt && (
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold m-0">
+                              {new Date(vid.publishedAt).toLocaleDateString(undefined, {
+                                month: 'short', day: 'numeric', year: 'numeric'
+                              })}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      
-                      {/* Meta text content */}
-                      <div className="p-3">
-                        <h4 className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition mb-1">
-                          {vid.title}
-                        </h4>
-                        {vid.publishedAt && (
-                          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold m-0">
-                            {new Date(vid.publishedAt).toLocaleDateString(undefined, {
-                              month: 'short', day: 'numeric', year: 'numeric'
-                            })}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
           </motion.div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-300 dark:border-slate-800 border-t-red-600" />
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Loading broadcast stream...</span>
+          </div>
         )}
         
       </div>

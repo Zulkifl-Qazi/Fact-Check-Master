@@ -404,7 +404,8 @@ const AdminPosts = () => {
 
   const loadPosts = async (silent = false) => {
     // Prevent silent auto-refresh from clashing with recent user actions
-    if (silent && (Date.now() - lastInteractionRef.current < 8000)) {
+    // Extended cooldown (20s) and guard against active pin operations
+    if (silent && (pinningId !== null || (Date.now() - lastInteractionRef.current < 20000))) {
       return;
     }
     
@@ -497,6 +498,8 @@ const AdminPosts = () => {
           }
           return p;
         }));
+        // Reset cooldown timer AFTER server confirms, to protect against auto-refresh
+        lastInteractionRef.current = Date.now();
       }
     } catch (error) {
       console.error('Pin toggle failed:', error);
@@ -531,6 +534,8 @@ const AdminPosts = () => {
           }
           return p;
         }));
+        // Reset cooldown timer AFTER server confirms, to protect against auto-refresh
+        lastInteractionRef.current = Date.now();
       }
     } catch (error) {
       console.error('Popular pin toggle failed:', error);

@@ -6,39 +6,8 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const fallbackVideos = [
-    {
-      videoId: '680g9nQ2d-w',
-      title: 'National Anthem of Pakistan (Official Vocal Version) - ISPR Broadcast',
-      publishedAt: new Date('2019-03-23').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/680g9nQ2d-w/mqdefault.jpg',
-      description: 'The official vocal performance of the Qaumi Tarana (National Anthem of Pakistan) broadcasted by the military media wing.'
-    },
-    {
-      videoId: 'ZfKz2hZ6w7w',
-      title: 'Pak Sar Zameen Shaad Baad - National Anthem Tribute (ISPR Special)',
-      publishedAt: new Date('2017-09-06').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/ZfKz2hZ6w7w/mqdefault.jpg',
-      description: "A patriotic media briefing compilation honoring the martyrs and military defenders of Pakistan on National Day."
-    },
-    {
-      videoId: '4C_dWCtpYdE',
-      title: 'Pakistan Day Joint Services Parade Highlights - ISPR Special Broadcast',
-      publishedAt: new Date('2024-03-23').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/4C_dWCtpYdE/mqdefault.jpg',
-      description: 'Highlights of the Pakistan Day Joint Services Parade showcasing military drills, flight demonstrations, and cultural floats.'
-    },
-    {
-      videoId: 'Q7h2_Cy0Pn0',
-      title: 'ISPR Press Briefing: Updates on Security Operations and National Defense Briefs',
-      publishedAt: new Date('2025-12-05').toISOString(),
-      thumbnail: 'https://i.ytimg.com/vi/Q7h2_Cy0Pn0/mqdefault.jpg',
-      description: 'Press briefing updates regarding active national defense measures, border security status, and tactical counter-terrorism operations.'
-    }
-  ];
-
   try {
-    let configuredHandle = process.env.YOUTUBE_CHANNEL_ID || '@ISPR';
+    let configuredHandle = process.env.YOUTUBE_CHANNEL_ID || '@ISPROfficial';
     let channelId = 'UCw8U3G10a8d672rDkC6W4Yw'; // Default ISPR Channel ID
 
     // If configured variable is a handle, resolve it to Channel ID
@@ -84,20 +53,16 @@ export default async function handler(req, res) {
       if (liveRes.ok) {
         const html = await liveRes.text();
         
-        // Check if the HTML contains live player flags, excluding scheduled/upcoming/offline events
         const isUpcomingOrOffline = html.includes('"upcomingEventData"') || 
                                      html.includes('LIVE_STREAM_OFFLINE') || 
-                                     html.includes('"status":"UPCOMING"') ||
-                                     html.includes('"upcomingEventData"');
+                                     html.includes('"status":"UPCOMING"');
 
         const isLiveActive = !isUpcomingOrOffline && (
                              html.includes('"isLive":true') || 
-                             html.includes('"liveStreamability"') ||
-                             html.includes('yt-playability-error-supported-renderers')
+                             html.includes('"liveStreamability"')
         );
 
         if (isLiveActive) {
-          // Extract video ID from canonical link or watch URL
           const canonMatch = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([^"]+)"/) ||
                              html.match(/"videoDetails"\s*:\s*{\s*"videoId"\s*:\s*"([^"]+)"/) ||
                              html.match(/"videoId"\s*:\s*"([^"]+)"/);
@@ -106,7 +71,6 @@ export default async function handler(req, res) {
             isLive = true;
             liveVideoId = canonMatch[1];
             
-            // Attempt to grab live title
             const titleMatch = html.match(/<title>([^<]+)<\/title>/) || 
                                html.match(/"videoDetails"\s*:\s*{\s*"videoId"\s*:\s*"[^"]+"\s*,\s*"title"\s*:\s*"([^"]+)"/);
             if (titleMatch) {
@@ -121,31 +85,25 @@ export default async function handler(req, res) {
       console.error('[YouTube] Error checking live status:', err);
     }
 
-    // If live, return live status and prepended video list
+    // If live, return live status
     if (isLive && liveVideoId) {
-      const mainLiveVideo = {
-        videoId: liveVideoId,
-        title: liveTitle || 'Press Conference - LIVE',
-        publishedAt: new Date().toISOString(),
-        thumbnail: `https://i.ytimg.com/vi/${liveVideoId}/mqdefault.jpg`,
-        description: '🔴 LIVE BROADCAST: Streaming official ISPR press conference statements in real-time.'
-      };
-      
-      const videos = [
-        mainLiveVideo,
-        ...fallbackVideos.filter(v => v.videoId !== liveVideoId)
-      ];
-
       return res.status(200).json({
         isLive: true,
         videoId: liveVideoId,
         title: liveTitle || 'Press Conference - LIVE',
+        publishedAt: new Date().toISOString(),
         channelId,
-        videos
+        videos: [{
+          videoId: liveVideoId,
+          title: liveTitle || 'Press Conference - LIVE',
+          publishedAt: new Date().toISOString(),
+          description: '🔴 LIVE BROADCAST: Streaming official ISPR press conference statements in real-time.'
+        }],
+        fallbackMode: false
       });
     }
 
-    // 2. Fetch latest uploads using RSS feed
+    // 2. Fetch latest uploads using RSS feed — extract MULTIPLE entries
     try {
       const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
       const rssRes = await fetch(rssUrl);
@@ -153,56 +111,54 @@ export default async function handler(req, res) {
       if (rssRes.ok) {
         const xml = await rssRes.text();
         
-        // Extract the first entry from feed
-        const entryMatch = xml.match(/<entry>([\s\S]+?)<\/entry>/);
-        if (entryMatch) {
-          const entryXml = entryMatch[1];
+        // Extract ALL entries from the RSS feed (up to 6)
+        const entryRegex = /<entry>([\s\S]+?)<\/entry>/g;
+        const videos = [];
+        let match;
+        
+        while ((match = entryRegex.exec(xml)) !== null && videos.length < 6) {
+          const entryXml = match[1];
           
           const idMatch = entryXml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
           const titleMatch = entryXml.match(/<title>([^<]+)<\/title>/);
           const dateMatch = entryXml.match(/<published>([^<]+)<\/published>/);
           
           if (idMatch && titleMatch) {
-            const fetchedVideoId = idMatch[1];
-            const fetchedTitle = titleMatch[1].trim();
-            const fetchedPublishedAt = dateMatch ? dateMatch[1] : new Date().toISOString();
-            
-            const mainVideo = {
-              videoId: fetchedVideoId,
-              title: fetchedTitle,
-              publishedAt: fetchedPublishedAt,
-              thumbnail: `https://i.ytimg.com/vi/${fetchedVideoId}/mqdefault.jpg`,
-              description: 'Official press conference statement and media briefing updates on national security and operational progress.'
-            };
-
-            const videos = [
-              mainVideo,
-              ...fallbackVideos.filter(v => v.videoId !== fetchedVideoId)
-            ];
-
-            return res.status(200).json({
-              isLive: false,
-              videoId: fetchedVideoId,
-              title: fetchedTitle,
-              publishedAt: fetchedPublishedAt,
-              channelId,
-              videos
+            videos.push({
+              videoId: idMatch[1],
+              title: titleMatch[1].trim(),
+              publishedAt: dateMatch ? dateMatch[1] : new Date().toISOString(),
+              description: 'Official press conference statement and media briefing from ISPR.'
             });
           }
+        }
+
+        if (videos.length > 0) {
+          return res.status(200).json({
+            isLive: false,
+            videoId: videos[0].videoId,
+            title: videos[0].title,
+            publishedAt: videos[0].publishedAt,
+            channelId,
+            videos,
+            fallbackMode: false
+          });
         }
       }
     } catch (err) {
       console.error('[YouTube] Error fetching RSS feed:', err);
     }
 
-    // Fallback if both checks fail (hardcoded latest fallback or placeholder)
+    // Fallback: RSS and Live both failed. Return empty videos with fallbackMode flag.
+    // The frontend will show a "visit channel" message instead of broken thumbnails.
     return res.status(200).json({
       isLive: false,
-      videoId: fallbackVideos[0].videoId,
-      title: fallbackVideos[0].title,
-      publishedAt: fallbackVideos[0].publishedAt,
+      videoId: null,
+      title: 'ISPR Official Channel',
+      publishedAt: null,
       channelId,
-      videos: fallbackVideos
+      videos: [],
+      fallbackMode: true
     });
 
   } catch (error) {

@@ -1112,42 +1112,29 @@ app.post('/api/send-otp', async (req, res) => {
 });
 
 app.get('/api/youtube-feed', (req, res) => {
+  // Local dev mock — simulates the RSS-scraped response format.
+  // No thumbnail URLs — the frontend generates them from videoId.
   res.json({
     isLive: false,
-    videoId: '680g9nQ2d-w',
-    title: '[Local Mock] Latest Press Briefing by DG ISPR',
+    videoId: 'kSA3mfCyvrw',
+    title: '[Local Mock] Dil Dil Pakistan - Vital Signs',
     publishedAt: new Date().toISOString(),
     channelId: 'UCw8U3G10a8d672rDkC6W4Yw',
     videos: [
       {
-        videoId: '680g9nQ2d-w',
-        title: '[Local Mock] Latest Press Briefing by DG ISPR',
+        videoId: 'kSA3mfCyvrw',
+        title: '[Local Mock] Dil Dil Pakistan - Vital Signs',
         publishedAt: new Date().toISOString(),
-        thumbnail: 'https://i.ytimg.com/vi/680g9nQ2d-w/mqdefault.jpg',
-        description: 'DG ISPR conducts a detailed press briefing at the General Headquarters (GHQ) highlighting state security operations, counter-terrorism highlights, and media questions.'
+        description: 'Classic patriotic anthem by Vital Signs.'
       },
       {
-        videoId: 'E_7N5-WlO2A',
-        title: 'DG ISPR Press Conference on National Security & Counter-Terrorism Operations',
+        videoId: 'pktbig4cWkQ',
+        title: 'Har Ghari Tayyar Kamran - ISPR Official',
         publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        thumbnail: 'https://i.ytimg.com/vi/E_7N5-WlO2A/mqdefault.jpg',
-        description: 'Press conference by the Director General of Inter-Services Public Relations (ISPR) outlining active border defense measures and achievements in military logistics.'
-      },
-      {
-        videoId: 'n6aVz-027_U',
-        title: 'Special Briefing by DG ISPR on regional security dynamics and media queries',
-        publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        thumbnail: 'https://i.ytimg.com/vi/n6aVz-027_U/mqdefault.jpg',
-        description: 'Media brief detailing geopolitical coordinates, local security milestones, and active strategic updates from the military press wing.'
-      },
-      {
-        videoId: 'vWk2p5xM384',
-        title: 'ISPR Press Briefing: Updates on Operation Radd-ul-Fasaad accomplishments',
-        publishedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-        thumbnail: 'https://i.ytimg.com/vi/vWk2p5xM384/mqdefault.jpg',
-        description: 'Comprehensive review of operational logistics, rehabilitation, and intelligence-based raids under the national security doctrine.'
+        description: 'Defence and Martyrs Day anthem by ISPR.'
       }
-    ]
+    ],
+    fallbackMode: false
   });
 });
 
