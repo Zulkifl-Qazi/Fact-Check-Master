@@ -773,9 +773,11 @@ export default async function handler(req, res) {
       const action = parseQueryParam(req.query, 'action');
       if (action === 'ai-generate') {
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        if (!GEMINI_API_KEY) {
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
+        if (!GEMINI_API_KEY && !OPENROUTER_API_KEY) {
           return res.status(500).json({
-            error: 'AI service not configured. Please add GEMINI_API_KEY to your Vercel environment variables.',
+            error: 'AI service not configured. Please add OPENROUTER_API_KEY or GEMINI_API_KEY to your Vercel environment variables.',
             configRequired: true
           });
         }
@@ -833,37 +835,83 @@ IMPORTANT RULES:
 
           userPrompt += `\n\nRESPOND WITH VALID JSON ONLY (no markdown, no code fences). Use this exact structure:\n{\n  "title": "FACT CHECK: [compelling headline]",\n  "content": "<h2>Summary</h2><p>...</p><h2>Background</h2><p>...</p><h2>Investigation</h2><p>...</p><h2>Evidence</h2><p>...</p><h2>Reality</h2><p>...</p><h2>Verdict</h2><p>...</p>",\n  "verdict": "FALSE",\n  "verdictLabel": "FALSE",\n  "summary": "2-3 sentence summary",\n  "keywords": ["keyword1", "keyword2", "keyword3"],\n  "seoTitle": "SEO-optimized title under 60 chars",\n  "seoDescription": "Meta description under 160 chars",\n  "sources": [\n    { "name": "Source Name", "url": "https://example.com", "type": "official" }\n  ],\n  "confidence": 0.85\n}`;
 
-          console.log('[AI Generate] Calling Gemini API with model fallback...');
-          const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-          const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
-          let result = null;
-          let lastModelError = null;
+          let responseText = null;
 
-          for (const modelName of modelsToTry) {
-            try {
-              console.log(`[AI Generate] Trying model: ${modelName}...`);
-              const model = genAI.getGenerativeModel({ model: modelName });
-              result = await model.generateContent([
-                { text: SYSTEM_PROMPT },
-                { text: userPrompt }
-              ]);
-              if (result && result.response) {
-                console.log(`[AI Generate] Success with model: ${modelName}`);
-                break;
+          // 1. Try OpenRouter if key is present
+          if (OPENROUTER_API_KEY) {
+            console.log('[AI Generate] Trying OpenRouter free models...');
+            const openRouterModels = [
+              'google/gemini-2.0-flash-exp:free',
+              'meta-llama/llama-3.3-70b-instruct:free',
+              'qwen/qwen-2.5-72b-instruct:free',
+              'google/gemini-flash-1.5-exp:free'
+            ];
+
+            for (const model of openRouterModels) {
+              try {
+                console.log(`[OpenRouter] Trying model: ${model}...`);
+                const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': 'https://factcheckmaster.com',
+                    'X-Title': 'FactCheckMaster'
+                  },
+                  body: JSON.stringify({
+                    model: model,
+                    messages: [
+                      { role: 'system', content: SYSTEM_PROMPT },
+                      { role: 'user', content: userPrompt }
+                    ]
+                  })
+                });
+
+                const orData = await orRes.json();
+                if (orRes.ok && orData.choices?.[0]?.message?.content) {
+                  console.log(`[OpenRouter] Success with model: ${model}`);
+                  responseText = orData.choices[0].message.content;
+                  break;
+                }
+                console.warn(`[OpenRouter] Model ${model} error:`, orData.error || orData);
+              } catch (orErr) {
+                console.warn(`[OpenRouter] Model ${model} fetch failed:`, orErr.message);
               }
-            } catch (err) {
-              console.warn(`[AI Generate] Model ${modelName} failed/rate limited:`, err.message);
-              lastModelError = err;
-              // Short delay before trying next model
-              await new Promise(r => setTimeout(r, 1000));
             }
           }
 
-          if (!result || !result.response) {
-            throw lastModelError || new Error('All Gemini models returned rate limits or errors.');
+          // 2. Fallback to direct Gemini API if OpenRouter failed or key not set
+          if (!responseText && GEMINI_API_KEY) {
+            console.log('[AI Generate] Calling Gemini API directly with model fallback...');
+            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+            const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+            let lastModelError = null;
+
+            for (const modelName of modelsToTry) {
+              try {
+                console.log(`[AI Generate] Trying model: ${modelName}...`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                const result = await model.generateContent([
+                  { text: SYSTEM_PROMPT },
+                  { text: userPrompt }
+                ]);
+                if (result && result.response) {
+                  console.log(`[AI Generate] Success with model: ${modelName}`);
+                  responseText = result.response.text();
+                  break;
+                }
+              } catch (err) {
+                console.warn(`[AI Generate] Model ${modelName} failed/rate limited:`, err.message);
+                lastModelError = err;
+                await new Promise(r => setTimeout(r, 1000));
+              }
+            }
           }
 
-          const responseText = result.response.text();
+          if (!responseText) {
+            throw new Error('AI generation rate limit reached on free models. Please wait a minute and try again.');
+          }
+
           console.log('[AI Generate] Raw response length:', responseText.length);
 
           let parsed;
