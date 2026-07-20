@@ -1,5 +1,8 @@
 # Fact Check Master
 
+> [!NOTE]
+> Read the complete **[Project Proposal & Software Requirements Document (PRD/SRS)](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/PROJECT_PROPOSAL_SRS.md)** to understand the platform's vision, system architecture, database design, and implementation roadmap.
+
 A modern fact-checking platform built with React, Vite, and Node.js that helps combat misinformation through real-time verification and community engagement.
 
 ## Features

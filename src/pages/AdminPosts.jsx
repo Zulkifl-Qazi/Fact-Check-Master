@@ -759,7 +759,7 @@ const AdminPosts = () => {
     }, 2500);
 
     try {
-      const response = await axios.post('/api/ai-generate', {
+      const response = await axios.post('/api/posts?action=ai-generate', {
         claim: aiClaim.trim(),
         imageUrl: aiImageUrl.trim() || undefined
       }, {

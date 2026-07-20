@@ -1,16 +1,13 @@
 {
   "functions": {
     "api/posts.js": {
-      "maxDuration": 10
+      "maxDuration": 30
     },
     "api/articles.js": {
       "maxDuration": 10
     },
     "api/sync-facebook.js": {
       "maxDuration": 25
-    },
-    "api/ai-generate.js": {
-      "maxDuration": 30
     }
   },
   "crons": [

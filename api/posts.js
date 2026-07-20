@@ -1,6 +1,7 @@
 // Supabase configuration for permanent post storage
 import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Supabase configuration - you'll need to set these environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -768,6 +769,168 @@ export default async function handler(req, res) {
       const approvedAdmin = await requireApprovedAdmin(req, res);
       if (!approvedAdmin) return;
 
+      // ========== AI GENERATE ACTION ==========
+      const action = parseQueryParam(req.query, 'action');
+      if (action === 'ai-generate') {
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        if (!GEMINI_API_KEY) {
+          return res.status(500).json({
+            error: 'AI service not configured. Please add GEMINI_API_KEY to your Vercel environment variables.',
+            configRequired: true
+          });
+        }
+
+        const { claim, imageUrl: aiImageUrl, language = 'en' } = req.body;
+        if (!claim && !aiImageUrl) {
+          return res.status(400).json({ error: 'Please provide a claim text or an image URL to analyze.' });
+        }
+
+        try {
+          const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+          const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+          const SYSTEM_PROMPT = `You are FactCheckMaster AI — a professional fact-checking assistant for the FactCheckMaster news platform (factcheckmaster.com). Your job is to analyze claims and generate complete, publishable fact-check articles.
+
+EDITORIAL VOICE:
+- Professional, authoritative, and neutral tone
+- Present evidence objectively without bias
+- Use clear, accessible language suitable for a general audience
+- Be thorough but concise — aim for 600-1000 words
+
+ARTICLE STRUCTURE (generate ALL sections):
+1. HEADLINE: Compelling, SEO-friendly headline starting with "FACT CHECK:" or "VERIFIED:"
+2. VERDICT: One of: TRUE, FALSE, MISLEADING, PARTLY FALSE, UNVERIFIED, SATIRE, MANIPULATED MEDIA, OUT OF CONTEXT
+3. SUMMARY: 2-3 sentence overview of the claim and verdict
+4. BACKGROUND: Where the claim originated, who shared it, why it went viral
+5. INVESTIGATION: Step-by-step verification process, sources consulted
+6. EVIDENCE: Key documents, statements, data points that support the verdict
+7. REALITY: The verified, objective facts
+8. VERDICT DETAILS: Final conclusion with rationale
+
+FORMATTING:
+- Use HTML tags for rich text: <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>, <blockquote>
+- Add section headers as <h2> tags
+- Use <strong> for emphasis on key facts
+- Use <blockquote> for quoted sources
+- Do NOT use markdown — output clean HTML only
+
+IMPORTANT RULES:
+- If you cannot verify the claim with high confidence, set verdict to "UNVERIFIED"
+- Always cite at least 2-3 plausible sources (use real source names but note if URLs are illustrative)
+- Generate realistic, professional content that an editor can publish with minor edits
+- Include relevant keywords naturally in the text
+- Estimate a confidence score (0.0 to 1.0) based on how verifiable the claim is`;
+
+          let userPrompt = '';
+          if (claim && aiImageUrl) {
+            userPrompt = `Analyze this claim that was shared along with the following image.\n\nCLAIM TEXT: "${claim}"\nIMAGE URL: ${aiImageUrl}\n\nGenerate a complete fact-check article about this claim.`;
+          } else if (claim) {
+            userPrompt = `Analyze and fact-check the following claim:\n\nCLAIM: "${claim}"\n\nGenerate a complete fact-check article investigating this claim.`;
+          } else {
+            userPrompt = `An image has been shared on social media. The image URL is: ${aiImageUrl}\n\nDescribe what the image likely contains, then generate a fact-check article analyzing the claims in this image.`;
+          }
+
+          if (language !== 'en') {
+            userPrompt += `\n\nIMPORTANT: Generate the article in ${language} language, but keep the JSON keys in English.`;
+          }
+
+          userPrompt += `\n\nRESPOND WITH VALID JSON ONLY (no markdown, no code fences). Use this exact structure:\n{\n  "title": "FACT CHECK: [compelling headline]",\n  "content": "<h2>Summary</h2><p>...</p><h2>Background</h2><p>...</p><h2>Investigation</h2><p>...</p><h2>Evidence</h2><p>...</p><h2>Reality</h2><p>...</p><h2>Verdict</h2><p>...</p>",\n  "verdict": "FALSE",\n  "verdictLabel": "FALSE",\n  "summary": "2-3 sentence summary",\n  "keywords": ["keyword1", "keyword2", "keyword3"],\n  "seoTitle": "SEO-optimized title under 60 chars",\n  "seoDescription": "Meta description under 160 chars",\n  "sources": [\n    { "name": "Source Name", "url": "https://example.com", "type": "official" }\n  ],\n  "confidence": 0.85\n}`;
+
+          console.log('[AI Generate] Calling Gemini API...');
+          const result = await model.generateContent([
+            { text: SYSTEM_PROMPT },
+            { text: userPrompt }
+          ]);
+
+          const responseText = result.response.text();
+          console.log('[AI Generate] Raw response length:', responseText.length);
+
+          let parsed;
+          try {
+            parsed = JSON.parse(responseText);
+          } catch {
+            const jsonMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
+            if (jsonMatch) {
+              parsed = JSON.parse(jsonMatch[1].trim());
+            } else {
+              const objectMatch = responseText.match(/\{[\s\S]*\}/);
+              if (objectMatch) {
+                parsed = JSON.parse(objectMatch[0]);
+              } else {
+                throw new Error('AI response was not valid JSON');
+              }
+            }
+          }
+
+          if (!parsed.title || !parsed.content) {
+            throw new Error('AI response missing required fields (title, content)');
+          }
+
+          // Map verdict to app status
+          const verdictUpper = (parsed.verdict || 'UNVERIFIED').toUpperCase().trim();
+          const verdictStatusMap = {
+            'TRUE': 'verified', 'FALSE': 'false', 'MISLEADING': 'disputed',
+            'PARTLY FALSE': 'disputed', 'UNVERIFIED': 'investigating',
+            'SATIRE': 'disputed', 'MANIPULATED MEDIA': 'false', 'OUT OF CONTEXT': 'disputed'
+          };
+          const factCheckStatus = verdictStatusMap[verdictUpper] || 'investigating';
+
+          // Auto-detect categories
+          const textForCategories = `${parsed.title} ${parsed.content}`.toLowerCase();
+          const categoryKeywords = {
+            'military-news': ['army', 'military', 'ispr', 'defense', 'defence', 'soldier', 'troops', 'forces', 'casualties'],
+            'viral-news': ['viral', 'trending', 'social media', 'whatsapp', 'forward', 'circulating'],
+            'indian-claims': ['india', 'indian', 'modi', 'bjp', 'delhi', 'indian media'],
+            'afghan-claims': ['afghan', 'afghanistan', 'kabul', 'taliban'],
+            'world-news': ['international', 'global', 'world', 'united nations', 'europe', 'america', 'china', 'russia'],
+            'breaking-news': ['breaking', 'just in', 'urgent', 'developing']
+          };
+          const detectedCategories = [];
+          for (const [cat, kws] of Object.entries(categoryKeywords)) {
+            if (kws.some(kw => textForCategories.includes(kw))) detectedCategories.push(cat);
+          }
+          if (detectedCategories.length === 0) detectedCategories.push('latest-news');
+          if (['false', 'disputed'].includes(factCheckStatus) && !detectedCategories.includes('viral-news')) {
+            detectedCategories.push('viral-news');
+          }
+
+          // Estimate read time
+          const wordCount = parsed.content.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+          const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+
+          const aiResponse = {
+            title: parsed.title,
+            content: parsed.content,
+            summary: parsed.summary || '',
+            verdict: verdictUpper,
+            verdictLabel: parsed.verdictLabel || verdictUpper,
+            factCheckStatus,
+            categories: detectedCategories.slice(0, 3),
+            keywords: parsed.keywords || [],
+            seoTitle: parsed.seoTitle || parsed.title.substring(0, 60),
+            seoDescription: parsed.seoDescription || (parsed.summary || '').substring(0, 160),
+            sources: parsed.sources || [],
+            confidence: Math.min(1, Math.max(0, parsed.confidence || 0.5)),
+            readTime,
+            generatedAt: new Date().toISOString()
+          };
+
+          console.log('[AI Generate] Successfully generated:', aiResponse.title);
+          return res.status(200).json(aiResponse);
+
+        } catch (aiErr) {
+          console.error('[AI Generate] Error:', aiErr);
+          if (aiErr.message?.includes('API key')) {
+            return res.status(401).json({ error: 'Invalid Gemini API key. Please check your GEMINI_API_KEY environment variable.' });
+          }
+          if (aiErr.message?.includes('quota') || aiErr.message?.includes('rate')) {
+            return res.status(429).json({ error: 'AI rate limit reached. Please try again in a moment.' });
+          }
+          return res.status(500).json({ error: 'Failed to generate article. Please try again.', details: aiErr.message });
+        }
+      }
+
+      // ========== REGULAR POST CREATION ==========
       console.log('[API] POST request body:', JSON.stringify(req.body, null, 2));
       const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories, media } = req.body;
       
