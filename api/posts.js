@@ -786,9 +786,6 @@ export default async function handler(req, res) {
         }
 
         try {
-          const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-          const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
           const SYSTEM_PROMPT = `You are FactCheckMaster AI — a professional fact-checking assistant for the FactCheckMaster news platform (factcheckmaster.com). Your job is to analyze claims and generate complete, publishable fact-check articles.
 
 EDITORIAL VOICE:
@@ -836,11 +833,35 @@ IMPORTANT RULES:
 
           userPrompt += `\n\nRESPOND WITH VALID JSON ONLY (no markdown, no code fences). Use this exact structure:\n{\n  "title": "FACT CHECK: [compelling headline]",\n  "content": "<h2>Summary</h2><p>...</p><h2>Background</h2><p>...</p><h2>Investigation</h2><p>...</p><h2>Evidence</h2><p>...</p><h2>Reality</h2><p>...</p><h2>Verdict</h2><p>...</p>",\n  "verdict": "FALSE",\n  "verdictLabel": "FALSE",\n  "summary": "2-3 sentence summary",\n  "keywords": ["keyword1", "keyword2", "keyword3"],\n  "seoTitle": "SEO-optimized title under 60 chars",\n  "seoDescription": "Meta description under 160 chars",\n  "sources": [\n    { "name": "Source Name", "url": "https://example.com", "type": "official" }\n  ],\n  "confidence": 0.85\n}`;
 
-          console.log('[AI Generate] Calling Gemini API...');
-          const result = await model.generateContent([
-            { text: SYSTEM_PROMPT },
-            { text: userPrompt }
-          ]);
+          console.log('[AI Generate] Calling Gemini API with model fallback...');
+          const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+          const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+          let result = null;
+          let lastModelError = null;
+
+          for (const modelName of modelsToTry) {
+            try {
+              console.log(`[AI Generate] Trying model: ${modelName}...`);
+              const model = genAI.getGenerativeModel({ model: modelName });
+              result = await model.generateContent([
+                { text: SYSTEM_PROMPT },
+                { text: userPrompt }
+              ]);
+              if (result && result.response) {
+                console.log(`[AI Generate] Success with model: ${modelName}`);
+                break;
+              }
+            } catch (err) {
+              console.warn(`[AI Generate] Model ${modelName} failed/rate limited:`, err.message);
+              lastModelError = err;
+              // Short delay before trying next model
+              await new Promise(r => setTimeout(r, 1000));
+            }
+          }
+
+          if (!result || !result.response) {
+            throw lastModelError || new Error('All Gemini models returned rate limits or errors.');
+          }
 
           const responseText = result.response.text();
           console.log('[AI Generate] Raw response length:', responseText.length);
