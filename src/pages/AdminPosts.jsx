@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo, FaStar, FaFire, FaRss } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaEye, FaCheckCircle, FaExclamationTriangle, FaTimes, FaPen, FaImage, FaVideo, FaStar, FaFire, FaRss, FaRobot, FaBolt, FaSearch, FaGlobe, FaChartBar, FaPaperPlane, FaRedo, FaArrowRight, FaCloudUploadAlt, FaLink, FaQuoteLeft } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { parseVideoUrl, getVideoPlatformIcon, getVideoPlatformName } from '../utils/videoParser';
@@ -298,6 +298,16 @@ const quillStyles = `
       padding-top: 1rem !important;
     }
   }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
 `;
 
 // Client-side image compression utility
@@ -356,6 +366,17 @@ const AdminPosts = () => {
   const [mediaTab, setMediaTab] = useState('images');
   const [tempImageUrl, setTempImageUrl] = useState('');
   const [tempVideoUrl, setTempVideoUrl] = useState('');
+
+  // AI Studio state
+  const [showAIStudio, setShowAIStudio] = useState(false);
+  const [aiStep, setAiStep] = useState(1); // 1=input, 2=processing, 3=review
+  const [aiClaim, setAiClaim] = useState('');
+  const [aiImageUrl, setAiImageUrl] = useState('');
+  const [aiClaimType, setAiClaimType] = useState('text');
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiError, setAiError] = useState('');
+  const [aiProcessingStage, setAiProcessingStage] = useState(0);
   const lastInteractionRef = useRef(0);
 
   // Auto-refresh posts every 15 seconds for live collaboration
@@ -709,6 +730,152 @@ const AdminPosts = () => {
     }
   };
 
+  // ========== AI Studio Handlers ==========
+  const aiProcessingStages = [
+    { icon: '🔍', text: 'Analyzing claim...', color: '#3b82f6' },
+    { icon: '🌐', text: 'Cross-referencing sources...', color: '#8b5cf6' },
+    { icon: '📊', text: 'Evaluating evidence...', color: '#06b6d4' },
+    { icon: '✍️', text: 'Drafting article...', color: '#10b981' },
+    { icon: '🎯', text: 'Finalizing verdict...', color: '#f59e0b' }
+  ];
+
+  const handleAIGenerate = async () => {
+    if (!aiClaim.trim() && !aiImageUrl.trim()) {
+      setAiError('Please enter a claim or provide an image URL.');
+      return;
+    }
+
+    setAiError('');
+    setAiGenerating(true);
+    setAiStep(2);
+    setAiProcessingStage(0);
+
+    // Animate through processing stages
+    const stageInterval = setInterval(() => {
+      setAiProcessingStage(prev => {
+        if (prev < aiProcessingStages.length - 1) return prev + 1;
+        return prev;
+      });
+    }, 2500);
+
+    try {
+      const response = await axios.post('/api/ai-generate', {
+        claim: aiClaim.trim(),
+        imageUrl: aiImageUrl.trim() || undefined
+      }, {
+        headers: getAdminHeaders(),
+        timeout: 35000
+      });
+
+      clearInterval(stageInterval);
+      setAiResult(response.data);
+      setAiStep(3);
+    } catch (error) {
+      clearInterval(stageInterval);
+      console.error('AI generation failed:', error);
+      const errorMsg = error.response?.data?.error || error.message || 'AI generation failed';
+      setAiError(errorMsg);
+      setAiStep(1);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  const handleAIPublish = () => {
+    if (!aiResult) return;
+
+    // Transfer AI result to the existing post form
+    setFormData({
+      title: aiResult.title || '',
+      content: aiResult.content || '',
+      author: 'Fact Check Master',
+      fact_check_status: aiResult.factCheckStatus || 'verified',
+      categories: aiResult.categories || ['latest-news'],
+      postUrl: '',
+      media: { images: [], videos: [] }
+    });
+
+    // Close AI Studio and open the manual form for final review
+    setShowAIStudio(false);
+    setShowAddForm(true);
+    setAiStep(1);
+    setAiResult(null);
+    setAiClaim('');
+    setAiImageUrl('');
+  };
+
+  const handleAIDirectPublish = async () => {
+    if (!aiResult) return;
+
+    lastInteractionRef.current = Date.now();
+    setSubmitting(true);
+    try {
+      const postData = {
+        title: aiResult.title,
+        content: aiResult.content,
+        author: 'Fact Check Master',
+        fact_check_status: aiResult.factCheckStatus || 'verified',
+        categories: aiResult.categories || ['latest-news'],
+        postUrl: '',
+        media: { images: [], videos: [] }
+      };
+
+      await axios.post('/api/posts', postData, {
+        headers: getAdminHeaders()
+      });
+
+      setShowAIStudio(false);
+      setAiStep(1);
+      setAiResult(null);
+      setAiClaim('');
+      setAiImageUrl('');
+      await loadPosts();
+      alert('AI-generated post published successfully! ✅');
+    } catch (error) {
+      console.error('Failed to publish AI post:', error);
+      alert(`Failed to publish: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleAIRegenerate = () => {
+    setAiResult(null);
+    setAiStep(1);
+    setAiError('');
+  };
+
+  const handleCloseAIStudio = () => {
+    setShowAIStudio(false);
+    setAiStep(1);
+    setAiResult(null);
+    setAiClaim('');
+    setAiImageUrl('');
+    setAiError('');
+    setAiGenerating(false);
+  };
+
+  const getVerdictColor = (verdict) => {
+    const v = (verdict || '').toUpperCase();
+    const colors = {
+      'TRUE': '#10b981',
+      'FALSE': '#ef4444',
+      'MISLEADING': '#f59e0b',
+      'PARTLY FALSE': '#f97316',
+      'UNVERIFIED': '#6b7280',
+      'SATIRE': '#8b5cf6',
+      'MANIPULATED MEDIA': '#dc2626',
+      'OUT OF CONTEXT': '#eab308'
+    };
+    return colors[v] || '#6b7280';
+  };
+
+  const getConfidenceColor = (score) => {
+    if (score >= 0.8) return '#10b981';
+    if (score >= 0.6) return '#f59e0b';
+    return '#ef4444';
+  };
+
   const handleCancelEdit = () => {
     setEditingPost(null);
     setFormData({ title: '', content: '', author: 'Fact Check Master', fact_check_status: 'verified', categories: ['latest-news'], postUrl: '', media: { images: [], videos: [] } });
@@ -883,9 +1050,51 @@ const AdminPosts = () => {
               )}
             </button>
 
+            {/* AI Generate Button */}
+            <button
+              onClick={() => { setShowAIStudio(!showAIStudio); if (showAddForm) setShowAddForm(false); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: showAIStudio
+                  ? 'linear-gradient(135deg, #7c3aed, #6d28d9)'
+                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed, #6d28d9)',
+                color: 'white',
+                padding: 'clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem)',
+                borderRadius: '12px',
+                border: 'none',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                boxShadow: '0 8px 25px rgba(139, 92, 246, 0.4)',
+                fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+                whiteSpace: 'nowrap',
+                flexShrink: '0',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+            >
+              <FaRobot style={{ fontSize: '1.1rem' }} />
+              {showAIStudio ? 'Close AI' : 'AI Generate'}
+              {!showAIStudio && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-1px',
+                  right: '-1px',
+                  width: '10px',
+                  height: '10px',
+                  background: '#10b981',
+                  borderRadius: '50%',
+                  border: '2px solid rgba(30,41,59,0.95)',
+                  animation: 'pulse 2s infinite'
+                }} />
+              )}
+            </button>
+
             {/* Add Button */}
             <button
-              onClick={() => setShowAddForm(!showAddForm)}
+              onClick={() => { setShowAddForm(!showAddForm); if (showAIStudio) setShowAIStudio(false); }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -909,6 +1118,681 @@ const AdminPosts = () => {
             </button>
           </div>
         </div>
+
+        {/* ==================== AI STUDIO PANEL ==================== */}
+        {showAIStudio && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            style={{
+              background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95))',
+              borderRadius: '20px',
+              padding: '0',
+              marginBottom: '2rem',
+              border: '2px solid rgba(139, 92, 246, 0.3)',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(139, 92, 246, 0.1)',
+              overflow: 'hidden',
+              position: 'relative'
+            }}
+          >
+            {/* Animated gradient border effect */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #8b5cf6, #3b82f6, #06b6d4, #10b981, #f59e0b, #8b5cf6)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 3s linear infinite'
+            }} />
+
+            {/* Header */}
+            <div style={{
+              padding: '1.5rem 2rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid rgba(139, 92, 246, 0.15)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.2rem',
+                  boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)'
+                }}>
+                  <FaRobot style={{ color: 'white' }} />
+                </div>
+                <div>
+                  <h2 style={{ color: 'white', fontSize: '1.2rem', fontWeight: '800', margin: 0, letterSpacing: '-0.02em' }}>
+                    AI Studio
+                  </h2>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', margin: 0, fontWeight: '500' }}>
+                    Powered by Gemini AI
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {/* Step indicators */}
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {[1, 2, 3].map(step => (
+                    <div key={step} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div style={{
+                        width: step === aiStep ? '28px' : '8px',
+                        height: '8px',
+                        borderRadius: '4px',
+                        background: step <= aiStep
+                          ? 'linear-gradient(90deg, #8b5cf6, #3b82f6)'
+                          : 'rgba(255,255,255,0.15)',
+                        transition: 'all 0.4s ease'
+                      }} />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={handleCloseAIStudio}
+                  style={{
+                    background: 'rgba(255,255,255,0.08)',
+                    border: 'none',
+                    color: 'rgba(255,255,255,0.6)',
+                    cursor: 'pointer',
+                    padding: '0.5rem',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            </div>
+
+            {/* Content Area */}
+            <div style={{ padding: '2rem' }}>
+
+              {/* ===== STEP 1: Claim Input ===== */}
+              {aiStep === 1 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {/* Claim Type Chips */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                    {[
+                      { key: 'text', icon: <FaQuoteLeft />, label: 'Text Claim' },
+                      { key: 'url', icon: <FaLink />, label: 'URL' },
+                      { key: 'image', icon: <FaCloudUploadAlt />, label: 'Image URL' }
+                    ].map(type => (
+                      <button
+                        key={type.key}
+                        onClick={() => setAiClaimType(type.key)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '20px',
+                          border: aiClaimType === type.key
+                            ? '2px solid rgba(139, 92, 246, 0.6)'
+                            : '2px solid rgba(255,255,255,0.1)',
+                          background: aiClaimType === type.key
+                            ? 'rgba(139, 92, 246, 0.15)'
+                            : 'rgba(255,255,255,0.03)',
+                          color: aiClaimType === type.key ? '#a78bfa' : 'rgba(255,255,255,0.6)',
+                          cursor: 'pointer',
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {type.icon}
+                        {type.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Main Input Area */}
+                  <div style={{
+                    position: 'relative',
+                    marginBottom: '1rem'
+                  }}>
+                    <textarea
+                      value={aiClaim}
+                      onChange={(e) => setAiClaim(e.target.value)}
+                      placeholder={aiClaimType === 'url'
+                        ? 'Paste the URL of a claim to fact-check...'
+                        : aiClaimType === 'image'
+                        ? 'Describe the claim shown in the image...'
+                        : 'Paste a claim, rumor, or viral text to fact-check...\n\nExample: "Pakistan Army suffered 50 casualties in recent military operation"'}
+                      style={{
+                        width: '100%',
+                        minHeight: '140px',
+                        padding: '1.25rem',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '2px solid rgba(139, 92, 246, 0.2)',
+                        borderRadius: '14px',
+                        color: 'white',
+                        fontSize: '1rem',
+                        fontFamily: 'Inter, sans-serif',
+                        lineHeight: '1.7',
+                        outline: 'none',
+                        resize: 'vertical',
+                        transition: 'border-color 0.3s',
+                        boxSizing: 'border-box'
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = 'rgba(139, 92, 246, 0.5)'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(139, 92, 246, 0.2)'}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '12px',
+                      right: '12px',
+                      fontSize: '0.7rem',
+                      color: 'rgba(255,255,255,0.3)'
+                    }}>
+                      {aiClaim.length} chars
+                    </div>
+                  </div>
+
+                  {/* Image URL Input (shown for image type) */}
+                  {aiClaimType === 'image' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      style={{ marginBottom: '1rem' }}
+                    >
+                      <label style={{ display: 'block', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                        <FaImage style={{ marginRight: '0.4rem' }} />
+                        Image URL (screenshot or image to analyze)
+                      </label>
+                      <input
+                        type="url"
+                        value={aiImageUrl}
+                        onChange={(e) => setAiImageUrl(e.target.value)}
+                        placeholder="https://example.com/screenshot.jpg"
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '2px solid rgba(139, 92, 246, 0.2)',
+                          borderRadius: '10px',
+                          color: 'white',
+                          fontSize: '0.9rem',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </motion.div>
+                  )}
+
+                  {/* Error Message */}
+                  {aiError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      style={{
+                        padding: '0.75rem 1rem',
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: '10px',
+                        color: '#fca5a5',
+                        fontSize: '0.85rem',
+                        marginBottom: '1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <FaExclamationTriangle />
+                      {aiError}
+                    </motion.div>
+                  )}
+
+                  {/* Generate Button */}
+                  <button
+                    onClick={handleAIGenerate}
+                    disabled={aiGenerating || (!aiClaim.trim() && !aiImageUrl.trim())}
+                    style={{
+                      width: '100%',
+                      padding: '1rem',
+                      background: (!aiClaim.trim() && !aiImageUrl.trim())
+                        ? 'rgba(107, 114, 128, 0.3)'
+                        : 'linear-gradient(135deg, #8b5cf6, #6d28d9, #4c1d95)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '14px',
+                      fontSize: '1.05rem',
+                      fontWeight: '700',
+                      cursor: (!aiClaim.trim() && !aiImageUrl.trim()) ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.6rem',
+                      transition: 'all 0.3s',
+                      boxShadow: (!aiClaim.trim() && !aiImageUrl.trim())
+                        ? 'none'
+                        : '0 10px 30px rgba(139, 92, 246, 0.35)',
+                      letterSpacing: '0.02em'
+                    }}
+                  >
+                    <FaBolt style={{ fontSize: '1.1rem' }} />
+                    Generate Fact Check
+                    <FaArrowRight style={{ fontSize: '0.85rem', marginLeft: '0.25rem' }} />
+                  </button>
+
+                  {/* Powered by note */}
+                  <p style={{
+                    textAlign: 'center',
+                    color: 'rgba(255,255,255,0.25)',
+                    fontSize: '0.7rem',
+                    marginTop: '0.75rem',
+                    fontWeight: '500'
+                  }}>
+                    AI-generated content should always be reviewed before publishing
+                  </p>
+                </motion.div>
+              )}
+
+              {/* ===== STEP 2: Processing Animation ===== */}
+              {aiStep === 2 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '3rem 1rem',
+                    textAlign: 'center'
+                  }}
+                >
+                  {/* Animated brain icon */}
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '24px',
+                      background: `linear-gradient(135deg, ${aiProcessingStages[aiProcessingStage]?.color || '#8b5cf6'}33, ${aiProcessingStages[aiProcessingStage]?.color || '#8b5cf6'}11)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '2.5rem',
+                      marginBottom: '1.5rem',
+                      border: `2px solid ${aiProcessingStages[aiProcessingStage]?.color || '#8b5cf6'}44`,
+                      boxShadow: `0 0 40px ${aiProcessingStages[aiProcessingStage]?.color || '#8b5cf6'}22`,
+                      transition: 'all 0.5s ease'
+                    }}
+                  >
+                    {aiProcessingStages[aiProcessingStage]?.icon || '🤖'}
+                  </motion.div>
+
+                  {/* Stage text */}
+                  <motion.p
+                    key={aiProcessingStage}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{
+                      color: 'white',
+                      fontSize: '1.15rem',
+                      fontWeight: '700',
+                      marginBottom: '0.5rem'
+                    }}
+                  >
+                    {aiProcessingStages[aiProcessingStage]?.text || 'Processing...'}
+                  </motion.p>
+
+                  {/* Progress bar */}
+                  <div style={{
+                    width: '280px',
+                    height: '4px',
+                    background: 'rgba(255,255,255,0.08)',
+                    borderRadius: '2px',
+                    overflow: 'hidden',
+                    marginTop: '1rem'
+                  }}>
+                    <motion.div
+                      animate={{ width: `${((aiProcessingStage + 1) / aiProcessingStages.length) * 100}%` }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      style={{
+                        height: '100%',
+                        background: `linear-gradient(90deg, #8b5cf6, ${aiProcessingStages[aiProcessingStage]?.color || '#3b82f6'})`,
+                        borderRadius: '2px'
+                      }}
+                    />
+                  </div>
+
+                  {/* Stage dots */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem' }}>
+                    {aiProcessingStages.map((stage, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          background: i <= aiProcessingStage ? stage.color : 'rgba(255,255,255,0.15)',
+                          transition: 'all 0.3s'
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.75rem', marginTop: '1.5rem' }}>
+                    This usually takes 10-20 seconds
+                  </p>
+                </motion.div>
+              )}
+
+              {/* ===== STEP 3: Review & Publish ===== */}
+              {aiStep === 3 && aiResult && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {/* Top Stats Bar */}
+                  <div style={{
+                    display: 'flex',
+                    gap: '1rem',
+                    marginBottom: '1.5rem',
+                    flexWrap: 'wrap'
+                  }}>
+                    {/* Verdict Badge */}
+                    <div style={{
+                      padding: '0.5rem 1.25rem',
+                      background: `${getVerdictColor(aiResult.verdict)}18`,
+                      border: `2px solid ${getVerdictColor(aiResult.verdict)}44`,
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: getVerdictColor(aiResult.verdict),
+                        boxShadow: `0 0 10px ${getVerdictColor(aiResult.verdict)}66`
+                      }} />
+                      <span style={{ color: getVerdictColor(aiResult.verdict), fontWeight: '800', fontSize: '0.9rem', letterSpacing: '0.05em' }}>
+                        {aiResult.verdictLabel || aiResult.verdict}
+                      </span>
+                    </div>
+
+                    {/* Confidence Score */}
+                    <div style={{
+                      padding: '0.5rem 1.25rem',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <FaChartBar style={{ color: getConfidenceColor(aiResult.confidence), fontSize: '0.85rem' }} />
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: '600' }}>
+                        Confidence: 
+                      </span>
+                      <span style={{ color: getConfidenceColor(aiResult.confidence), fontWeight: '800' }}>
+                        {Math.round(aiResult.confidence * 100)}%
+                      </span>
+                    </div>
+
+                    {/* Read Time */}
+                    <div style={{
+                      padding: '0.5rem 1rem',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      color: 'rgba(255,255,255,0.6)',
+                      fontSize: '0.85rem',
+                      fontWeight: '500'
+                    }}>
+                      ⏱ {aiResult.readTime}
+                    </div>
+
+                    {/* Categories */}
+                    {aiResult.categories?.map((cat, i) => (
+                      <div key={i} style={{
+                        padding: '0.5rem 0.75rem',
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        borderRadius: '12px',
+                        color: '#60a5fa',
+                        fontSize: '0.75rem',
+                        fontWeight: '600'
+                      }}>
+                        {cat.replace(/-/g, ' ')}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Title Preview */}
+                  <div style={{
+                    marginBottom: '1.25rem',
+                    padding: '1.25rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.08)'
+                  }}>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', marginTop: 0 }}>
+                      Generated Title
+                    </p>
+                    <h3 style={{ color: 'white', fontSize: '1.15rem', fontWeight: '800', margin: 0, lineHeight: '1.4' }}>
+                      {aiResult.title}
+                    </h3>
+                  </div>
+
+                  {/* Summary */}
+                  {aiResult.summary && (
+                    <div style={{
+                      marginBottom: '1.25rem',
+                      padding: '1rem 1.25rem',
+                      background: 'rgba(139, 92, 246, 0.06)',
+                      borderRadius: '12px',
+                      borderLeft: '4px solid rgba(139, 92, 246, 0.4)'
+                    }}>
+                      <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: 0, lineHeight: '1.6', fontStyle: 'italic' }}>
+                        {aiResult.summary}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Article Content Preview */}
+                  <div style={{
+                    marginBottom: '1.5rem',
+                    padding: '1.5rem',
+                    background: 'rgba(255,255,255,0.02)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    maxHeight: '350px',
+                    overflowY: 'auto'
+                  }}>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem', marginTop: 0 }}>
+                      Article Preview
+                    </p>
+                    <div
+                      className="post-content-display"
+                      dangerouslySetInnerHTML={{ __html: aiResult.content }}
+                      style={{ color: 'rgba(255,255,255,0.85)', lineHeight: '1.75', fontSize: '0.9rem' }}
+                    />
+                  </div>
+
+                  {/* Sources */}
+                  {aiResult.sources?.length > 0 && (
+                    <div style={{
+                      marginBottom: '1.5rem',
+                      padding: '1rem 1.25rem',
+                      background: 'rgba(255,255,255,0.02)',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255,255,255,0.06)'
+                    }}>
+                      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem', marginTop: 0 }}>
+                        Sources ({aiResult.sources.length})
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        {aiResult.sources.map((source, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <FaGlobe style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', flexShrink: 0 }} />
+                            <span style={{ color: '#60a5fa', fontSize: '0.8rem', fontWeight: '500' }}>
+                              {source.name}
+                            </span>
+                            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.7rem' }}>•</span>
+                            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem' }}>
+                              {source.type || 'reference'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SEO Preview */}
+                  <div style={{
+                    marginBottom: '1.5rem',
+                    padding: '1rem 1.25rem',
+                    background: 'rgba(255,255,255,0.02)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.06)'
+                  }}>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem', marginTop: 0 }}>
+                      <FaSearch style={{ marginRight: '0.3rem', fontSize: '0.65rem' }} />
+                      SEO Preview
+                    </p>
+                    <div style={{
+                      padding: '0.75rem 1rem',
+                      background: 'rgba(255,255,255,0.05)',
+                      borderRadius: '8px'
+                    }}>
+                      <p style={{ color: '#8ab4f8', fontSize: '0.95rem', fontWeight: '500', margin: '0 0 0.25rem 0', lineHeight: '1.3' }}>
+                        {aiResult.seoTitle || aiResult.title}
+                      </p>
+                      <p style={{ color: '#bdc1c6', fontSize: '0.78rem', margin: 0, lineHeight: '1.4' }}>
+                        {aiResult.seoDescription || aiResult.summary}
+                      </p>
+                      <p style={{ color: '#4d9a5c', fontSize: '0.72rem', margin: '0.25rem 0 0 0' }}>
+                        www.factcheckmaster.com › post › ...
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Keywords */}
+                  {aiResult.keywords?.length > 0 && (
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                      {aiResult.keywords.map((kw, i) => (
+                        <span key={i} style={{
+                          padding: '0.25rem 0.6rem',
+                          background: 'rgba(255,255,255,0.05)',
+                          borderRadius: '6px',
+                          color: 'rgba(255,255,255,0.5)',
+                          fontSize: '0.72rem',
+                          fontWeight: '500'
+                        }}>
+                          #{kw}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {/* Direct Publish */}
+                    <button
+                      onClick={handleAIDirectPublish}
+                      disabled={submitting}
+                      style={{
+                        flex: '1',
+                        minWidth: '140px',
+                        padding: '0.85rem 1.5rem',
+                        background: submitting ? 'rgba(107,114,128,0.4)' : 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        cursor: submitting ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        fontSize: '0.95rem',
+                        boxShadow: '0 8px 25px rgba(16, 185, 129, 0.3)',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      <FaPaperPlane />
+                      {submitting ? 'Publishing...' : 'Publish Now'}
+                    </button>
+
+                    {/* Edit More */}
+                    <button
+                      onClick={handleAIPublish}
+                      style={{
+                        flex: '1',
+                        minWidth: '140px',
+                        padding: '0.85rem 1.5rem',
+                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        fontSize: '0.95rem',
+                        boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      <FaPen />
+                      Edit More
+                    </button>
+
+                    {/* Regenerate */}
+                    <button
+                      onClick={handleAIRegenerate}
+                      style={{
+                        padding: '0.85rem 1.25rem',
+                        background: 'rgba(255,255,255,0.06)',
+                        color: 'rgba(255,255,255,0.7)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        fontSize: '0.9rem',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      <FaRedo />
+                      Redo
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Add Post Form */}
         {showAddForm && (
