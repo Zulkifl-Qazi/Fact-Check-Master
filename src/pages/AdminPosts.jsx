@@ -298,16 +298,6 @@ const quillStyles = `
       padding-top: 1rem !important;
     }
   }
-
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.2); }
-  }
 `;
 
 // Client-side image compression utility
@@ -920,8 +910,6 @@ const AdminPosts = () => {
           </div>
         </div>
 
-
-
         {/* Add Post Form */}
         {showAddForm && (
           <motion.div
@@ -1309,7 +1297,7 @@ const AdminPosts = () => {
                               }));
                             } catch (error) {
                               console.error('Upload failed', error);
-                              alert(`Upload failed: ${error.response?.data?.error || error.message || 'Failed to upload image. Please try again.'}`);
+                              alert('Failed to upload image. Please try again.');
                             } finally {
                               e.target.value = ''; // Reset input to allow selecting same file again
                             }

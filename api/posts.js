@@ -1,3 +1,4 @@
+// Supabase configuration for permanent post storage
 import { createClient } from '@supabase/supabase-js';
 import nodemailer from 'nodemailer';
 
@@ -49,6 +50,8 @@ function cleanSubjectText(text) {
     if (code >= 0x1D482 && code <= 0x1D49B) return String.fromCharCode(code - 0x1D482 + 97);
     // Sans-serif Bold: 𝗔-𝗭 (U+1D5D4 to U+1D5ED)
     if (code >= 0x1D5D4 && code <= 0x1D5ED) return String.fromCharCode(code - 0x1D5D4 + 65);
+    // Sans-serif Bold: 𝗮-𝘇 (U+1D5EE to U+1D607)
+    if (code >= 0x1D5EE && code <= 0x1D607) return String.fromCharCode(code - 0x1D5EE + 97);
     return char;
   }).join('');
 }
@@ -174,7 +177,7 @@ function requireSupabase(res) {
 }
 
 async function requireApprovedAdmin(req, res) {
-  const deviceId = req.headers && req.headers['x-device-id'];
+  const deviceId = req.headers['x-device-id'];
 
   if (!deviceId) {
     res.status(403).json({ error: 'Approved device ID is required' });
@@ -673,14 +676,12 @@ export default async function handler(req, res) {
   console.log(`[API] ${req.method} /api/posts`);
 
   try {
-    if (req.method !== 'GET') {
-      if (!requireSupabase(res)) return;
-    }
+    if (!requireSupabase(res)) return;
 
     if (req.method === 'GET') {
       const requestedId = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id;
-      const isAdmin = !!(req.headers && req.headers['x-device-id']);
-      const cacheKey = JSON.stringify(req.query || {});
+      const isAdmin = !!req.headers['x-device-id'];
+      const cacheKey = JSON.stringify(req.query);
 
       if (requestedId !== undefined) {
         const postId = parseInt(requestedId, 10);
@@ -767,7 +768,6 @@ export default async function handler(req, res) {
       const approvedAdmin = await requireApprovedAdmin(req, res);
       if (!approvedAdmin) return;
 
-      // ========== REGULAR POST CREATION ==========
       console.log('[API] POST request body:', JSON.stringify(req.body, null, 2));
       const { title, content, author, fact_check_status, imageUrl, postUrl, category, categories, media } = req.body;
       
