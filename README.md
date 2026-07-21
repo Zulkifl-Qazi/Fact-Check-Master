@@ -1,7 +1,12 @@
 # Fact Check Master
 
-> [!NOTE]
-> Read the complete **[Project Proposal & Software Requirements Document (PRD/SRS)](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/PROJECT_PROPOSAL_SRS.md)** to understand the platform's vision, system architecture, database design, and implementation roadmap.
+> [!IMPORTANT]
+> **Multi-App Architecture Documentation**:
+> Read the complete **[AI Agent Master Project Specification (AI_AGENT_PROJECT_MASTER_DOC.md)](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/AI_AGENT_PROJECT_MASTER_DOC.md)** and **[PRD/SRS Document](file:///c:/Users/qzulk/Desktop/ISPR/Fact%20Check%20Master/PROJECT_PROPOSAL_SRS.md)** to understand the platform vision, architecture, and weekly roadmap.
+>
+> **Connected Repositories**:
+> 1. **Main News & Publishing Portal**: [`https://github.com/Zulkifl-Qazi/Fact-Check-Master`](https://github.com/Zulkifl-Qazi/Fact-Check-Master)
+> 2. **Standalone AI Post & Stamp Generator Studio**: [`https://github.com/Zulkifl-Qazi/AI_POST_GENERATION`](https://github.com/Zulkifl-Qazi/AI_POST_GENERATION)
 
 A modern fact-checking platform built with React, Vite, and Node.js that helps combat misinformation through real-time verification and community engagement.
 
