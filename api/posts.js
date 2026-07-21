@@ -49,12 +49,8 @@ function cleanSubjectText(text) {
     if (code >= 0x1D482 && code <= 0x1D49B) return String.fromCharCode(code - 0x1D482 + 97);
     // Sans-serif Bold: 𝗔-𝗭 (U+1D5D4 to U+1D5ED)
     if (code >= 0x1D5D4 && code <= 0x1D5ED) return String.fromCharCode(code - 0x1D5D4 + 65);
-    // Sans-serif Bold: 𝗮-𝘇 (U+1D5EE to U+1D607)
-    if (code >= 0x1D5EE && code <= 0x1D607) return String.fromCharCode(code - 0x1D5EE + 97);
     return char;
   }).join('');
-}
-
 }
 
 // Helper to broadcast emails on new post
