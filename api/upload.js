@@ -38,12 +38,23 @@ export default async function handler(req, res) {
 
   try {
     if (!supabase) {
-      return res.status(500).json({ error: 'Supabase is not configured on the server. Please configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.' });
+      console.error('[Upload] Supabase is not configured');
+      return res.status(500).json({ error: 'Supabase storage is not configured on server' });
     }
 
-    const { imageBase64, fileName, contentType } = req.body;
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.error('[Upload] Error parsing JSON body:', e);
+      }
+    }
+
+    const { imageBase64, fileName, contentType } = body || {};
     
     if (!imageBase64 || !fileName) {
+      console.error('[Upload] Missing image data or fileName');
       return res.status(400).json({ error: 'Missing image data or filename' });
     }
 
@@ -53,19 +64,21 @@ export default async function handler(req, res) {
     
     // Generate unique name
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const safeFileName = uniqueSuffix + '-' + fileName.replace(/[^a-zA-Z0-9.\-_]/g, '');
+    const safeFileName = uniqueSuffix + '-' + String(fileName).replace(/[^a-zA-Z0-9.\-_]/g, '');
+
+    console.log(`[Upload] Uploading ${safeFileName} to Supabase bucket 'post-images' (${buffer.length} bytes)...`);
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('post-images')
       .upload(safeFileName, buffer, {
         contentType: contentType || 'image/jpeg',
-        upsert: false
+        upsert: true
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
-      throw error;
+      console.error('[Upload] Supabase storage error:', error);
+      return res.status(500).json({ error: `Supabase Storage error: ${error.message}` });
     }
 
     // Get public URL
@@ -73,9 +86,10 @@ export default async function handler(req, res) {
       .from('post-images')
       .getPublicUrl(safeFileName);
 
+    console.log('[Upload] Upload successful:', publicData.publicUrl);
     return res.status(200).json({ imageUrl: publicData.publicUrl });
   } catch (error) {
-    console.error('Upload handler error:', error);
-    return res.status(500).json({ error: 'Failed to upload image' });
+    console.error('[Upload] Unexpected handler error:', error);
+    return res.status(500).json({ error: error.message || 'Failed to upload image' });
   }
 }

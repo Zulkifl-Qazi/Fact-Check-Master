@@ -1308,7 +1308,7 @@ const AdminPosts = () => {
                               }));
                             } catch (error) {
                               console.error('Upload failed', error);
-                              alert('Failed to upload image. Please try again.');
+                              alert(`Upload failed: ${error.response?.data?.error || error.message || 'Failed to upload image. Please try again.'}`);
                             } finally {
                               e.target.value = ''; // Reset input to allow selecting same file again
                             }
