@@ -17,7 +17,7 @@ function q(query, key) {
 }
 
 async function requireApprovedAdmin(req) {
-  const deviceId = req.headers['x-device-id'];
+  const deviceId = req.headers && req.headers['x-device-id'];
   if (!deviceId || !supabase) return null;
 
   const { data } = await supabase
@@ -37,10 +37,6 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  if (!supabase) {
-    return res.status(500).json({ error: 'Supabase not configured' });
-  }
-
   try {
     // GET /api/subscribers?email=...
     // Or GET /api/subscribers (lists all for admin)
@@ -48,6 +44,7 @@ export default async function handler(req, res) {
       const email = q(req.query, 'email');
       
       if (!email) {
+        if (!supabase) return res.status(200).json([]);
         // Admin call — verify admin device
         const adminDevice = await requireApprovedAdmin(req);
         if (!adminDevice) {
@@ -68,6 +65,10 @@ export default async function handler(req, res) {
         return res.status(200).json(data || []);
       }
 
+      if (!supabase) {
+        return res.status(200).json({ subscribed: false, subscriber: null });
+      }
+
       const { data, error } = await supabase
         .from('subscribers')
         .select('*')
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
 
       if (error) {
         if (error.code === '42P01' || error.message?.includes('relation "subscribers" does not exist')) {
-          return res.status(200).json({ subscribed: false });
+          return res.status(200).json({ subscribed: false, subscriber: null });
         }
         throw error;
       }
@@ -85,6 +86,10 @@ export default async function handler(req, res) {
         subscribed: !!data,
         subscriber: data || null
       });
+    }
+
+    if (!supabase) {
+      return res.status(500).json({ error: 'Supabase not configured' });
     }
 
     // POST /api/subscribers

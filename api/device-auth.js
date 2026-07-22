@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
       // Handle Device Approval if deviceIdToApprove parameter is present
       if (deviceIdToApprove) {
-        const requestingDeviceId = req.headers['x-device-id'];
+        const requestingDeviceId = req.headers && req.headers['x-device-id'];
 
         // Verify requesting device is approved
         const { data: requestingDevice } = await supabase
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
 
     } else if (req.method === 'GET') {
       // Get all devices
-      const deviceId = req.headers['x-device-id'];
+      const deviceId = req.headers && req.headers['x-device-id'];
       
       // Verify requesting device is approved
       const { data: device } = await supabase
@@ -154,7 +154,7 @@ export default async function handler(req, res) {
     } else if (req.method === 'DELETE') {
       // Revoke device
       const { deviceId } = req.query;
-      const requestingDeviceId = req.headers['x-device-id'];
+      const requestingDeviceId = req.headers && req.headers['x-device-id'];
 
       const { data: requestingDevice } = await supabase
         .from('approved_devices')

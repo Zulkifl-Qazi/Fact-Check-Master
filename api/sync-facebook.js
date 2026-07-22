@@ -40,15 +40,15 @@ export default async function handler(req, res) {
   }
 
   // Verify auth for POST/Sync requests
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers && req.headers.authorization;
   const isCronAuthorized = cronSecret && authHeader === `Bearer ${cronSecret}`;
   
   // Also check for Meta Webhook signature or direct POST from Meta
-  const isMetaWebhook = req.headers['x-hub-signature-256'] || req.headers['x-hub-signature'];
+  const isMetaWebhook = req.headers && (req.headers['x-hub-signature-256'] || req.headers['x-hub-signature']);
 
   // Also allow trigger if requested by an approved administrator via Device ID
   let isAdminAuthorized = false;
-  const deviceId = req.headers['x-device-id'];
+  const deviceId = req.headers && req.headers['x-device-id'];
   if (supabase && deviceId) {
     const { data: approvedDevice } = await supabase
       .from('approved_devices')

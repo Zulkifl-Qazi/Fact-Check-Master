@@ -177,7 +177,7 @@ function requireSupabase(res) {
 }
 
 async function requireApprovedAdmin(req, res) {
-  const deviceId = req.headers['x-device-id'];
+  const deviceId = req.headers && req.headers['x-device-id'];
 
   if (!deviceId) {
     res.status(403).json({ error: 'Approved device ID is required' });
@@ -680,7 +680,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
       const requestedId = Array.isArray(req.query?.id) ? req.query.id[0] : req.query?.id;
-      const isAdmin = !!req.headers['x-device-id'];
+      const isAdmin = !!(req.headers && req.headers['x-device-id']);
       const cacheKey = JSON.stringify(req.query);
 
       if (requestedId !== undefined) {

@@ -51,23 +51,24 @@ function estimateReadTime(html) {
 }
 
 async function requireApprovedAdmin(req, res) {
-  const deviceId = req.headers['x-device-id'];
-  if (!deviceId) {
+  const deviceId = req.headers && req.headers['x-device-id'];
+  if (!deviceId || !supabase) {
     res.status(403).json({ error: 'Approved device ID is required' });
     return null;
   }
 
   const { data, error } = await supabase
     .from('approved_devices')
-    .select('device_id, device_name, approved')
+    .select('device_id, approved')
     .eq('device_id', deviceId)
     .eq('approved', true)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     res.status(403).json({ error: 'Unauthorized device' });
     return null;
   }
+
   return data;
 }
 
@@ -80,13 +81,13 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  if (!supabase) {
-    return res.status(500).json({ error: 'Supabase not configured' });
-  }
-
   try {
     // ─── GET ─────────────────────────────────────────────────
     if (req.method === 'GET') {
+      if (!supabase) {
+        return res.status(200).json([]);
+      }
+
       const slug = q(req.query, 'slug');
       const id = q(req.query, 'id');
       const all = q(req.query, 'all');
@@ -98,7 +99,7 @@ export default async function handler(req, res) {
           .select('*')
           .eq('slug', slug)
           .eq('status', 'published')
-          .single();
+          .maybeSingle();
 
         if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
@@ -112,7 +113,7 @@ export default async function handler(req, res) {
           .from('articles')
           .select('*')
           .eq('id', parseInt(id, 10))
-          .single();
+          .maybeSingle();
 
         if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
@@ -134,7 +135,12 @@ export default async function handler(req, res) {
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('relation "articles" does not exist')) {
+          return res.status(200).json([]);
+        }
+        throw error;
+      }
 
       if (all === 'true') {
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
