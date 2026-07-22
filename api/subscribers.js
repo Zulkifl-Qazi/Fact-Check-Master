@@ -57,10 +57,8 @@ export default async function handler(req, res) {
           .order('created_at', { ascending: false });
 
         if (error) {
-          if (error.code === '42P01' || error.message?.includes('relation "subscribers" does not exist')) {
-            return res.status(200).json([]);
-          }
-          throw error;
+          console.warn('[Subscribers] Supabase query error:', error.message);
+          return res.status(200).json([]);
         }
         return res.status(200).json(data || []);
       }
@@ -76,10 +74,8 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (error) {
-        if (error.code === '42P01' || error.message?.includes('relation "subscribers" does not exist')) {
-          return res.status(200).json({ subscribed: false, subscriber: null });
-        }
-        throw error;
+        console.warn('[Subscribers] Supabase query error:', error.message);
+        return res.status(200).json({ subscribed: false, subscriber: null });
       }
 
       return res.status(200).json({

@@ -136,10 +136,8 @@ export default async function handler(req, res) {
 
       const { data, error } = await query;
       if (error) {
-        if (error.code === '42P01' || error.message?.includes('relation "articles" does not exist')) {
-          return res.status(200).json([]);
-        }
-        throw error;
+        console.warn('[Articles] Supabase query error:', error.message);
+        return res.status(200).json([]);
       }
 
       if (all === 'true') {

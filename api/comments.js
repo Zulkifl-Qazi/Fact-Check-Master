@@ -30,6 +30,8 @@ export default async function handler(req, res) {
   try {
     // GET /api/comments
     if (req.method === 'GET') {
+      if (!supabase) return res.status(200).json([]);
+
       const post_title = q(req.query, 'post_title');
 
       let query = supabase.from('comments').select('*');
@@ -42,13 +44,8 @@ export default async function handler(req, res) {
       const { data, error } = await query;
 
       if (error) {
-        // Handle missing table error gracefully
-        if (error.code === '42P01' || error.message?.includes('relation "comments" does not exist')) {
-          return res.status(500).json({
-            error: "Supabase table 'comments' does not exist. Please run the SQL migration script inside 'supabase-comments-table.sql' on your Supabase dashboard editor."
-          });
-        }
-        throw error;
+        console.warn('[Comments] Supabase query error:', error.message);
+        return res.status(200).json([]);
       }
       return res.status(200).json(data || []);
     }
