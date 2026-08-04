@@ -18,6 +18,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/replies",
+      "destination": "/api/feedback"
+    },
+    {
       "source": "/post/:id",
       "destination": "/api/share-preview?type=post&id=:id"
     },
