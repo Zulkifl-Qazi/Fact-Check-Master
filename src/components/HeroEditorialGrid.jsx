@@ -275,7 +275,196 @@ const HeroEditorialGrid = () => {
   return (
     <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
+
+        {/* ── MOBILE/TABLET LAYOUT: Strictly Chronological Order (Visible on screens < md) ── */}
+        <div className="block md:hidden space-y-8 hero-fade-in">
+          {/* Main Story (Lead) */}
+          <div
+            className="hero-lead hero-link cursor-pointer relative overflow-hidden rounded-lg group"
+            onClick={() => navigate(`/post/${mainStory.id}`)}
+          >
+            <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+              {mainImage && (
+                <>
+                  <div
+                    className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
+                    style={{ backgroundImage: `url(${vercelImg(mainImage, 1200, 80)})` }}
+                  />
+                  <img
+                    src={vercelImg(mainImage, 1200, 80)}
+                    alt={mainStory.title}
+                    fetchPriority="high"
+                    decoding="sync"
+                    width="1200"
+                    height="675"
+                    className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                </>
+              )}
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-30 flex flex-col justify-end">
+                <span className="inline-block px-3 py-1 text-[11px] font-extrabold tracking-wider uppercase text-white bg-red-600 mb-3 w-fit rounded-sm shadow-sm">
+                  {heroUsedFallback ? 'Featured' : 'Breaking'}
+                </span>
+                <h2 className="text-xl sm:text-2xl font-black text-white leading-tight m-0 drop-shadow-md">
+                  {mainStory.title}
+                </h2>
+                {mainStory.content && (
+                  <p className="text-xs text-slate-200/90 mt-2 leading-relaxed line-clamp-2 drop-shadow-sm">
+                    {stripHtml(mainStory.content)}
+                  </p>
+                )}
+                <p className="text-[10px] text-slate-400 mt-2.5 m-0 tracking-wide font-medium">
+                  {mainStory.author && `${mainStory.author} · `}
+                  {mainStory.created_at && new Date(mainStory.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sub-stories Grid (Strict chronological order: Secondary stories first, then Bottom Row stories) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {secondaryStories && secondaryStories.map((post) => {
+              const img = getPostImage(post);
+              return (
+                <div
+                  key={post.id}
+                  className="hero-mid-card hero-link cursor-pointer group"
+                  onClick={() => navigate(`/post/${post.id}`)}
+                >
+                  <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
+                    {img && (
+                      <>
+                        <div
+                          className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
+                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                        />
+                        <img
+                          src={vercelImg(img, 640, 75)}
+                          alt={post.title}
+                          loading="lazy"
+                          decoding="async"
+                          width="640"
+                          height="360"
+                          className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      </>
+                    )}
+                    <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-30">
+                      <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse flex-shrink-0" />
+                      <span className="text-[10px] font-bold tracking-wider uppercase text-white drop-shadow-md">Live</span>
+                    </div>
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-200 leading-snug m-0 line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 m-0">
+                    {post.created_at && new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
+                  </p>
+                </div>
+              );
+            })}
+
+            {bottomRowPosts && bottomRowPosts.map((post) => {
+              const img = getPostImage(post);
+              return (
+                <div
+                  key={post.id}
+                  className="hero-mid-card hero-link cursor-pointer group"
+                  onClick={() => navigate(`/post/${post.id}`)}
+                >
+                  <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
+                    {img && (
+                      <>
+                        <div
+                          className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
+                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                        />
+                        <img
+                          src={vercelImg(img, 640, 75)}
+                          alt={post.title}
+                          loading="lazy"
+                          decoding="async"
+                          width="640"
+                          height="360"
+                          className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      </>
+                    )}
+                    <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-200 leading-snug m-0 line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 m-0">
+                    {post.created_at && new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Sidebar Sections on Mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4 border-t border-slate-200/50 dark:border-slate-800/30">
+            {/* Must Read */}
+            <div>
+              <div className="flex items-center gap-2 mb-3.5 pb-2.5 border-b-2 border-amber-500">
+                <span className="w-0.5 h-4 bg-amber-500 rounded-sm flex-shrink-0" />
+                <h3 className="text-[13px] font-extrabold tracking-wider uppercase text-slate-700 dark:text-slate-300 m-0">
+                  Must Read
+                </h3>
+              </div>
+              {mustReadPosts.length === 0 && (
+                <p className="text-slate-400 dark:text-slate-600 text-sm py-2">No picks yet.</p>
+              )}
+              {mustReadPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="hero-link cursor-pointer py-2.5 border-b border-slate-200/50 dark:border-slate-800/30 group"
+                  onClick={() => navigate(`/post/${post.id}`)}
+                >
+                  <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-200 leading-snug m-0 line-clamp-3">
+                    {post.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 m-0">
+                    {post.created_at && new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* More Headlines */}
+            <div>
+              <div className="flex items-center gap-2 mb-3.5 pb-2.5 border-b border-slate-200 dark:border-slate-800">
+                <span className="w-0.5 h-4 bg-slate-300 dark:bg-slate-700 rounded-sm flex-shrink-0" />
+                <h3 className="text-[13px] font-extrabold tracking-wider uppercase text-slate-600 dark:text-slate-400 m-0">
+                  More Headlines
+                </h3>
+              </div>
+              {moreHeadlines.length === 0 && (
+                <p className="text-slate-400 dark:text-slate-600 text-sm py-2">No more headlines.</p>
+              )}
+              {moreHeadlines.map((post) => (
+                <div
+                  key={post.id}
+                  className="hero-link cursor-pointer py-2 border-b border-slate-200/30 dark:border-slate-800/10 last:border-none group"
+                  onClick={() => navigate(`/post/${post.id}`)}
+                >
+                  <h4 className="text-xs font-medium text-slate-700 dark:text-slate-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-200 leading-relaxed m-0 line-clamp-2">
+                    {post.title}
+                  </h4>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── DESKTOP LAYOUT (Visible only on md screens and up) ── */}
+        <div className="hidden md:grid grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
 
           {/* ── COL 1: MAIN STORY ── */}
           <div className="flex flex-col justify-between h-full gap-6 hero-fade-in">
