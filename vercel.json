@@ -19,11 +19,11 @@
   "rewrites": [
     {
       "source": "/post/:id",
-      "destination": "/api/share-preview.js?type=post&id=:id"
+      "destination": "/api/share-preview?type=post&id=:id"
     },
     {
       "source": "/articles/:slug",
-      "destination": "/api/share-preview.js?type=article&slug=:slug"
+      "destination": "/api/share-preview?type=article&slug=:slug"
     },
     {
       "source": "/((?!api/|google.*\\.html|sitemap\\.xml|ads\\.txt|robots\\.txt).*)",

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import axios from 'axios';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -111,9 +112,9 @@ export default async function handler(req, res) {
   // HTTP fallback if filesystem fails
   if (!htmlTemplate) {
     try {
-      const indexRes = await fetch(`${baseUrl}/index.html`);
-      if (indexRes.ok) {
-        htmlTemplate = await indexRes.text();
+      const response = await axios.get(`${baseUrl}/index.html`, { timeout: 5000 });
+      if (response.status === 200 && response.data) {
+        htmlTemplate = response.data;
       }
     } catch (err) {
       console.warn('[Share Preview] Fetch fallback error:', err.message);
