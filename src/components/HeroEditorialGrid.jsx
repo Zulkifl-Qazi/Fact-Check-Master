@@ -83,12 +83,8 @@ const HeroEditorialGrid = () => {
       const breakingRes = postsPool
         .filter((p) => p.category === BREAKING_CATEGORY || p.category === 'featured-news')
         .slice(0, 8);
-      const fallbackRes = postsPool
-        .filter((p) => p.category === LATEST_FALLBACK)
-        .slice(0, 8);
-      const latestPoolRes = postsPool
-        .filter((p) => p.category === LATEST_FALLBACK)
-        .slice(0, 16);
+      const fallbackRes = postsPool.slice(0, 8);
+      const latestPoolRes = postsPool.slice(0, 16);
       const generalRes = postsPool.slice(0, 24);
 
       let breaking = dedupeByTitle(breakingRes);

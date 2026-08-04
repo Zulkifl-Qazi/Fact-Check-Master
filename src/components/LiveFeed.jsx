@@ -20,7 +20,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
             setLoading(true);
             setError(null);
             
-            const postsRes = await fetch('/api/posts');
+            const postsRes = await fetch('/api/posts?chronological=true');
             
             if (!postsRes.ok) {
                 throw new Error(`HTTP ${postsRes.status}: ${postsRes.statusText}`);

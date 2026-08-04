@@ -244,7 +244,7 @@ const SAMPLE_POSTS = [
 ];
 
 // Database functions for permanent storage
-async function getAllPosts(popular) {
+async function getAllPosts(popular, chronological) {
   try {
     let query = supabase
       .from('posts')
@@ -255,6 +255,9 @@ async function getAllPosts(popular) {
       query = query
         .order('pinned_popular', { ascending: false, nullsFirst: false })
         .order('views', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false });
+    } else if (chronological === true || chronological === 'true') {
+      query = query
         .order('created_at', { ascending: false });
     } else {
       query = query
@@ -307,7 +310,7 @@ const HERO_BREAKING_CATEGORIES = ['breaking-news', 'featured-news'];
  * Filtered list for GET ?category=&limit=&offset=&ascending=
  * When category matches hero lane, includes both breaking-news and featured-news rows.
  */
-async function getPostsList({ category, limit, offset, ascending, popular }) {
+async function getPostsList({ category, limit, offset, ascending, popular, chronological }) {
   try {
     let query = supabase
       .from('posts')
@@ -330,6 +333,9 @@ async function getPostsList({ category, limit, offset, ascending, popular }) {
         .order('pinned_popular', { ascending: false, nullsFirst: false })
         .order('views', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });
+    } else if (chronological === true || chronological === 'true') {
+      const asc = ascending === true || ascending === 'true';
+      query = query.order('created_at', { ascending: asc });
     } else {
       const asc = ascending === true || ascending === 'true';
       query = query.order('pinned_hero', { ascending: false, nullsFirst: false })
@@ -725,6 +731,7 @@ export default async function handler(req, res) {
       const rawOffset = parseQueryParam(req.query, 'offset');
       const rawAscending = parseQueryParam(req.query, 'ascending');
       const popular = parseQueryParam(req.query, 'popular');
+      const chronological = parseQueryParam(req.query, 'chronological');
 
       const categoryTrimmed =
         rawCategory !== undefined && rawCategory !== null && String(rawCategory).trim() !== ''
@@ -734,7 +741,8 @@ export default async function handler(req, res) {
         categoryTrimmed !== undefined ||
         (rawLimit !== undefined && rawLimit !== '' && rawLimit !== null) ||
         (rawOffset !== undefined && rawOffset !== '' && rawOffset !== null) ||
-        (popular !== undefined && popular !== '' && popular !== null);
+        (popular !== undefined && popular !== '' && popular !== null) ||
+        (chronological !== undefined && chronological !== '' && chronological !== null);
 
       if (hasListFilters) {
         const posts = await getPostsList({
@@ -742,7 +750,8 @@ export default async function handler(req, res) {
           limit: rawLimit,
           offset: rawOffset,
           ascending: rawAscending,
-          popular: popular
+          popular: popular,
+          chronological: chronological
         });
         console.log(`[API] Returning ${posts.length} posts (filtered list)`);
         
@@ -754,7 +763,7 @@ export default async function handler(req, res) {
         return res.status(200).json(posts);
       }
 
-      const posts = await getAllPosts(popular);
+      const posts = await getAllPosts(popular, chronological);
       console.log(`[API] Returning ${posts.length} posts from permanent database`);
       
       if (!isAdmin) {
