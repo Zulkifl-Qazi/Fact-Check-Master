@@ -4,6 +4,11 @@ import { FaArrowLeft, FaCheckCircle, FaExclamationTriangle, FaRss, FaClock, FaUs
 import MediaCarousel from '../components/MediaCarousel';
 import { useAuth } from '../hooks/useAuth';
 
+const stripHtml = (str) => {
+    if (!str) return '';
+    return str.replace(/<[^>]+>/g, '').trim();
+};
+
 const PostView = () => {
     const { id } = useParams();
     const navigate = useNavigate();
