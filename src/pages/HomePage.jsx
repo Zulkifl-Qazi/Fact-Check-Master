@@ -28,8 +28,8 @@ const HomePage = () => {
   }, [searchParams]);
 
   return (
-    <div className="w-full flex flex-col gap-16 md:gap-20 pb-16 md:pb-24">
-      <div id="top" />
+    <div className="w-full flex flex-col gap-16 md:gap-20 pb-16 md:pb-24 relative">
+      <div id="top" className="absolute top-0 pointer-events-none" />
       
       {/* HERO EDITORIAL GRID - loads eagerly (above the fold on desktop) */}
       <div className="order-2 md:order-1">
@@ -37,7 +37,7 @@ const HomePage = () => {
       </div>
       
       {/* LiveFeed (Latest News) */}
-      <div className="order-1 md:order-2 w-full pt-6 md:pt-0">
+      <div className="order-1 md:order-2 w-full pt-0">
         <Suspense fallback={
           <div id="live-feed" className="w-full py-20 flex items-center justify-center">
             <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
