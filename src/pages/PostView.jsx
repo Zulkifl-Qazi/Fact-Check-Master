@@ -120,6 +120,7 @@ const PostView = () => {
     const handleShare = (platform) => {
         const url = window.location.href;
         const text = `Check out this fact check: "${post?.title}"`;
+        const excerpt = post?.content ? stripHtml(post.content).substring(0, 120) + '...' : '';
         
         switch (platform) {
             case 'facebook':
@@ -129,7 +130,7 @@ const PostView = () => {
                 window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
                 break;
             case 'whatsapp':
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n\n' + excerpt + '\n\n' + url)}`, '_blank');
                 break;
             case 'copy':
                 navigator.clipboard.writeText(url);
@@ -140,7 +141,7 @@ const PostView = () => {
                 if (navigator.share) {
                     navigator.share({
                         title: post.title,
-                        text: text,
+                        text: text + '\n\n' + excerpt,
                         url: url
                     }).catch(console.error);
                 }

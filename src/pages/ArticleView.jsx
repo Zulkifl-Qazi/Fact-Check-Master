@@ -81,6 +81,7 @@ const ArticleView = () => {
   const handleShare = async (platform) => {
     const url = window.location.href;
     const text = `Check out this article: "${article?.title}"`;
+    const excerpt = article?.content ? stripHtml(article.content).substring(0, 120) + '...' : '';
     
     switch (platform) {
       case 'facebook':
@@ -90,7 +91,7 @@ const ArticleView = () => {
         window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
         break;
       case 'whatsapp':
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n\n' + excerpt + '\n\n' + url)}`, '_blank');
         break;
       case 'copy':
         await navigator.clipboard.writeText(url).catch(() => {});
@@ -99,7 +100,11 @@ const ArticleView = () => {
         break;
       default:
         if (navigator.share) {
-          navigator.share({ title: article.title, url }).catch(() => {});
+          navigator.share({
+            title: article.title,
+            text: text + '\n\n' + excerpt,
+            url
+          }).catch(() => {});
         }
         break;
     }
