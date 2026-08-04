@@ -47,7 +47,7 @@ const Contact = () => {
   };
 
   return (
-    <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 md:pt-32 pb-20 px-4 transition-colors duration-300">
+    <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-4 md:pt-10 pb-20 px-4 transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

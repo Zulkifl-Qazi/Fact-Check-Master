@@ -115,6 +115,11 @@ const AppContent = () => {
 
 function App() {
   useEffect(() => {
+    // Prevent browser auto-scroll restoration on refresh/load to avoid jumping
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
     // Set document title and meta description
     document.title = 'Fact Check Master - Real-Time Fact Checking & Verification';
     
@@ -197,7 +202,7 @@ function ScrollToHash() {
     }
     // Only scroll to top if explicitly navigating to home without a hash
     else if (location.pathname === '/' && !location.state?.preventScroll) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, 0);
     }
   }, [location]);
   return null;

@@ -256,7 +256,7 @@ const PostView = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-28 md:pt-32 pb-16 transition-colors duration-300">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-4 md:pt-10 pb-16 transition-colors duration-300">
             <div className="max-w-[900px] mx-auto px-4 md:px-6">
                 {/* Back button */}
                 <button

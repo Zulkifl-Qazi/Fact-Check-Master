@@ -74,7 +74,7 @@ const AboutPage = () => {
   ];
 
   return (
-    <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 md:pt-32 pb-20 px-4 transition-colors duration-300">
+    <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-4 md:pt-10 pb-20 px-4 transition-colors duration-300">
       <div className="max-w-5xl mx-auto px-2 md:px-6">
 
         {/* Page Header */}

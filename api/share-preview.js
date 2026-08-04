@@ -130,6 +130,7 @@ export default async function handler(req, res) {
     <!-- Dynamic Social Share SEO Meta Tags (Server Injected) -->
     <title>${title}</title>
     <meta name="description" content="${description}" />
+    <link rel="canonical" href="${pageUrl}" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
@@ -147,7 +148,8 @@ export default async function handler(req, res) {
     .replace(/<title>[^<]*<\/title>/gi, '')
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/gi, '')
     .replace(/<meta\s+property="og:[^"]*"\s+content="[^"]*"\s*\/?>/gi, '')
-    .replace(/<meta\s+name="twitter:[^"]*"\s+content="[^"]*"\s*\/?>/gi, '');
+    .replace(/<meta\s+name="twitter:[^"]*"\s+content="[^"]*"\s*\/?>/gi, '')
+    .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/gi, '');
 
   // Insert custom tags into head
   if (cleanHtml.includes('</head>')) {
