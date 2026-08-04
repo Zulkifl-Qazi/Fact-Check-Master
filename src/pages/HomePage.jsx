@@ -28,52 +28,58 @@ const HomePage = () => {
   }, [searchParams]);
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-16 md:gap-20 pb-16 md:pb-24">
       <div id="top" />
       
-      {/* HERO EDITORIAL GRID - loads eagerly (above the fold) */}
-      <HeroEditorialGrid />
+      {/* HERO EDITORIAL GRID - loads eagerly (above the fold on desktop) */}
+      <div className="order-2 md:order-1">
+        <HeroEditorialGrid />
+      </div>
       
-      {/* Below-the-fold sections — lazy loaded */}
-      <div className="w-full space-y-0">
-        <div className="w-full space-y-20 py-16">
-          {/* LiveFeed (Latest News) */}
-          <Suspense fallback={
-            <div id="live-feed" className="w-full py-20 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
-            </div>
-          }>
-            <LiveFeed searchQuery={searchQuery} showOnly="latest" />
-          </Suspense>
-
-          {/* Articles & Guides Section */}
-          <Suspense fallback={<div className="w-full py-10" />}>
-            <ArticlesSection />
-          </Suspense>
-
-          {/* LiveFeed (More Latest News) */}
-          <Suspense fallback={<div className="w-full py-10" />}>
-            <LiveFeed searchQuery={searchQuery} showOnly="more" />
-          </Suspense>
-          
-          {/* View All News Button */}
-          <div className="text-center py-8">
-            <button
-              onClick={() => navigate('/news-dashboard')}
-              className="btn btn-primary btn-lg group"
-            >
-              <span>View All News Categories</span>
-              <span className="text-xl group-hover:translate-x-1 transition-transform">-&gt;</span>
-            </button>
-            <p className="text-gray-400 mt-4 text-sm">
-              Explore World News, Viral Claims, Military Claims and more
-            </p>
+      {/* LiveFeed (Latest News) */}
+      <div className="order-1 md:order-2 w-full pt-6 md:pt-0">
+        <Suspense fallback={
+          <div id="live-feed" className="w-full py-20 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
           </div>
-          
-          <Suspense fallback={<div className="w-full py-10" />}>
-            <About />
-          </Suspense>
-        </div>
+        }>
+          <LiveFeed searchQuery={searchQuery} showOnly="latest" />
+        </Suspense>
+      </div>
+
+      {/* Articles & Guides Section */}
+      <div className="order-3 w-full">
+        <Suspense fallback={<div className="w-full py-10" />}>
+          <ArticlesSection />
+        </Suspense>
+      </div>
+
+      {/* LiveFeed (More Latest News) */}
+      <div className="order-4 w-full">
+        <Suspense fallback={<div className="w-full py-10" />}>
+          <LiveFeed searchQuery={searchQuery} showOnly="more" />
+        </Suspense>
+      </div>
+      
+      {/* View All News Button */}
+      <div className="order-5 w-full text-center py-4">
+        <button
+          onClick={() => navigate('/news-dashboard')}
+          className="btn btn-primary btn-lg group"
+        >
+          <span>View All News Categories</span>
+          <span className="text-xl group-hover:translate-x-1 transition-transform">-&gt;</span>
+        </button>
+        <p className="text-gray-400 mt-4 text-sm">
+          Explore World News, Viral Claims, Military Claims and more
+        </p>
+      </div>
+      
+      {/* About Section */}
+      <div className="order-6 w-full">
+        <Suspense fallback={<div className="w-full py-10" />}>
+          <About />
+        </Suspense>
       </div>
     </div>
   );
