@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBookOpen, FaClock, FaEye, FaArrowLeft } from 'react-icons/fa';
+import { getArticleCover } from '../utils/articleImage';
 
 const stripHtml = (str) => {
   if (!str) return '';
@@ -21,7 +22,7 @@ const ArticlesList = () => {
         const data = await res.json();
         setArticles(data);
       } catch (err) {
-        console.error('Articles fetch error:', err);
+        console.error('Failed to load articles:', err);
       } finally {
         setLoading(false);
       }
@@ -31,19 +32,19 @@ const ArticlesList = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-16 flex items-center justify-center">
         <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-10">
-        {/* Header */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-16 transition-colors duration-300">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8">
+        {/* Back button */}
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors cursor-pointer border-none bg-transparent font-semibold"
         >
           <FaArrowLeft className="text-xs" /> Back to Home
         </button>
@@ -73,9 +74,9 @@ const ArticlesList = () => {
               >
                 {/* Cover Image */}
                 <div className="relative w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-blue-900 to-slate-900">
-                  {article.cover_image ? (
+                  {getArticleCover(article) ? (
                     <img
-                      src={article.cover_image}
+                      src={getArticleCover(article)}
                       alt={article.title}
                       loading="lazy"
                       decoding="async"

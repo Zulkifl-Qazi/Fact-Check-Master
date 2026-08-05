@@ -82,8 +82,18 @@ export default async function handler(req, res) {
         if (article) {
           title = `${article.title} - Fact Check Master`;
           description = stripHtml(article.content || article.excerpt).substring(0, 160);
-          if (article.cover_image) {
-            imageUrl = article.cover_image.startsWith('http') ? article.cover_image : `${baseUrl}${article.cover_image}`;
+          
+          let rawCover = article.cover_image;
+          if (!rawCover && article.content) {
+            const imgRegex = /<img[^>]+src="([^">]+)"/i;
+            const match = article.content.match(imgRegex);
+            if (match && match[1]) {
+              rawCover = match[1];
+            }
+          }
+
+          if (rawCover) {
+            imageUrl = rawCover.startsWith('http') ? rawCover : `${baseUrl}${rawCover}`;
           }
           pageUrl = `${baseUrl}/articles/${slug}`;
         }

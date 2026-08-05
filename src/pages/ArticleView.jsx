@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaClock, FaEye, FaCalendarAlt, FaUser, FaArrowLeft, FaBookOpen, FaShareAlt, FaLock, FaCommentDots, FaGoogle, FaFacebook, FaInstagram, FaEnvelope, FaApple, FaTwitter, FaWhatsapp, FaLink, FaGlobe } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
+import { getArticleCover } from '../utils/articleImage';
 
 const stripHtml = (str) => {
   if (!str) return '';
@@ -175,10 +176,10 @@ const ArticleView = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* Hero / Cover Image */}
-      {article.cover_image && (
+      {getArticleCover(article) && (
         <div className="relative w-full max-h-[480px] overflow-hidden bg-gradient-to-br from-slate-900 to-blue-950">
           <img
-            src={article.cover_image}
+            src={getArticleCover(article)}
             alt={article.title}
             className="w-full h-full max-h-[480px] object-cover opacity-80"
             fetchPriority="high"
@@ -417,9 +418,9 @@ const ArticleView = () => {
                   className="group block rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 hover:border-blue-300 dark:hover:border-blue-700/50 transition-all duration-300"
                 >
                   <div className="w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-blue-900 to-slate-900">
-                    {r.cover_image ? (
+                    {getArticleCover(r) ? (
                       <img
-                        src={r.cover_image}
+                        src={getArticleCover(r)}
                         alt={r.title}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

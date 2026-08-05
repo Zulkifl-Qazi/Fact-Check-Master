@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBookOpen, FaClock, FaArrowRight, FaEye } from 'react-icons/fa';
+import { getArticleCover } from '../utils/articleImage';
 
 const stripHtml = (str) => {
   if (!str) return '';
@@ -84,9 +85,9 @@ const ArticlesSection = () => {
           >
             {/* Cover Image */}
             <div className="relative w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-blue-900 to-slate-900">
-              {article.cover_image ? (
+              {getArticleCover(article) ? (
                 <img
-                  src={article.cover_image}
+                  src={getArticleCover(article)}
                   alt={article.title}
                   loading="lazy"
                   decoding="async"
