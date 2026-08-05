@@ -72,104 +72,69 @@ const HeroEditorialGrid = () => {
         .filter((p) => p.pinned_hero)
         .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
-      let lead = pinnedPosts[0] || null;
-      const pinnedSecondary = pinnedPosts.slice(1, 4);
-      const pinnedBottom = pinnedPosts.slice(4, 6);
-
-      // Exclude all used pinned posts from the general layout pool to avoid duplication
-      const pinnedUsedIds = new Set(pinnedPosts.slice(0, 6).map((p) => p.id));
-      const postsPool = allPosts.filter((p) => !pinnedUsedIds.has(p.id));
-
-      const breakingRes = postsPool
-        .filter((p) => p.category === BREAKING_CATEGORY || p.category === 'featured-news')
-        .slice(0, 8);
-      const fallbackRes = postsPool.slice(0, 8);
-      const latestPoolRes = postsPool.slice(0, 16);
-      const generalRes = postsPool.slice(0, 24);
-
-      let breaking = dedupeByTitle(breakingRes);
+      let lead = null;
+      let secondary = [];
+      let bottomRow = [];
+      let mustRead = [];
+      let more = [];
       let usedFallback = false;
 
-      if (breaking.length === 0) {
-        breaking = dedupeByTitle(fallbackRes);
+      if (pinnedPosts.length > 0) {
+        lead = pinnedPosts[0] || null;
+        const pinnedSecondary = pinnedPosts.slice(1, 4);
+        const pinnedBottom = pinnedPosts.slice(4, 6);
+
+        secondary = [...pinnedSecondary];
+        bottomRow = [...pinnedBottom];
+
+        const pinnedUsedIds = new Set(pinnedPosts.slice(0, 6).map((p) => p.id));
+        const postsPool = allPosts.filter((p) => !pinnedUsedIds.has(p.id));
+
+        const uniquePool = dedupeByTitle(postsPool);
+        const usedIds = new Set();
+        const usedTitles = new Set();
+
+        if (lead) {
+          usedIds.add(lead.id);
+          if (lead.title) usedTitles.add(lead.title.trim().toLowerCase());
+        }
+        secondary.forEach((p) => {
+          usedIds.add(p.id);
+          if (p.title) usedTitles.add(p.title.trim().toLowerCase());
+        });
+        bottomRow.forEach((p) => {
+          usedIds.add(p.id);
+          if (p.title) usedTitles.add(p.title.trim().toLowerCase());
+        });
+
+        const availablePool = uniquePool.filter(
+          (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
+        );
+
+        while (secondary.length < 3 && availablePool.length > 0) {
+          const fillPost = availablePool.shift();
+          secondary.push(fillPost);
+        }
+
+        while (bottomRow.length < 2 && availablePool.length > 0) {
+          const fillPost = availablePool.shift();
+          bottomRow.push(fillPost);
+        }
+
+        mustRead = availablePool.slice(0, 3);
+        more = availablePool.slice(3, 7);
+        usedFallback = false;
+      } else {
+        // Strict chronological fallback using all posts (any category)
+        const uniquePool = dedupeByTitle(allPosts);
+
+        lead = uniquePool[0] || null;
+        secondary = uniquePool.slice(1, 4);
+        bottomRow = uniquePool.slice(4, 6);
+        mustRead = uniquePool.slice(6, 9);
+        more = uniquePool.slice(9, 13);
         usedFallback = true;
       }
-
-      // If no post was explicitly pinned, fallback to the first breaking story
-      if (!lead) {
-        lead = breaking[0] || null;
-      }
-
-      let secondary = [...pinnedSecondary];
-      let bottomRow = [...pinnedBottom];
-
-      // Collect already used posts to avoid duplicates
-      const usedIds = new Set();
-      const usedTitles = new Set();
-      if (lead) {
-        usedIds.add(lead.id);
-        if (lead.title) usedTitles.add(lead.title.trim().toLowerCase());
-      }
-      secondary.forEach((p) => {
-        usedIds.add(p.id);
-        if (p.title) usedTitles.add(p.title.trim().toLowerCase());
-      });
-
-      let latestPool = dedupeByTitle(latestPoolRes).filter(
-        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      );
-
-      // Fill secondary stories if we have fewer than 3 to prevent empty space
-      const remainingBreakingForSecondary = breaking.filter(
-        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      );
-      while (secondary.length < 3 && remainingBreakingForSecondary.length > 0) {
-        const fillPost = remainingBreakingForSecondary.shift();
-        secondary.push(fillPost);
-        usedIds.add(fillPost.id);
-        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
-      }
-      while (secondary.length < 3 && latestPool.length > 0) {
-        const fillPost = latestPool.shift();
-        secondary.push(fillPost);
-        usedIds.add(fillPost.id);
-        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
-      }
-
-      // Fill bottomRow from breaking posts first, then from latestPool
-      const remainingBreakingForBottom = breaking.filter(
-        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      );
-      while (bottomRow.length < 2 && remainingBreakingForBottom.length > 0) {
-        const fillPost = remainingBreakingForBottom.shift();
-        bottomRow.push(fillPost);
-        usedIds.add(fillPost.id);
-        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
-      }
-
-      // Re-filter latestPool to exclude any bottomRow additions
-      latestPool = latestPool.filter(
-        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      );
-
-      // If bottomRow still needs posts, fill from latestPool
-      while (bottomRow.length < 2 && latestPool.length > 0) {
-        const fillPost = latestPool.shift();
-        bottomRow.push(fillPost);
-        usedIds.add(fillPost.id);
-        if (fillPost.title) usedTitles.add(fillPost.title.trim().toLowerCase());
-      }
-
-      const mustRead = latestPool.slice(0, 3);
-      mustRead.forEach((p) => {
-        usedIds.add(p.id);
-        if (p.title) usedTitles.add(p.title.trim().toLowerCase());
-      });
-
-      let general = dedupeByTitle(generalRes).filter(
-        (p) => !usedIds.has(p.id) && !usedTitles.has(p.title?.trim().toLowerCase())
-      );
-      const more = general.slice(0, 4);
 
       setMainStory(lead);
       setSecondaryStories(secondary);
