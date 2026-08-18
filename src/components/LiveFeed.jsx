@@ -46,6 +46,13 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
             const latestNewsPosts = uniquePosts.slice(0, 24);
             setPosts(latestNewsPosts);
 
+            if (latestNewsPosts[0]?.image_url) {
+                try {
+                    const mobileLcp = vercelImg(latestNewsPosts[0].image_url, 480, 65);
+                    localStorage.setItem('fcm_mobile_lcp', mobileLcp);
+                } catch (e) {}
+            }
+
             // Compute popular posts locally by mimicking backend sort logic:
             // 1. pinned_popular descending
             // 2. views descending

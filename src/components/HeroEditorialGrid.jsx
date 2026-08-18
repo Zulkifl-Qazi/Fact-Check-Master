@@ -248,7 +248,7 @@ const HeroEditorialGrid = () => {
               {mainImage && (
                 <>
                   <img
-                    src={vercelImg(mainImage, 640, 75)}
+                    src={vercelImg(mainImage, 240, 35)}
                     alt=""
                     aria-hidden="true"
                     className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
@@ -256,7 +256,7 @@ const HeroEditorialGrid = () => {
                     decoding="async"
                   />
                   <img
-                    src={vercelImg(mainImage, 640, 75)}
+                    src={vercelImg(mainImage, 640, 70)}
                     alt={mainStory.title}
                     fetchPriority="high"
                     decoding="sync"
@@ -302,7 +302,7 @@ const HeroEditorialGrid = () => {
                     {img && (
                       <>
                         <img
-                          src={vercelImg(img, 640, 75)}
+                          src={vercelImg(img, 240, 35)}
                           alt=""
                           aria-hidden="true"
                           className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
@@ -310,12 +310,12 @@ const HeroEditorialGrid = () => {
                           decoding="async"
                         />
                         <img
-                          src={vercelImg(img, 640, 75)}
+                          src={vercelImg(img, 480, 60)}
                           alt={post.title}
                           loading="lazy"
                           decoding="async"
-                          width="640"
-                          height="360"
+                          width="480"
+                          height="270"
                           className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
                           onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
@@ -349,7 +349,7 @@ const HeroEditorialGrid = () => {
                     {img && (
                       <>
                         <img
-                          src={vercelImg(img, 640, 75)}
+                          src={vercelImg(img, 240, 35)}
                           alt=""
                           aria-hidden="true"
                           className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
@@ -357,7 +357,7 @@ const HeroEditorialGrid = () => {
                           decoding="async"
                         />
                         <img
-                          src={vercelImg(img, 640, 75)}
+                          src={vercelImg(img, 480, 60)}
                           alt={post.title}
                           loading="lazy"
                           decoding="async"

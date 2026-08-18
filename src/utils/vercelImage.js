@@ -11,7 +11,7 @@
  * @param {number} [quality=80]        - Quality (1-100)
  * @returns {string}                   - Optimized WebP image URL
  */
-export function vercelImg(src, width, quality = 80) {
+export function vercelImg(src, width, quality = 65) {
   if (!src || typeof src !== 'string') return src || '';
   
   // Skip data URIs, SVGs, or already proxied URLs

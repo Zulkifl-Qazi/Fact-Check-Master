@@ -20,10 +20,8 @@
     <link rel="canonical" href="https://www.factcheckmaster.com" />
 
     <!-- Preconnect to image CDN and API origins for fast LCP discovery -->
-    <link rel="preconnect" href="https://wsrv.nl" />
+    <link rel="preconnect" href="https://wsrv.nl" crossorigin />
     <link rel="dns-prefetch" href="https://wsrv.nl" />
-    <link rel="preconnect" href="https://ipwho.is" />
-    <link rel="dns-prefetch" href="https://api.open-meteo.com" />
 
     <!-- Preconnect to Google Fonts (DNS only, non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -79,13 +77,15 @@
     </style>
 
     <!--
-      LCP Preload: On repeat visits, inject <link rel=preload> for the hero
-      image before any JS runs. The URL is cached in localStorage after first
-      load by HeroEditorialGrid. First-time visitors get no preload (normal).
+      LCP Preload: On repeat visits / lighthouse audits, preloads LCP image BEFORE React JS runs.
+      Mobile reads fcm_mobile_lcp, desktop reads fcm_hero_img.
     -->
     <script>
       try {
-        var h = localStorage.getItem('fcm_hero_img');
+        var isMobile = window.innerWidth < 768;
+        var h = isMobile
+          ? (localStorage.getItem('fcm_mobile_lcp') || localStorage.getItem('fcm_hero_img'))
+          : localStorage.getItem('fcm_hero_img');
         if (h) {
           var l = document.createElement('link');
           l.rel = 'preload';
