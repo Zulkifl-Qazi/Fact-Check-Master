@@ -48,7 +48,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
 
             if (latestNewsPosts[0]?.image_url) {
                 try {
-                    const mobileLcp = vercelImg(latestNewsPosts[0].image_url, 480, 65);
+                    const mobileLcp = vercelImg(latestNewsPosts[0].image_url, 360, 60);
                     localStorage.setItem('fcm_mobile_lcp', mobileLcp);
                 } catch (e) {}
             }
@@ -318,13 +318,13 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
                                             <div className="relative w-full sm:w-[240px] aspect-[16/10] overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 to-slate-950 flex-shrink-0">
                                                 {post.image_url ? (
                                                     <img 
-                                                        src={vercelImg(post.image_url, 480, 70)} 
+                                                        src={vercelImg(post.image_url, 360, 60)} 
                                                         alt={post.title} 
                                                         loading={idx === 0 ? undefined : "lazy"}
                                                         fetchPriority={idx === 0 ? "high" : "low"}
                                                         decoding={idx === 0 ? "sync" : "async"}
-                                                        width="480"
-                                                        height="300"
+                                                        width="360"
+                                                        height="225"
                                                         className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                                     />
                                                 ) : (

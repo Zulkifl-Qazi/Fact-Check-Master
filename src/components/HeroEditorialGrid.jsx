@@ -246,26 +246,16 @@ const HeroEditorialGrid = () => {
           >
             <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
               {mainImage && (
-                <>
-                  <img
-                    src={vercelImg(mainImage, 240, 35)}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <img
-                    src={vercelImg(mainImage, 640, 70)}
-                    alt={mainStory.title}
-                    fetchPriority="high"
-                    decoding="sync"
-                    width="640"
-                    height="360"
-                    className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                  />
-                </>
+                <img
+                  src={vercelImg(mainImage, 400, 60)}
+                  alt={mainStory.title}
+                  fetchPriority="high"
+                  decoding="sync"
+                  width="400"
+                  height="225"
+                  className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
               )}
               <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 z-30 flex flex-col justify-end">
@@ -300,26 +290,16 @@ const HeroEditorialGrid = () => {
                 >
                   <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                     {img && (
-                      <>
-                        <img
-                          src={vercelImg(img, 240, 35)}
-                          alt=""
-                          aria-hidden="true"
-                          className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <img
-                          src={vercelImg(img, 480, 60)}
-                          alt={post.title}
-                          loading="lazy"
-                          decoding="async"
-                          width="480"
-                          height="270"
-                          className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                        />
-                      </>
+                      <img
+                        src={vercelImg(img, 320, 55)}
+                        alt={post.title}
+                        loading="lazy"
+                        decoding="async"
+                        width="320"
+                        height="180"
+                        className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
                     )}
                     <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                     <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-30">
@@ -347,26 +327,16 @@ const HeroEditorialGrid = () => {
                 >
                   <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                     {img && (
-                      <>
-                        <img
-                          src={vercelImg(img, 240, 35)}
-                          alt=""
-                          aria-hidden="true"
-                          className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <img
-                          src={vercelImg(img, 480, 60)}
-                          alt={post.title}
-                          loading="lazy"
-                          decoding="async"
-                          width="640"
-                          height="360"
-                          className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                        />
-                      </>
+                      <img
+                        src={vercelImg(img, 320, 55)}
+                        alt={post.title}
+                        loading="lazy"
+                        decoding="async"
+                        width="320"
+                        height="180"
+                        className="hero-mid-card-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
                     )}
                     <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                   </div>

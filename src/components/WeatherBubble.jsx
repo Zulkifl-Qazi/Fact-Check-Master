@@ -345,7 +345,7 @@ const WeatherBubble = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       initializeLocation();
-    }, 800);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 

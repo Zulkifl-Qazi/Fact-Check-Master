@@ -19,8 +19,8 @@
     <meta name="description" content="Fact Check Master is a real-time fact-checking platform dedicated to verifying viral news, social media claims, and countering misinformation." />
     <link rel="canonical" href="https://www.factcheckmaster.com" />
 
-    <!-- Preconnect to image CDN and API origins for fast LCP discovery -->
-    <link rel="preconnect" href="https://wsrv.nl" crossorigin />
+    <!-- Preconnect to image CDN — img tags need non-CORS preconnect -->
+    <link rel="preconnect" href="https://wsrv.nl" />
     <link rel="dns-prefetch" href="https://wsrv.nl" />
 
     <!-- Preconnect to Google Fonts (DNS only, non-blocking) -->
