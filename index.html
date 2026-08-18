@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WTFM5PSPBG"></script>
+    <!-- Google tag (gtag.js) - Loaded asynchronously with defer to prevent render blocking -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-WTFM5PSPBG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-WTFM5PSPBG');
+      gtag('config', 'G-WTFM5PSPBG', { 'send_page_view': true });
     </script>
 
     <meta charset="UTF-8" />
@@ -24,17 +23,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Preconnect to Supabase storage so hero image downloads start earlier -->
-    <link rel="preconnect" href="https://bswvizupdnwrdhtnmgqw.supabase.co" crossorigin />
-    <link rel="dns-prefetch" href="https://bswvizupdnwrdhtnmgqw.supabase.co" />
-
-    <!-- Load Google Fonts asynchronously to avoid render-blocking -->
-    <link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'" />
+    <!-- Non-render-blocking Google Fonts stylesheet loading -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" media="print" onload="this.media='all'" />
     <noscript>
-      <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" />
     </noscript>
 
     <!-- Structured Data (JSON-LD) -->

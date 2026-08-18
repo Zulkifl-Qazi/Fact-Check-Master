@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaRss, FaCheckCircle, FaExclamationTriangle, FaEye } from 'react-icons/fa';
+import { vercelImg } from '../utils/vercelImage';
 
 const CategoryFeed = ({ category, title, icon = '📰' }) => {
     const [posts, setPosts] = useState([]);
@@ -84,15 +85,21 @@ const CategoryFeed = ({ category, title, icon = '📰' }) => {
                 {post.image_url && (
                     <>
                         {/* Blurred background */}
-                        <div
-                            className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
-                            style={{ backgroundImage: `url(${post.image_url})` }}
+                        <img
+                            src={vercelImg(post.image_url, 640, 75)}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
+                            loading="lazy"
+                            decoding="async"
                         />
                         {/* Contained image */}
                         <img
-                            src={post.image_url}
+                            src={vercelImg(post.image_url, 640, 75)}
                             alt={post.title}
                             className="absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                            loading="lazy"
+                            decoding="async"
                             onError={(e) => { e.currentTarget.style.display = 'none'; }}
                         />
                     </>
@@ -145,14 +152,20 @@ const CategoryFeed = ({ category, title, icon = '📰' }) => {
                     {/* Image left */}
                     {post.image_url && (
                         <div className="w-[40%] relative overflow-hidden flex-shrink-0 bg-slate-950">
-                            <div
-                                className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                                style={{ backgroundImage: `url(${post.image_url})` }}
+                            <img
+                                src={vercelImg(post.image_url, 480, 75)}
+                                alt=""
+                                aria-hidden="true"
+                                className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
+                                loading="lazy"
+                                decoding="async"
                             />
                             <img
-                                src={post.image_url}
+                                src={vercelImg(post.image_url, 480, 75)}
                                 alt={post.title}
                                 className="absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-500 group-hover:scale-[1.04]"
+                                loading="lazy"
+                                decoding="async"
                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
                             <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />

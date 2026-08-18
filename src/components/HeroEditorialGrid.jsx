@@ -247,9 +247,13 @@ const HeroEditorialGrid = () => {
             <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
               {mainImage && (
                 <>
-                  <div
-                    className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
-                    style={{ backgroundImage: `url(${vercelImg(mainImage, 640, 60)})` }}
+                  <img
+                    src={vercelImg(mainImage, 640, 75)}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <img
                     src={vercelImg(mainImage, 640, 75)}
@@ -297,9 +301,13 @@ const HeroEditorialGrid = () => {
                   <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                     {img && (
                       <>
-                        <div
-                          className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                        <img
+                          src={vercelImg(img, 640, 75)}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <img
                           src={vercelImg(img, 640, 75)}
@@ -340,9 +348,13 @@ const HeroEditorialGrid = () => {
                   <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                     {img && (
                       <>
-                        <div
-                          className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                        <img
+                          src={vercelImg(img, 640, 75)}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <img
                           src={vercelImg(img, 640, 75)}
@@ -438,9 +450,13 @@ const HeroEditorialGrid = () => {
                 {mainImage && (
                   <>
                     {/* Blurred background for letterboxing effect */}
-                    <div
-                      className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
-                      style={{ backgroundImage: `url(${vercelImg(mainImage, 1200, 80)})` }}
+                    <img
+                      src={vercelImg(mainImage, 1200, 80)}
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
+                      loading="lazy"
+                      decoding="async"
                     />
                     {/* LCP image — fetchPriority=high, no lazy loading */}
                     <img
@@ -492,9 +508,13 @@ const HeroEditorialGrid = () => {
                       <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                         {img && (
                           <>
-                            <div
-                              className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                              style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                            <img
+                              src={vercelImg(img, 640, 75)}
+                              alt=""
+                              aria-hidden="true"
+                              className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
+                              loading="lazy"
+                              decoding="async"
                             />
                             <img
                               src={vercelImg(img, 640, 75)}
@@ -542,9 +562,13 @@ const HeroEditorialGrid = () => {
                   <div className="hero-img-wrap relative w-full aspect-video overflow-hidden rounded-md bg-gradient-to-br from-slate-900 to-slate-950 mb-3">
                     {img && (
                       <>
-                        <div
-                          className="absolute inset-[-10px] bg-cover bg-center blur-lg brightness-50 z-0"
-                          style={{ backgroundImage: `url(${vercelImg(img, 640, 60)})` }}
+                        <img
+                          src={vercelImg(img, 640, 75)}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-[-10px] w-full h-full object-cover blur-lg brightness-50 z-0 pointer-events-none select-none"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <img
                           src={vercelImg(img, 640, 75)}
