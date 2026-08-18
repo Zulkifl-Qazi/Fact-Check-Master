@@ -249,15 +249,15 @@ const HeroEditorialGrid = () => {
                 <>
                   <div
                     className="absolute inset-[-20px] bg-cover bg-center blur-xl brightness-50 z-0"
-                    style={{ backgroundImage: `url(${vercelImg(mainImage, 1200, 80)})` }}
+                    style={{ backgroundImage: `url(${vercelImg(mainImage, 640, 60)})` }}
                   />
                   <img
-                    src={vercelImg(mainImage, 1200, 80)}
+                    src={vercelImg(mainImage, 640, 75)}
                     alt={mainStory.title}
                     fetchPriority="high"
                     decoding="sync"
-                    width="1200"
-                    height="675"
+                    width="640"
+                    height="360"
                     className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />

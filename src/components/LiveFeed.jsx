@@ -123,13 +123,56 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
 
     if (loading) {
         return (
-            <div 
+            <section 
                 id="live-feed"
-                className="w-full py-20 flex flex-col items-center justify-center bg-white dark:bg-slate-950 transition-colors duration-300 hero-fade-in"
+                className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950 transition-colors duration-300"
             >
-            <div className="animate-spin rounded-full h-9 w-9 border-3 border-slate-200 dark:border-slate-800 border-t-blue-600 mb-4"></div>
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Loading latest news...</p>
-        </div>
+                <div className="max-w-[1600px] mx-auto px-4 md:px-8">
+                    {showOnly !== 'more' && (
+                        <div className="mb-8 border-b border-slate-200 dark:border-slate-800/80 pb-4">
+                            <div className="h-8 w-48 rounded skeleton mb-1" />
+                        </div>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-[1.3fr_0.9fr] lg:grid-cols-[6fr_2.9fr_2.9fr] gap-8 items-start">
+                        {/* Column 1 Skeleton */}
+                        <div className="flex flex-col gap-6 lg:border-r lg:border-slate-200/50 lg:dark:border-slate-800/50 lg:pr-8">
+                            {[1, 2].map((i) => (
+                                <div key={i} className="flex flex-col sm:flex-row gap-5 items-start pb-6 border-b border-slate-200/50 dark:border-slate-800/50 last:border-none">
+                                    <div className="w-full sm:w-[240px] aspect-[16/10] rounded-lg skeleton flex-shrink-0" />
+                                    <div className="flex-grow flex flex-col justify-between w-full h-auto sm:h-[150px] gap-2">
+                                        <div className="h-5 w-5/6 rounded skeleton" />
+                                        <div className="h-4 w-full rounded skeleton" />
+                                        <div className="h-4 w-2/3 rounded skeleton" />
+                                        <div className="h-3 w-1/3 rounded skeleton mt-auto" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {/* Column 2 Skeleton */}
+                        <div className="flex flex-col gap-5 lg:border-r lg:border-slate-200/50 lg:dark:border-slate-800/50 lg:pr-8">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="flex gap-4 pb-5 border-b border-slate-100 dark:border-slate-800/50 last:border-none">
+                                    <div className="w-24 h-16 rounded-md skeleton flex-shrink-0" />
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        <div className="h-3 w-1/4 rounded skeleton" />
+                                        <div className="h-4 w-5/6 rounded skeleton" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {/* Column 3 Skeleton */}
+                        <div className="flex flex-col gap-4">
+                            <div className="h-6 w-36 rounded skeleton mb-2" />
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <div key={i} className="py-2.5 border-b border-slate-100 dark:border-slate-800/50 flex flex-col gap-2">
+                                    <div className="h-4 w-full rounded skeleton" />
+                                    <div className="h-3 w-1/3 rounded skeleton" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
         );
     }
 

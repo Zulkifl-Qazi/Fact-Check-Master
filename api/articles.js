@@ -88,7 +88,7 @@ export default async function handler(req, res) {
 
           if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
-          res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+          res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
           return res.status(200).json(data);
         }
 
@@ -102,7 +102,7 @@ export default async function handler(req, res) {
 
           if (error || !data) return res.status(404).json({ error: 'Article not found' });
 
-          res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+          res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
           return res.status(200).json(data);
         }
 
@@ -126,7 +126,7 @@ export default async function handler(req, res) {
         if (all === 'true') {
           res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         } else {
-          res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
+          res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
         }
         return res.status(200).json(data || []);
       } catch (getErr) {

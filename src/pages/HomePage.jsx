@@ -39,9 +39,18 @@ const HomePage = () => {
       {/* LiveFeed (Latest News) */}
       <div className="order-1 md:order-2 w-full pt-0">
         <Suspense fallback={
-          <div id="live-feed" className="w-full py-20 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 dark:border-slate-800 border-t-blue-600" />
-          </div>
+          <section id="live-feed" className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950">
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8">
+              <div className="mb-8 border-b border-slate-200 dark:border-slate-800/80 pb-4">
+                <div className="h-8 w-48 rounded skeleton mb-1" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-[1.3fr_0.9fr] lg:grid-cols-[6fr_2.9fr_2.9fr] gap-8">
+                <div className="h-[300px] rounded-lg skeleton" />
+                <div className="h-[300px] rounded-lg skeleton" />
+                <div className="h-[300px] rounded-lg skeleton" />
+              </div>
+            </div>
+          </section>
         }>
           <LiveFeed searchQuery={searchQuery} showOnly="latest" />
         </Suspense>

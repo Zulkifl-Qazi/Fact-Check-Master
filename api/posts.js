@@ -699,7 +699,7 @@ export default async function handler(req, res) {
         if (!isAdmin) {
           const cachedPost = getCachedData(singleCacheKey);
           if (cachedPost) {
-            res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
+            res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
             return res.status(200).json(cachedPost);
           }
         }
@@ -713,7 +713,7 @@ export default async function handler(req, res) {
           setCachedData(singleCacheKey, post);
         }
 
-        res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
+        res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
         return res.status(200).json(post);
       }
 
@@ -721,7 +721,7 @@ export default async function handler(req, res) {
       if (!isAdmin) {
         const cachedData = getCachedData(cacheKey);
         if (cachedData) {
-          res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+          res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
           return res.status(200).json(cachedData);
         }
       }
@@ -759,7 +759,7 @@ export default async function handler(req, res) {
           setCachedData(cacheKey, posts);
         }
         
-        res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+        res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
         return res.status(200).json(posts);
       }
 
@@ -770,7 +770,7 @@ export default async function handler(req, res) {
         setCachedData(cacheKey, posts);
       }
 
-      res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
+      res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600');
       res.status(200).json(posts);
 
     } else if (req.method === 'POST') {
