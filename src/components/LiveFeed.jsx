@@ -302,7 +302,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
                                 
                                 {/* COLUMN 1: Two Stacked Lead Stories (Large Horizontal Layout) */}
                                 <div className="flex flex-col gap-6 lg:border-r lg:border-slate-200/50 lg:dark:border-slate-800/50 lg:pr-8">
-                                    {leadPosts.map((post) => (
+                                    {leadPosts.map((post, idx) => (
                                         <article 
                                             key={post.id} 
                                             className="group flex flex-col sm:flex-row gap-5 items-start cursor-pointer pb-6 border-b border-slate-200/50 dark:border-slate-800/50 last:border-none last:pb-0" 
@@ -311,10 +311,11 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
                                             <div className="relative w-full sm:w-[240px] aspect-[16/10] overflow-hidden rounded-lg bg-gradient-to-br from-slate-900 to-slate-950 flex-shrink-0">
                                                 {post.image_url ? (
                                                     <img 
-                                                        src={vercelImg(post.image_url, 480, 75)} 
+                                                        src={vercelImg(post.image_url, 480, 70)} 
                                                         alt={post.title} 
-                                                        loading="lazy"
-                                                        decoding="async"
+                                                        loading={idx === 0 ? undefined : "lazy"}
+                                                        fetchPriority={idx === 0 ? "high" : "low"}
+                                                        decoding={idx === 0 ? "sync" : "async"}
                                                         width="480"
                                                         height="300"
                                                         className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"

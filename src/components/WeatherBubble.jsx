@@ -343,7 +343,10 @@ const WeatherBubble = () => {
   };
 
   useEffect(() => {
-    initializeLocation();
+    const timer = setTimeout(() => {
+      initializeLocation();
+    }, 800);
+    return () => clearTimeout(timer);
   }, []);
 
   // Handle clicking outside to collapse

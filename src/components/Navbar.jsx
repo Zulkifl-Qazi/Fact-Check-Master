@@ -7,6 +7,8 @@ import useDarkMode from '../hooks/useDarkMode';
 import WeatherBubble from './WeatherBubble';
 import { useAuth } from '../hooks/useAuth';
 
+import { vercelImg } from '../utils/vercelImage';
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -211,7 +213,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-slate-100 transition-colors duration-200" style={{ textDecoration: 'none' }}>
               <div className="relative">
-                <img src={logo} alt="Fact Check Master Logo" width="32" height="32" fetchPriority="high" className="h-8 w-8 rounded-lg shadow-md" />
+                <img src={vercelImg(logo, 64, 80)} alt="Fact Check Master Logo" width="32" height="32" fetchPriority="high" className="h-8 w-8 rounded-lg shadow-md" />
                 <div className="absolute -top-1 -right-1">
                   <FaShieldAlt className="text-blue-600 dark:text-blue-500 text-[10px]" />
                 </div>
