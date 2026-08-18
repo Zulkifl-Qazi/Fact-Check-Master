@@ -107,7 +107,9 @@ export default async function handler(req, res) {
         }
 
         // List all (admin) or published only
-        let query = supabase.from('articles').select('*');
+        // Only fetch fields needed for listing cards — exclude heavy 'content' column
+        const listingFields = 'id, title, slug, excerpt, cover_image, author, status, read_time, views, created_at, updated_at';
+        let query = supabase.from('articles').select(all === 'true' ? '*' : listingFields);
 
         if (all === 'true') {
           const admin = await requireApprovedAdmin(req, res);

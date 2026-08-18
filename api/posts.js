@@ -289,7 +289,11 @@ async function getAllPosts(popular, chronological) {
     
     // Return posts from database (even if empty)
     console.log(`[Database] Retrieved ${data ? data.length : 0} posts from Supabase, unique: ${uniquePosts.length}`);
-    return uniquePosts;
+    // Truncate content field for listing responses to reduce payload (~2KB vs ~50KB per post)
+    return uniquePosts.map(post => ({
+      ...post,
+      content: post.content ? post.content.substring(0, 300) : ''
+    }));
   } catch (error) {
     console.error('[Database] Error fetching posts:', error);
     // Only use fallback sample data if database connection fails completely
@@ -374,7 +378,11 @@ async function getPostsList({ category, limit, offset, ascending, popular, chron
       slicedPosts = uniquePosts.slice(off);
     }
 
-    return slicedPosts;
+    // Truncate content for listing responses to reduce payload
+    return slicedPosts.map(post => ({
+      ...post,
+      content: post.content ? post.content.substring(0, 300) : ''
+    }));
   } catch (error) {
     console.error('[Database] Error in getPostsList:', error);
     return [];
