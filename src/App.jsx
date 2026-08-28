@@ -5,8 +5,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import { AuthProvider } from './hooks/useAuth';
-import AuthModal from './components/AuthModal';
 
+const AuthModal = lazy(() => import('./components/AuthModal'));
 const NewsDashboard = lazy(() => import('./pages/NewsDashboard'));
 const Contact = lazy(() => import('./pages/Contact'));
 const AdminFeedback = lazy(() => import('./pages/AdminFeedback'));
@@ -30,7 +30,7 @@ const AppContent = () => {
   const isAuthPage = location.pathname.startsWith('/auth/');
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       <a href="#main-content" className="skip-link" style={{ position: 'absolute', top: '-100px' }}>Skip to content</a>
       <h1 className="sr-only">Fact Check Master - Real-Time Fact Checking & Verification</h1>
       <div className="absolute inset-0 -z-20 pointer-events-none overflow-hidden">
@@ -39,7 +39,9 @@ const AppContent = () => {
       </div>
       
       {!isAuthPage && <Navbar />}
-      <AuthModal />
+      <Suspense fallback={null}>
+        <AuthModal />
+      </Suspense>
       
       <main id="main-content" className={`relative flex-grow w-full z-10 ${isAuthPage ? 'pt-0' : 'pt-16 md:pt-[104px]'}`}>
         <Suspense fallback={null}>

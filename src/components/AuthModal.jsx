@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { FaTimes, FaGoogle, FaFacebook, FaEnvelope, FaChevronRight, FaLock, FaUser } from 'react-icons/fa';
 import logo from '../assets/logo.jpg';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const AuthModal = () => {
   const { showAuthModal, closeAuthModal, login } = useAuth();
@@ -163,25 +162,17 @@ const AuthModal = () => {
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        {/* Dark overlay backdrop */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={handleClose}
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-md cursor-pointer"
-        />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Dark overlay backdrop */}
+      <div 
+        onClick={handleClose}
+        className="absolute inset-0 bg-slate-950/80 backdrop-blur-md cursor-pointer animate-fadeIn"
+      />
 
-        {/* Modal content container */}
-        <motion.div 
-          initial={{ scale: 0.95, y: 15, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          exit={{ scale: 0.95, y: 15, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-          className="relative bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl w-full max-w-[450px] shadow-2xl overflow-hidden transition-colors duration-300"
-        >
+      {/* Modal content container */}
+      <div 
+        className="relative bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl w-full max-w-[450px] shadow-2xl overflow-hidden animate-scaleUp"
+      >
           {/* Close button */}
           <button 
             onClick={handleClose}
@@ -401,9 +392,8 @@ const AuthModal = () => {
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
   );
 };
 

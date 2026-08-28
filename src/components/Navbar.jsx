@@ -211,7 +211,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-slate-100 transition-colors duration-200" style={{ textDecoration: 'none' }}>
+            <Link to="/" className="flex items-center gap-2 font-bold text-lg text-slate-900 dark:text-slate-100" style={{ textDecoration: 'none' }}>
               <div className="relative">
                 <img src={vercelImg(logo, 64, 80)} alt="Fact Check Master Logo" width="32" height="32" fetchPriority="high" className="h-8 w-8 rounded-lg shadow-md" />
                 <div className="absolute -top-1 -right-1">
@@ -224,9 +224,9 @@ const Navbar = () => {
           
           {/* Desktop Menu - Modern Glassmorphism Navigation */}
           <div className="navbar-desktop-menu items-center gap-6">
-            <Link to="/#top" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Home</Link>
-            <Link to="/#live-feed" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Latest News</Link>
-            <Link to="/articles" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Articles</Link>
+            <Link to="/#top" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none' }}>Home</Link>
+            <Link to="/#live-feed" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none' }}>Latest News</Link>
+            <Link to="/articles" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none' }}>Articles</Link>
             
             {/* Categories Dropdown */}
             <div 
@@ -234,14 +234,14 @@ const Navbar = () => {
               onMouseEnter={() => setIsCategoriesOpen(true)}
               onMouseLeave={() => setIsCategoriesOpen(false)}
             >
-              <Link to="/news-dashboard" className="flex items-center gap-1 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none', padding: '0.5rem 0' }}>
+              <Link to="/news-dashboard" className="flex items-center gap-1 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none', padding: '0.5rem 0' }}>
                 News Dashboard
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 200ms', transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
               </Link>
               
               {/* Dropdown Menu */}
               <div 
-                className="absolute top-full left-1/2 -translate-x-1/2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50 rounded-xl shadow-xl p-3 min-w-[220px] z-50 flex flex-col gap-1 transition-all duration-200"
+                className="absolute top-full left-1/2 -translate-x-1/2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/50 rounded-xl shadow-xl p-3 min-w-[220px] z-50 flex flex-col gap-1"
                 style={{
                   transform: `translateX(-50%) ${isCategoriesOpen ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.95)'}`,
                   opacity: isCategoriesOpen ? 1 : 0,
@@ -260,7 +260,7 @@ const Navbar = () => {
                   <Link 
                     key={i} 
                     to={cat.path} 
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
                     style={{ textDecoration: 'none' }}
                   >
                     {cat.label}
@@ -269,13 +269,13 @@ const Navbar = () => {
               </div>
             </div>
 
-            <Link to="/about" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>About</Link>
-            <Link to="/contact" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" style={{ textDecoration: 'none' }}>Contact</Link>
+            <Link to="/about" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none' }}>About</Link>
+            <Link to="/contact" className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" style={{ textDecoration: 'none' }}>Contact</Link>
             
             {/* Search Button */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 flex items-center justify-center cursor-pointer"
               aria-label="Search"
             >
               <FaSearch className="text-sm" />
@@ -284,7 +284,7 @@ const Navbar = () => {
             {/* Theme Toggle Button */}
             <button
               onClick={() => setTheme(colorTheme)}
-              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+              className="p-2 rounded-lg border-none bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 flex items-center justify-center cursor-pointer"
               title={colorTheme === 'dark' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
             >
               {colorTheme === 'dark' ? <FaMoon className="text-sm" /> : <FaSun className="text-sm" />}
@@ -602,7 +602,7 @@ const Navbar = () => {
                 ) : (
                   <button
                     onClick={openAuthModal}
-                    className="flex items-center justify-center w-7 h-7 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 cursor-pointer shadow-sm"
+                    className="flex items-center justify-center w-7 h-7 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer shadow-sm"
                     title="Sign In"
                   >
                     <FaUser className="text-[10px]" />
@@ -612,7 +612,7 @@ const Navbar = () => {
 
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                className="p-2 rounded-lg bg-transparent border-none text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-lg bg-transparent border-none text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 flex items-center justify-center cursor-pointer"
                 aria-label="Toggle menu"
               >
                 {isOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
@@ -686,17 +686,18 @@ const Navbar = () => {
 
       {/* Mobile Menu - Slides down from top */}
       <div 
-        className="navbar-mobile-menu transition-all duration-300 ease-in-out"
+        className="navbar-mobile-menu"
         style={{ 
           maxHeight: isOpen ? '650px' : '0',
           opacity: isOpen ? '1' : '0',
           overflow: 'hidden',
+          display: isOpen ? 'block' : 'none'
         }}
       >
         <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-lg flex flex-col gap-1">
           <Link 
             to="/#top" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
@@ -704,7 +705,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/#live-feed" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
@@ -712,7 +713,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/articles" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
@@ -725,7 +726,7 @@ const Navbar = () => {
               onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
             >
               <span>Trending Topics</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 200ms', transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isCategoriesOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             
             {isCategoriesOpen && (
@@ -742,7 +743,7 @@ const Navbar = () => {
                   <Link 
                     key={i} 
                     to={cat.path} 
-                    className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                    className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
                     style={{ textDecoration: 'none' }}
                     onClick={handleLinkClick}
                   >
@@ -760,14 +761,14 @@ const Navbar = () => {
               onClick={() => setIsMobileDashboardOpen(!isMobileDashboardOpen)}
             >
               <span>News Dashboard</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 200ms', transform: isMobileDashboardOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isMobileDashboardOpen ? 'rotate(180deg)' : 'rotate(0)' }}><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             
             {isMobileDashboardOpen && (
               <div className="pl-4 flex flex-col gap-1 mt-1 border-l-2 border-slate-200/50 dark:border-slate-800/50 ml-4">
                 <Link 
                   to="/news-dashboard"
-                  className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                  className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
                   style={{ textDecoration: 'none' }}
                   onClick={handleLinkClick}
                 >
@@ -785,7 +786,7 @@ const Navbar = () => {
                   <Link 
                     key={i} 
                     to={cat.path} 
-                    className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                    className="block px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
                     style={{ textDecoration: 'none' }}
                     onClick={handleLinkClick}
                   >
@@ -798,7 +799,7 @@ const Navbar = () => {
 
           <Link 
             to="/about" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
@@ -806,7 +807,7 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/contact" 
-            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+            className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400"
             style={{ textDecoration: 'none' }}
             onClick={handleLinkClick}
           >
