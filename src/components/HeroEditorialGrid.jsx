@@ -162,7 +162,7 @@ const HeroEditorialGrid = () => {
 
   if (loading) {
     return (
-      <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950 transition-colors duration-300">
+      <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950">
         <div className="max-w-[1600px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
             
@@ -223,7 +223,7 @@ const HeroEditorialGrid = () => {
 
   if (!mainStory) {
     return (
-      <div className="w-full py-16 text-center bg-white dark:bg-slate-950 transition-colors duration-300">
+      <div className="w-full py-16 text-center bg-white dark:bg-slate-950">
         <p className="text-slate-500 dark:text-slate-400 text-sm">
           No stories to show yet. Create a post with the "Featured / Breaking" category to populate this hero!
         </p>
@@ -234,7 +234,7 @@ const HeroEditorialGrid = () => {
   const mainImage = getPostImage(mainStory);
 
   return (
-    <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950 transition-colors duration-300">
+    <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950">
       <div className="max-w-[1600px] mx-auto px-4 md:px-8">
 
         {/* ── MOBILE/TABLET LAYOUT: Strictly Chronological Order (Visible on screens < md) ── */}
@@ -421,7 +421,7 @@ const HeroEditorialGrid = () => {
                   <>
                     {/* Blurred background for letterboxing effect */}
                     <img
-                      src={vercelImg(mainImage, 1200, 80)}
+                      src={vercelImg(mainImage, 240, 30)}
                       alt=""
                       aria-hidden="true"
                       className="absolute inset-[-20px] w-full h-full object-cover blur-xl brightness-50 z-0 pointer-events-none select-none"
@@ -430,12 +430,12 @@ const HeroEditorialGrid = () => {
                     />
                     {/* LCP image — fetchPriority=high, no lazy loading */}
                     <img
-                      src={vercelImg(mainImage, 1200, 80)}
+                      src={vercelImg(mainImage, 960, 70)}
                       alt={mainStory.title}
                       fetchPriority="high"
                       decoding="sync"
-                      width="1200"
-                      height="675"
+                      width="960"
+                      height="540"
                       className="hero-lead-img absolute inset-0 w-full h-full object-contain block z-10 transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}
                     />

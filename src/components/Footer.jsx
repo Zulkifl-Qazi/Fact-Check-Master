@@ -11,7 +11,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-sm text-slate-900 dark:text-slate-100 relative z-10 transition-colors duration-300">
+    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-sm text-slate-900 dark:text-slate-100 relative z-10">
       <div className="max-w-7xl mx-auto px-4">
         {/* Main Footer Content */}
         <div className="flex flex-col md:flex-row items-center justify-between min-h-[80px] py-6 gap-6 flex-wrap">

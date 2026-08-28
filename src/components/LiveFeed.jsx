@@ -132,7 +132,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
         return (
             <section 
                 id="live-feed"
-                className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950 transition-colors duration-300"
+                className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950"
             >
                 <div className="max-w-[1600px] mx-auto px-4 md:px-8">
                     {showOnly !== 'more' && (
@@ -212,7 +212,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
 
     return (
         <section 
-            className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300" 
+            className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100" 
             id={showOnly === 'more' ? 'more-latest-news' : 'live-feed'}
         >
             <div className="max-w-[1600px] mx-auto px-4 md:px-8">

@@ -1,7 +1,25 @@
 // src/components/About.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaShieldAlt, FaEye, FaBullseye, FaHeart, FaUsers, FaGlobe, FaAward, FaLightbulb } from 'react-icons/fa';
+
+/* ── Lightweight scroll‑reveal hook (replaces framer‑motion whileInView) ── */
+function useReveal(options = {}) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); io.disconnect(); } },
+      { threshold: 0.15, ...options }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return [ref, visible];
+}
 
 const About = () => {
   const values = [
@@ -34,8 +52,14 @@ const About = () => {
     { icon: FaLightbulb, number: "10,000+", label: "Facts Verified" }
   ];
 
+  const [headerRef, headerVisible] = useReveal();
+  const [missionRef, missionVisible] = useReveal();
+  const [valuesRef, valuesVisible] = useReveal();
+  const [statsRef, statsVisible] = useReveal();
+  const [teamRef, teamVisible] = useReveal();
+
   return (
-    <section id="about" className="py-20 bg-white dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+    <section id="about" className="py-20 bg-white dark:bg-slate-950 relative overflow-hidden">
       {/* Subtle background gradient elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100 dark:bg-blue-950/20 rounded-full blur-[100px]"></div>
@@ -44,12 +68,15 @@ const About = () => {
 
       <div className="relative z-10 container mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+        <div
+          ref={headerRef}
           className="text-center mb-16"
+          style={{
+            opacity: headerVisible ? 1 : 0,
+            transform: headerVisible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+            willChange: 'opacity, transform',
+          }}
         >
           <div className="inline-flex items-center gap-3 bg-blue-50 dark:bg-blue-950/30 rounded-full px-6 py-3 mb-6 border border-blue-200/50 dark:border-blue-900/30">
             <FaShieldAlt className="text-blue-600 dark:text-blue-400" />
@@ -63,16 +90,19 @@ const About = () => {
             In an era where information travels faster than ever, we stand as guardians of truth, 
             providing reliable fact-checking services to combat fake news, propaganda, and misinformation.
           </p>
-        </motion.div>
+        </div>
 
         {/* Mission Statement */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          style={{ marginTop: '80px', marginBottom: '80px' }}
-          className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 border border-slate-100 dark:border-slate-800/60 shadow-sm transition-colors duration-300"
+        <div
+          ref={missionRef}
+          style={{
+            marginTop: '80px', marginBottom: '80px',
+            opacity: missionVisible ? 1 : 0,
+            transform: missionVisible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease-out 0.1s, transform 0.6s ease-out 0.1s',
+            willChange: 'opacity, transform',
+          }}
+          className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 border border-slate-100 dark:border-slate-800/60 shadow-sm"
         >
           <div className="text-center">
             <h3 style={{ marginTop: '32px', marginBottom: '32px' }} className="text-3xl font-bold text-slate-900 dark:text-slate-100">Our Mission</h3>
@@ -83,27 +113,31 @@ const About = () => {
               we work to counter the spread of misinformation and support evidence-based decision making.
             </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Core Values */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          style={{ marginTop: '80px', marginBottom: '80px' }}
-          className=""
+        <div
+          ref={valuesRef}
+          style={{
+            marginTop: '80px', marginBottom: '80px',
+            opacity: valuesVisible ? 1 : 0,
+            transform: valuesVisible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease-out 0.15s, transform 0.6s ease-out 0.15s',
+            willChange: 'opacity, transform',
+          }}
         >
           <h3 style={{ marginTop: '48px', marginBottom: '64px' }} className="text-3xl font-bold text-center text-slate-900 dark:text-slate-100">Our Core Values</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-2 border border-slate-100 dark:border-slate-800/60 hover:border-blue-200 dark:hover:border-blue-500/50"
+                className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-800/60 hover:border-blue-200 dark:hover:border-blue-500/50"
+                style={{
+                  opacity: valuesVisible ? 1 : 0,
+                  transform: valuesVisible ? 'translate3d(0,0,0)' : `translate3d(${index % 2 === 0 ? '-20px' : '20px'},0,0)`,
+                  transition: `opacity 0.5s ease-out ${0.2 + index * 0.08}s, transform 0.5s ease-out ${0.2 + index * 0.08}s`,
+                  willChange: 'opacity, transform',
+                }}
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 bg-blue-50 dark:bg-blue-950/40 p-3 rounded-lg">
@@ -114,46 +148,54 @@ const About = () => {
                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{value.description}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-          style={{ marginTop: '80px', marginBottom: '80px' }}
-          className="bg-gradient-to-r from-blue-800 via-blue-600 to-blue-800 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900 rounded-2xl p-8 md:p-12 text-white border border-blue-500/40 dark:border-blue-700/30 shadow-md transition-colors duration-300"
+        <div
+          ref={statsRef}
+          style={{
+            marginTop: '80px', marginBottom: '80px',
+            opacity: statsVisible ? 1 : 0,
+            transform: statsVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.98)',
+            transition: 'opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s',
+            willChange: 'opacity, transform',
+          }}
+          className="bg-gradient-to-r from-blue-800 via-blue-600 to-blue-800 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900 rounded-2xl p-8 md:p-12 text-white border border-blue-500/40 dark:border-blue-700/30 shadow-md"
         >
           <h3 style={{ marginTop: '32px', marginBottom: '64px' }} className="text-3xl font-bold text-center">Our Impact</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-                viewport={{ once: true }}
                 className="text-center"
+                style={{
+                  opacity: statsVisible ? 1 : 0,
+                  transform: statsVisible ? 'scale(1)' : 'scale(0.8)',
+                  transition: `opacity 0.5s ease-out ${0.3 + index * 0.08}s, transform 0.5s ease-out ${0.3 + index * 0.08}s`,
+                  willChange: 'opacity, transform',
+                }}
               >
                 <stat.icon className="text-4xl mx-auto mb-4 text-blue-200 dark:text-blue-300" />
                 <div className="text-3xl md:text-4xl font-black mb-2">{stat.number}</div>
                 <div className="text-white/90 font-semibold text-sm">{stat.label}</div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Team Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          viewport={{ once: true }}
-          style={{ marginTop: '80px' }}
+        <div
+          ref={teamRef}
+          style={{
+            marginTop: '80px',
+            opacity: teamVisible ? 1 : 0,
+            transform: teamVisible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease-out 0.1s, transform 0.6s ease-out 0.1s',
+            willChange: 'opacity, transform',
+          }}
           className="text-center"
         >
           <h3 style={{ marginTop: '48px', marginBottom: '32px' }} className="text-3xl font-bold text-slate-900 dark:text-slate-100">Expert Team</h3>
@@ -161,7 +203,7 @@ const About = () => {
             Our team consists of experienced journalists, researchers, data analysts, and technology experts 
             who are passionate about truth and committed to the highest standards of fact-checking.
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

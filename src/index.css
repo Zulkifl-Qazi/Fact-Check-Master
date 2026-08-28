@@ -985,20 +985,29 @@ div[style*="color: #e2e8f0"] p:last-child {
   animation: fadeInUp 0.5s ease-out;
 }
 
-/* Skeleton Loading */
+/* Skeleton Loading — GPU-composited shimmer using transform */
 @keyframes shimmer {
   0% {
-    background-position: -200% 0;
+    transform: translateX(-100%);
   }
   100% {
-    background-position: 200% 0;
+    transform: translateX(100%);
   }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1f293b 25%, #374151 50%, #1f293b 75%);
-  background-size: 200% 100%;
+  background: #1f293b;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(55, 65, 81, 0.5), transparent);
   animation: shimmer 1.5s infinite;
+  will-change: transform;
 }
 
 /* Glass Morphism for Cards (Subtle) */
@@ -1082,11 +1091,10 @@ html {
 }
 
 /* ─── Performance: content-visibility for below-fold sections ────────────── */
-/* Allows browser to skip rendering off-screen sections until needed */
-#live-feed,
+/* Only apply to truly below-fold sections. #live-feed is above-fold on mobile */
 footer {
   content-visibility: auto;
-  contain-intrinsic-size: 0 800px; /* estimated height to avoid layout shift */
+  contain-intrinsic-size: 0 400px;
 }
 
 /* ─── Reduced Motion: respect user preference ────────────────────────────── */

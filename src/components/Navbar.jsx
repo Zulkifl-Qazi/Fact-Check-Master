@@ -181,7 +181,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-sm transition-colors duration-300 overflow-visible">
+    <nav className="fixed top-0 left-0 right-0 w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-sm overflow-visible">
       <style>{`
         @media (max-width: 767px) {
           .navbar-desktop-menu {
@@ -693,7 +693,7 @@ const Navbar = () => {
           overflow: 'hidden',
         }}
       >
-        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-lg flex flex-col gap-1 transition-colors duration-300">
+        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/50 dark:border-slate-800/50 shadow-lg flex flex-col gap-1">
           <Link 
             to="/#top" 
             className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
