@@ -294,6 +294,17 @@ const WeatherBubble = () => {
       }
       
       if (name) setLocationName(name);
+
+      try {
+        sessionStorage.setItem('fcm_weather_cache', JSON.stringify({
+          weather: data.current,
+          forecast: data.daily?.time ? list : [],
+          city: name || locationName,
+          ts: Date.now()
+        }));
+      } catch {
+        // ignore
+      }
     } catch (err) {
       console.error(err);
       setError('Weather currently unavailable');
@@ -302,11 +313,44 @@ const WeatherBubble = () => {
     }
   };
 
-  // Run location detection chain
-  const initializeLocation = async () => {
-    let ipLat = 33.6844;
-    let ipLon = 73.0479;
-    let ipCity = 'Rawalpindi';
+  // Run location detection chain without blocking critical rendering path
+  const initializeLocation = async (usePreciseGps = false) => {
+    let ipLat = coords.latitude || 33.6844;
+    let ipLon = coords.longitude || 73.0479;
+    let ipCity = locationName || 'Rawalpindi';
+
+    try {
+      // Check session cache first
+      const cached = sessionStorage.getItem('fcm_weather_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Date.now() - parsed.ts < 30 * 60 * 1000) {
+          setWeather(parsed.weather);
+          setForecast(parsed.forecast || []);
+          setLocationName(parsed.city || ipCity);
+          setLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    if (usePreciseGps && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const browserLat = position.coords.latitude;
+          const browserLon = position.coords.longitude;
+          setCoords({ latitude: browserLat, longitude: browserLon });
+          getWeatherData(browserLat, browserLon, ipCity);
+        },
+        () => {
+          getWeatherData(ipLat, ipLon, ipCity);
+        },
+        { timeout: 5000 }
+      );
+      return;
+    }
 
     try {
       const ipRes = await fetch('https://ipwho.is/');
@@ -320,33 +364,51 @@ const WeatherBubble = () => {
           setLocationName(ipCity);
         }
       }
-    } catch (e) {
-      console.warn('IP Geolocation failed, using default coordinates.', e);
+    } catch {
+      // ignore
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const browserLat = position.coords.latitude;
-          const browserLon = position.coords.longitude;
-          setCoords({ latitude: browserLat, longitude: browserLon });
-          getWeatherData(browserLat, browserLon, ipCity);
-        },
-        () => {
-          getWeatherData(ipLat, ipLon, ipCity);
-        },
-        { timeout: 5000 }
-      );
-    } else {
-      getWeatherData(ipLat, ipLon, ipCity);
-    }
+    getWeatherData(ipLat, ipLon, ipCity);
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      initializeLocation();
-    }, 3000);
-    return () => clearTimeout(timer);
+    // Check if we have cached weather to show immediately
+    try {
+      const cached = sessionStorage.getItem('fcm_weather_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setWeather(parsed.weather);
+        setForecast(parsed.forecast || []);
+        setLocationName(parsed.city || 'Rawalpindi');
+        setLoading(false);
+      }
+    } catch {
+      // ignore
+    }
+
+    // Defer network fetch until browser is completely idle (7s after mount or user interaction)
+    let triggered = false;
+    const triggerFetch = () => {
+      if (triggered) return;
+      triggered = true;
+      initializeLocation(false);
+    };
+
+    const timer = setTimeout(triggerFetch, 7000);
+    const handleInteraction = () => {
+      triggerFetch();
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('click', handleInteraction);
+    };
+
+    window.addEventListener('scroll', handleInteraction, { passive: true, once: true });
+    window.addEventListener('click', handleInteraction, { passive: true, once: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('click', handleInteraction);
+    };
   }, []);
 
   // Handle clicking outside to collapse
