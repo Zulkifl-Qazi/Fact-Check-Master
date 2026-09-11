@@ -144,10 +144,16 @@ const HeroEditorialGrid = () => {
       setMoreHeadlines(more);
       setHeroUsedFallback(usedFallback);
 
-      // Cache hero image URL for next-visit LCP preload (see index.html inline script)
+      // Cache exact hero image URL for next-visit LCP preload (see index.html inline script)
       try {
-        const heroImg = lead ? getPostImage(lead) : null;
-        if (heroImg) localStorage.setItem('fcm_hero_img', heroImg);
+        const rawImg = lead ? getPostImage(lead) : null;
+        if (rawImg) {
+          const mobileUrl = vercelImg(rawImg, 400, 60);
+          const desktopUrl = vercelImg(rawImg, 960, 70);
+          localStorage.setItem('fcm_hero_mobile_lcp', mobileUrl);
+          localStorage.setItem('fcm_hero_desktop_lcp', desktopUrl);
+          localStorage.setItem('fcm_hero_img', mobileUrl);
+        }
       } catch (e) { /* ignore private browsing / storage full */ }
     } catch (e) {
       console.error('Hero load failed', e);

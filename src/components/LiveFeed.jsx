@@ -20,7 +20,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
             setLoading(true);
             setError(null);
             
-            const postsRes = await fetch('/api/posts?chronological=true');
+            const postsRes = await fetch('/api/posts');
             
             if (!postsRes.ok) {
                 throw new Error(`HTTP ${postsRes.status}: ${postsRes.statusText}`);
@@ -43,15 +43,10 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
                 }
             }
             
+            // Strictly chronological order for LiveFeed
+            uniquePosts.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
             const latestNewsPosts = uniquePosts.slice(0, 24);
             setPosts(latestNewsPosts);
-
-            if (latestNewsPosts[0]?.image_url) {
-                try {
-                    const mobileLcp = vercelImg(latestNewsPosts[0].image_url, 360, 60);
-                    localStorage.setItem('fcm_mobile_lcp', mobileLcp);
-                } catch (e) {}
-            }
 
             // Compute popular posts locally by mimicking backend sort logic:
             // 1. pinned_popular descending

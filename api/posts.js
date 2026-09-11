@@ -244,7 +244,7 @@ const SAMPLE_POSTS = [
 ];
 
 // Database functions for permanent storage
-async function getAllPosts(popular, chronological) {
+async function getAllPosts(popular, chronological, isAdmin) {
   try {
     let query = supabase
       .from('posts')
@@ -265,8 +265,9 @@ async function getAllPosts(popular, chronological) {
         .order('created_at', { ascending: false });
     }
 
-    // Default limit to prevent massive payload transfers
-    query = query.limit(200);
+    // Default limit: 40 posts for public views (~40KB vs ~260KB), 200 for admins
+    const maxPosts = isAdmin ? 200 : 40;
+    query = query.limit(maxPosts);
 
     const { data, error } = await query;
 
@@ -314,7 +315,7 @@ const HERO_BREAKING_CATEGORIES = ['breaking-news', 'featured-news'];
  * Filtered list for GET ?category=&limit=&offset=&ascending=
  * When category matches hero lane, includes both breaking-news and featured-news rows.
  */
-async function getPostsList({ category, limit, offset, ascending, popular, chronological }) {
+async function getPostsList({ category, limit, offset, ascending, popular, chronological, isAdmin }) {
   try {
     let query = supabase
       .from('posts')
@@ -350,8 +351,14 @@ async function getPostsList({ category, limit, offset, ascending, popular, chron
     const offRaw = offset !== undefined && offset !== '' ? parseInt(offset, 10) : 0;
     const off = Number.isFinite(offRaw) && offRaw >= 0 ? offRaw : 0;
 
-    // Fetch up to 500 rows to allow deduplication without missing slots
-    query = query.range(0, 499);
+    // Fetch only what's needed (+ small buffer for deduplication) instead of hardcoded 500 rows
+    if (Number.isFinite(limRaw) && limRaw > 0) {
+      const fetchBuffer = Math.min(Math.max(limRaw * 2, limRaw + 5), 60);
+      query = query.range(off, off + fetchBuffer - 1);
+    } else {
+      const maxRows = isAdmin ? 500 : 50;
+      query = query.range(off, off + maxRows - 1);
+    }
 
     const { data, error } = await query;
     if (error) throw error;
@@ -759,7 +766,8 @@ export default async function handler(req, res) {
           offset: rawOffset,
           ascending: rawAscending,
           popular: popular,
-          chronological: chronological
+          chronological: chronological,
+          isAdmin
         });
         console.log(`[API] Returning ${posts.length} posts (filtered list)`);
         
@@ -771,7 +779,7 @@ export default async function handler(req, res) {
         return res.status(200).json(posts);
       }
 
-      const posts = await getAllPosts(popular, chronological);
+      const posts = await getAllPosts(popular, chronological, isAdmin);
       console.log(`[API] Returning ${posts.length} posts from permanent database`);
       
       if (!isAdmin) {

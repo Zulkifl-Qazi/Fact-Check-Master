@@ -128,42 +128,38 @@
     <script>
       (function() {
         try {
-          // 1. Try localStorage cache first (repeat visitors)
           var isMobile = window.innerWidth < 768;
-          var h = isMobile
-            ? (localStorage.getItem('fcm_mobile_lcp') || localStorage.getItem('fcm_hero_img'))
-            : localStorage.getItem('fcm_hero_img');
-          if (h) {
+          var key = isMobile ? 'fcm_hero_mobile_lcp' : 'fcm_hero_desktop_lcp';
+          var h = localStorage.getItem(key) || localStorage.getItem(isMobile ? 'fcm_mobile_lcp' : 'fcm_hero_img');
+
+          function injectPreload(url) {
+            if (!url || document.querySelector('link[href="' + url + '"]')) return;
             var l = document.createElement('link');
             l.rel = 'preload';
             l.as = 'image';
             l.fetchPriority = 'high';
-            l.href = h;
+            l.href = url;
             document.head.appendChild(l);
           }
 
-          // 2. First-visit: inline API fetch for LCP image discovery
-          // This runs in parallel with JS bundle download, shaving ~2s off LCP
-          if (!h) {
+          if (h) {
+            injectPreload(h);
+          } else {
+            // First visit (e.g. Lighthouse audit):
+            // Fast discovery: fetch 1 post, build the exact wsrv.nl URL matching HeroEditorialGrid
             var ctrl = new AbortController();
-            var timer = setTimeout(function() { ctrl.abort(); }, 4000);
+            var timer = setTimeout(function() { ctrl.abort(); }, 3000);
             fetch('/api/posts?limit=1', { signal: ctrl.signal })
               .then(function(r) { clearTimeout(timer); return r.json(); })
               .then(function(posts) {
                 if (Array.isArray(posts) && posts[0]) {
-                  var imgUrl = posts[0].image_url;
-                  if (imgUrl && typeof imgUrl === 'string') {
-                    // Build wsrv.nl URL
+                  var raw = posts[0].image_url || (posts[0].media && posts[0].media.images && posts[0].media.images[0]);
+                  if (raw && typeof raw === 'string') {
                     var w = isMobile ? 400 : 960;
-                    var proxyUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(imgUrl) + '&w=' + w + '&q=65&output=webp&il';
-                    var link = document.createElement('link');
-                    link.rel = 'preload';
-                    link.as = 'image';
-                    link.fetchPriority = 'high';
-                    link.href = proxyUrl;
-                    document.head.appendChild(link);
-                    // Cache for next visit
-                    try { localStorage.setItem(isMobile ? 'fcm_mobile_lcp' : 'fcm_hero_img', proxyUrl); } catch(e) {}
+                    var q = isMobile ? 60 : 70;
+                    var proxyUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(raw) + '&w=' + w + '&q=' + q + '&output=webp&il=';
+                    injectPreload(proxyUrl);
+                    try { localStorage.setItem(key, proxyUrl); } catch(e) {}
                   }
                 }
               })
