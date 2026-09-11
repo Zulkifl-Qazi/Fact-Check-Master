@@ -17,8 +17,6 @@ export default defineConfig({
         manualChunks: {
           // Core React runtime — tiny, always needed
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Heavy animation library only loaded when needed
-          'vendor-motion': ['framer-motion'],
           // Icons library
           'vendor-icons': ['react-icons'],
           // Rich text editor — admin only, very large

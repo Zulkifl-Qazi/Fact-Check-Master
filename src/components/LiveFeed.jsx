@@ -133,6 +133,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
             <section 
                 id="live-feed"
                 className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950"
+                style={{ minHeight: '350px' }}
             >
                 <div className="max-w-[1600px] mx-auto px-4 md:px-8">
                     {showOnly !== 'more' && (
@@ -188,6 +189,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
             <div 
                 id="live-feed"
                 className="max-w-[1600px] mx-auto px-4 md:px-8 py-16 hero-fade-in"
+                style={{ minHeight: '350px' }}
             >
             <div className="text-center p-8 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-900/30 max-w-md mx-auto">
                 <FaExclamationTriangle className="text-red-500 dark:text-red-400 text-2xl mx-auto mb-4" />
@@ -214,6 +216,7 @@ const LiveFeed = ({ searchQuery = '', showOnly }) => {
         <section 
             className="w-full pt-4 md:pt-12 pb-12 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100" 
             id={showOnly === 'more' ? 'more-latest-news' : 'live-feed'}
+            style={{ minHeight: showOnly !== 'more' ? '350px' : undefined }}
         >
             <div className="max-w-[1600px] mx-auto px-4 md:px-8">
                 {/* Header Section */}

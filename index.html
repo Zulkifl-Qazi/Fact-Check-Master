@@ -32,7 +32,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="mobile-version" content="v2.5" />
+    <meta name="mobile-version" content="v2.6" />
 
     <title>Fact Check Master - Real-Time Fact Checking &amp; Verification</title>
     <meta name="description" content="Fact Check Master is a real-time fact-checking platform dedicated to verifying viral news, social media claims, and countering misinformation." />
@@ -82,10 +82,19 @@
     <meta name="twitter:description" content="Verify claims, investigate rumors, and get real-time analysis." />
     <meta name="twitter:image" content="https://www.factcheckmaster.com/logo.jpg" />
 
-    <!-- Critical CSS: font-face fallback so text renders immediately -->
+    <!-- Critical CSS: size-adjusted fallback font prevents CLS from font swap -->
     <style>
+      /* Size-adjusted system fallback that matches Inter's metrics */
+      @font-face {
+        font-family: 'Inter Fallback';
+        src: local('Arial');
+        size-adjust: 107%;
+        ascent-override: 90%;
+        descent-override: 22%;
+        line-gap-override: 0%;
+      }
       body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        font-family: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
       }
       /* Prevent layout shift while fonts load */
       @font-face {
@@ -94,31 +103,95 @@
       }
       /* Minimal above-the-fold critical styles */
       #root { min-height: 100vh; }
+      /* Inline skeleton styles so placeholder renders before CSS bundle loads */
+      .fcm-skeleton-bar {
+        background: #e2e8f0;
+        border-radius: 6px;
+        animation: fcm-pulse 1.5s ease-in-out infinite;
+      }
+      @media (prefers-color-scheme: dark) {
+        .fcm-skeleton-bar { background: #1e293b; }
+        .fcm-inline-skel { background: #0f172a !important; }
+        .fcm-inline-skel-nav { background: rgba(15,23,42,0.95) !important; border-color: rgba(51,65,85,0.5) !important; }
+      }
+      @keyframes fcm-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
     </style>
 
     <!--
-      LCP Preload: On repeat visits / lighthouse audits, preloads LCP image BEFORE React JS runs.
-      Mobile reads fcm_mobile_lcp, desktop reads fcm_hero_img.
+      LCP Preload Strategy:
+      1. Repeat visitors: use localStorage cache (instant)
+      2. First visitors: inline fetch /api/posts?limit=1 fires BEFORE React downloads
     -->
     <script>
-      try {
-        var isMobile = window.innerWidth < 768;
-        var h = isMobile
-          ? (localStorage.getItem('fcm_mobile_lcp') || localStorage.getItem('fcm_hero_img'))
-          : localStorage.getItem('fcm_hero_img');
-        if (h) {
-          var l = document.createElement('link');
-          l.rel = 'preload';
-          l.as = 'image';
-          l.fetchPriority = 'high';
-          l.href = h;
-          document.head.appendChild(l);
-        }
-      } catch(e) {}
+      (function() {
+        try {
+          // 1. Try localStorage cache first (repeat visitors)
+          var isMobile = window.innerWidth < 768;
+          var h = isMobile
+            ? (localStorage.getItem('fcm_mobile_lcp') || localStorage.getItem('fcm_hero_img'))
+            : localStorage.getItem('fcm_hero_img');
+          if (h) {
+            var l = document.createElement('link');
+            l.rel = 'preload';
+            l.as = 'image';
+            l.fetchPriority = 'high';
+            l.href = h;
+            document.head.appendChild(l);
+          }
+
+          // 2. First-visit: inline API fetch for LCP image discovery
+          // This runs in parallel with JS bundle download, shaving ~2s off LCP
+          if (!h) {
+            var ctrl = new AbortController();
+            var timer = setTimeout(function() { ctrl.abort(); }, 4000);
+            fetch('/api/posts?limit=1', { signal: ctrl.signal })
+              .then(function(r) { clearTimeout(timer); return r.json(); })
+              .then(function(posts) {
+                if (Array.isArray(posts) && posts[0]) {
+                  var imgUrl = posts[0].image_url;
+                  if (imgUrl && typeof imgUrl === 'string') {
+                    // Build wsrv.nl URL
+                    var w = isMobile ? 400 : 960;
+                    var proxyUrl = 'https://wsrv.nl/?url=' + encodeURIComponent(imgUrl) + '&w=' + w + '&q=65&output=webp&il';
+                    var link = document.createElement('link');
+                    link.rel = 'preload';
+                    link.as = 'image';
+                    link.fetchPriority = 'high';
+                    link.href = proxyUrl;
+                    document.head.appendChild(link);
+                    // Cache for next visit
+                    try { localStorage.setItem(isMobile ? 'fcm_mobile_lcp' : 'fcm_hero_img', proxyUrl); } catch(e) {}
+                  }
+                  // Store prefetched data for React to use (skip redundant fetch)
+                  window.__FCM_PREFETCH__ = posts;
+                }
+              })
+              .catch(function() { clearTimeout(timer); });
+          }
+        } catch(e) {}
+      })();
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Inline skeleton: renders before JS bundle, serves as FCP element, prevents CLS -->
+    <div id="root">
+      <div class="fcm-inline-skel" style="min-height:100vh;background:#f4f6fa;">
+        <!-- Navbar placeholder -->
+        <div class="fcm-inline-skel-nav" style="position:fixed;top:0;left:0;right:0;height:64px;background:rgba(255,255,255,0.95);border-bottom:1px solid rgba(229,231,235,0.5);z-index:50;display:flex;align-items:center;padding:0 16px;">
+          <div class="fcm-skeleton-bar" style="width:32px;height:32px;border-radius:8px;flex-shrink:0;"></div>
+          <div class="fcm-skeleton-bar" style="width:140px;height:20px;margin-left:8px;"></div>
+        </div>
+        <!-- Hero section placeholder -->
+        <div style="padding:80px 16px 24px;max-width:1600px;margin:0 auto;">
+          <div class="fcm-skeleton-bar" style="width:100%;aspect-ratio:16/9;max-height:400px;border-radius:8px;"></div>
+          <div class="fcm-skeleton-bar" style="width:60%;height:24px;margin-top:16px;"></div>
+          <div class="fcm-skeleton-bar" style="width:40%;height:16px;margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

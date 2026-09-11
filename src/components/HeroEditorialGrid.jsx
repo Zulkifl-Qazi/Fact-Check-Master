@@ -6,6 +6,15 @@ const BREAKING_CATEGORY = 'breaking-news';
 const LATEST_FALLBACK = 'latest-news';
 
 async function fetchPostsList(params) {
+  // Use prefetched data from inline script if available (no category filter)
+  if (!params.category && !params.limit && !params.offset && window.__FCM_PREFETCH__) {
+    const prefetched = window.__FCM_PREFETCH__;
+    window.__FCM_PREFETCH__ = null; // Use only once
+    if (Array.isArray(prefetched) && prefetched.length > 0) {
+      return prefetched;
+    }
+  }
+
   const q = new URLSearchParams();
   if (params.category) q.set('category', params.category);
   if (params.limit != null) q.set('limit', String(params.limit));
@@ -162,7 +171,7 @@ const HeroEditorialGrid = () => {
 
   if (loading) {
     return (
-      <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950">
+      <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950" style={{ minHeight: '400px' }}>
         <div className="max-w-[1600px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] lg:grid-cols-[6.8fr_2.6fr_2fr] gap-8">
             
@@ -234,7 +243,7 @@ const HeroEditorialGrid = () => {
   const mainImage = getPostImage(mainStory);
 
   return (
-    <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950">
+    <section className="w-full py-6 pb-7 border-b border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-950" style={{ minHeight: '400px' }}>
       <div className="max-w-[1600px] mx-auto px-4 md:px-8">
 
         {/* ── MOBILE/TABLET LAYOUT: Strictly Chronological Order (Visible on screens < md) ── */}
