@@ -6,14 +6,6 @@ const BREAKING_CATEGORY = 'breaking-news';
 const LATEST_FALLBACK = 'latest-news';
 
 async function fetchPostsList(params) {
-  // Use prefetched data from inline script if available (no category filter)
-  if (!params.category && !params.limit && !params.offset && window.__FCM_PREFETCH__) {
-    const prefetched = window.__FCM_PREFETCH__;
-    window.__FCM_PREFETCH__ = null; // Use only once
-    if (Array.isArray(prefetched) && prefetched.length > 0) {
-      return prefetched;
-    }
-  }
 
   const q = new URLSearchParams();
   if (params.category) q.set('category', params.category);

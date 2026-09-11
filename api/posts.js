@@ -246,11 +246,9 @@ const SAMPLE_POSTS = [
 // Database functions for permanent storage
 async function getAllPosts(popular, chronological) {
   try {
-    // Only fetch columns needed for listing views — dramatically reduces payload size
-    const LISTING_COLUMNS = 'id, title, content, image_url, author, status, fact_check_status, category, created_at, updated_at, views, pinned_hero, pinned_popular, read_time';
     let query = supabase
       .from('posts')
-      .select(LISTING_COLUMNS)
+      .select('*')
       .eq('status', 'published');
 
     if (popular === true || popular === 'true') {
@@ -318,10 +316,9 @@ const HERO_BREAKING_CATEGORIES = ['breaking-news', 'featured-news'];
  */
 async function getPostsList({ category, limit, offset, ascending, popular, chronological }) {
   try {
-    const LISTING_COLUMNS = 'id, title, content, image_url, author, status, fact_check_status, category, created_at, updated_at, views, pinned_hero, pinned_popular, read_time';
     let query = supabase
       .from('posts')
-      .select(LISTING_COLUMNS)
+      .select('*')
       .eq('status', 'published');
 
     if (category) {

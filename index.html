@@ -165,8 +165,6 @@
                     // Cache for next visit
                     try { localStorage.setItem(isMobile ? 'fcm_mobile_lcp' : 'fcm_hero_img', proxyUrl); } catch(e) {}
                   }
-                  // Store prefetched data for React to use (skip redundant fetch)
-                  window.__FCM_PREFETCH__ = posts;
                 }
               })
               .catch(function() { clearTimeout(timer); });
